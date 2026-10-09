@@ -76,7 +76,7 @@ class TemplateCatalog(
     companion object {
         /** A user-owned copy with a new id. */
         fun duplicate(t: TemplateDefinition, newName: String = "${t.name} (copy)"): TemplateDefinition =
-            t.copy(id = "user." + Ids.newId(), name = newName, builtIn = false, version = 1)
+            t.copy(id = "user." + Ids.newId(), name = newName, builtIn = false, version = 1, aliases = emptyList())
 
         /** "Save note as template": the note body becomes the template's static body. */
         fun fromNote(title: String, body: String, category: String = "Custom"): TemplateDefinition = TemplateDefinition(

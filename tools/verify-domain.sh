@@ -39,5 +39,5 @@ grep -q 'error:' "$OUT/test.log" && { echo "test compilation failed"; exit 1; }
 
 CLASSES=$(cd "$OUT/test" && find . -name '*Test.class' ! -name '*$*' | sed 's|^\./||; s|\.class$||; s|/|.|g' | sort)
 echo "== running $(echo "$CLASSES" | wc -l) test classes"
-java -cp "$OUT/test:$OUT/main:$LIBS:$TESTLIBS" org.junit.runner.JUnitCore $CLASSES 2>&1 | grep -v '^Picked up JAVA_TOOL_OPTIONS' | tee "$OUT/junit.log"
+java -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8 -cp "$OUT/test:$OUT/main:$LIBS:$TESTLIBS" org.junit.runner.JUnitCore $CLASSES 2>&1 | grep -v '^Picked up JAVA_TOOL_OPTIONS' | tee "$OUT/junit.log"
 grep -q '^OK (' "$OUT/junit.log"
