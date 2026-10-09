@@ -212,6 +212,17 @@ object BackupArchive {
             return out.toByteArray()
         }
         fun drain() { val buf = ByteArray(64 * 1024); while (read(buf) >= 0) Unit }
+        /** Skipping must still pass bytes through the digest and the size limit, so it reads. */
+        override fun skip(n: Long): Long {
+            val buf = ByteArray(8 * 1024)
+            var left = n
+            while (left > 0) {
+                val r = read(buf, 0, minOf(buf.size.toLong(), left).toInt())
+                if (r < 0) break
+                left -= r
+            }
+            return n - left
+        }
         override fun close() {}
     }
 }

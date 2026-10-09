@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_background"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:padding="8dp">
+
+    <TextView
+        android:id="@+id/widget_new_note"
+        android:layout_width="0dp"
+        android:layout_height="48dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:drawableStart="@drawable/ic_shortcut_note"
+        android:drawablePadding="8dp"
+        android:text="@string/widget_new_note"
+        android:textColor="@color/widget_text"
+        android:textSize="16sp" />
+
+    <ImageView
+        android:id="@+id/widget_checklist"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:contentDescription="@string/shortcut_new_checklist"
+        android:src="@drawable/ic_shortcut_checklist" />
+
+    <ImageView
+        android:id="@+id/widget_search"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:contentDescription="@string/shortcut_search"
+        android:src="@drawable/ic_shortcut_search" />
+</LinearLayout>

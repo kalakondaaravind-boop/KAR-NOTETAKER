@@ -166,6 +166,12 @@ class IoTest {
         assertTrue(names.contains("markdown/Work/Clients_ A_B/Plan_ Q1 _draft_.md"))
     }
 
+    @Test fun stagingThatSkipsBytesStillVerifies() {
+        val r = BackupArchive.read(ByteArrayInputStream(writeBackup())) { _, d -> d.skip(Long.MAX_VALUE) }
+        assertEquals(snapshot(), r.snapshot)
+        BackupArchive.read(ByteArrayInputStream(writeBackup())) { _, _ -> } // stager that reads nothing
+    }
+
     @Test fun backupRecordsMissingAttachments() {
         val out = ByteArrayOutputStream()
         val w = BackupArchive.write(out, snapshot(), { null }, t0, "1.0")

@@ -127,6 +127,14 @@ class EditorTest {
         assertEquals("ab cd", u.undo(v)!!.text)
     }
 
+    @Test fun checkpointSeparatesSteps() {
+        val u = UndoStack()
+        u.record(TextValue(""), TextValue("a"), 0)
+        u.checkpoint()
+        u.record(TextValue("a"), TextValue("ab"), 10)
+        assertEquals("a", u.undo(TextValue("ab"))!!.text)
+    }
+
     @Test fun undoLimit() {
         val u = UndoStack(limit = 3)
         var v = TextValue("")

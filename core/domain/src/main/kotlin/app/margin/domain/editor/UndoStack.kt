@@ -47,6 +47,9 @@ class UndoStack(
 
     fun clear() { undo.clear(); redo.clear(); lastWasTyping = false }
 
+    /** Ends the current typing run so the next change becomes its own undo step (e.g. formatting). */
+    fun checkpoint() { lastWasTyping = false }
+
     private fun isSimpleTyping(b: TextValue, a: TextValue): Boolean {
         val d = a.text.length - b.text.length
         return (d == 1 || d == -1) && !b.hasSelection
