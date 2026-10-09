@@ -253,7 +253,9 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
                         DropdownMenuItem(text = { Text(stringResource(R.string.note_info)) }, leadingIcon = { Icon(Icons.Outlined.Info, null) }, onClick = { menu = false; infoDialog = true })
                         DropdownMenuItem(text = { Text(stringResource(R.string.share_export)) }, leadingIcon = { Icon(Icons.Outlined.Share, null) }, onClick = {
                             menu = false
-                            val md = app.margin.domain.io.NoteExporter.markdown(note ?: return@DropdownMenuItem, app.margin.domain.io.NoteExportContext(tags.map { it.name }, emptyList()))
+                            // Export what is on screen (including edits not yet flushed), not the last stored row.
+                            val current = (note ?: return@DropdownMenuItem).copy(title = title, body = body.text)
+                            val md = app.margin.domain.io.NoteExporter.markdown(current, app.margin.domain.io.NoteExportContext(tags.map { it.name }, emptyList()))
                             val uri = Files.shareableText(context, app.margin.domain.io.NoteExporter.safeFileName(title.ifBlank { "Note" }) + ".md", md)
                             Files.share(context, uri, "text/markdown", title.ifBlank { context.getString(R.string.untitled) })
                         })
