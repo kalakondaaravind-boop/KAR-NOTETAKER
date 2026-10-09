@@ -29,7 +29,13 @@ sealed interface SaveStatus {
     data class Failed(val reason: SaveError, val attempts: Int, val willRetry: Boolean) : SaveStatus
 }
 
-enum class SaveError { STORAGE_FULL, DATABASE_UNAVAILABLE, UNKNOWN }
+enum class SaveError {
+    STORAGE_FULL,
+    DATABASE_UNAVAILABLE,
+    /** The note was permanently deleted elsewhere; the editor keeps the text so the user can copy it. */
+    NOTE_MISSING,
+    UNKNOWN,
+}
 
 /** Thrown by persistence implementations to give the controller a typed reason. */
 class PersistenceException(val error: SaveError, cause: Throwable? = null) : Exception(error.name, cause)
@@ -101,7 +107,7 @@ class AutosaveController(
             attempt++
             val result = saveOnce()
             if (result == null) return true
-            val willRetry = retry && attempt < maxAttempts && result != SaveError.STORAGE_FULL
+            val willRetry = retry && attempt < maxAttempts && result != SaveError.STORAGE_FULL && result != SaveError.NOTE_MISSING
             _status.value = SaveStatus.Failed(result, attempt, willRetry)
             if (!willRetry) return false
             delay(retryBaseMs shl (attempt - 1))

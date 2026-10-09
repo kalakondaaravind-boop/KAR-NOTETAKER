@@ -59,6 +59,10 @@ data class LibrarySnapshot(
         revisions.filter { it.noteId !in noteIds }.forEach { p += "revision ${it.id} references missing note" }
         tasks.filter { it.noteId != null && it.noteId !in noteIds }.forEach { p += "task ${it.id} references missing note" }
         if (tags.map { it.key }.toSet().size != tags.size) p += "duplicate tag keys"
+        val byId = folders.associateBy { it.id }
+        folders.filter { app.margin.domain.organization.Folders.depthOf(it.id, byId) == Int.MAX_VALUE }.forEach { p += "folder ${it.id} is part of a cycle" }
+        val taskIds = tasks.map { it.id }.toSet()
+        tasks.filter { it.parentTaskId != null && it.parentTaskId !in taskIds }.forEach { p += "task ${it.id} references missing parent" }
         attachments.filter { it.storagePath.contains("..") || it.storagePath.startsWith("/") }.forEach { p += "attachment ${it.id} has unsafe path" }
         return p
     }
