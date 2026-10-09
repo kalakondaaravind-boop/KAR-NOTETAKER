@@ -1,0 +1,740 @@
+#! Requested template catalogue (from the product specification, section 12.2).
+#! Each entry is resolved to an implemented template by name or alias; unresolved entries are DEFERRED.
+
+## Everyday notes and personal organization
+Quick note
+Daily notes
+Brain dump
+Ideas inbox
+General reference
+Important information
+Contact reference
+Personal information inventory
+Frequently used information
+Checklist
+Packing list
+Shopping list
+Errands
+Decision record
+Pros and cons
+Questions to investigate
+Information to verify
+Follow-up list
+Things to remember
+Weekly personal review
+Monthly personal review
+Yearly review
+Personal goals
+Goal breakdown
+Habit tracker
+Personal milestone
+Personal operating manual
+
+## Journaling and reflection
+Daily journal
+Morning journal
+Evening journal
+Gratitude journal
+Mood journal
+Reflection
+Wins and lessons
+Personal retrospective
+Weekly reflection
+Monthly reflection
+Annual reflection
+Free-writing journal
+Travel journal
+Memory journal
+Dream journal
+Reading journal
+Learning journal
+Values reflection
+Life review
+Personal growth plan
+
+## Productivity and planning
+Daily planner
+Weekly planner
+Monthly planner
+Quarterly planner
+Annual planner
+Prioritization matrix
+Eisenhower matrix
+Personal task list
+Project task list
+Milestone tracker
+Goal-setting worksheet
+SMART goal
+OKR planning
+Habit review
+Time-blocking plan
+Focus session
+Personal retrospective
+Weekly review
+Monthly planning
+Next-actions list
+Waiting-for list
+Delegated-task record for personal reference
+Recurring maintenance checklist
+Decision log
+Risk register
+Issue log
+
+## Meetings and conversations
+Meeting agenda
+Meeting notes
+One-to-one meeting
+Team meeting notes for personal reference only
+Interview notes
+Customer interview
+User research interview
+Discovery call
+Sales call
+Client meeting
+Workshop notes
+Brainstorming session
+Retrospective
+Stakeholder conversation
+Phone call record
+Follow-up email preparation
+Meeting action tracker
+Meeting decision record
+Conference session notes
+Training session notes
+
+## Project and program management
+Project brief
+Project charter
+Project plan
+Scope definition
+Milestone plan
+Deliverables register
+Project status report
+Project retrospective
+Lessons learned
+Risk register
+Issue register
+Dependency register
+Change request
+Decision log
+Assumptions log
+RAID log
+Work breakdown structure
+Requirements register
+Acceptance criteria
+Project closure
+Personal project dashboard
+
+## Strategy and management consulting
+Executive summary
+Problem statement
+Issue tree
+Hypothesis tree
+MECE issue breakdown
+Situation assessment
+Current-state assessment
+Future-state vision
+Gap analysis
+SWOT analysis
+PESTLE analysis
+Porter's Five Forces
+Value chain analysis
+Business model canvas
+Competitive analysis
+Market sizing
+TAM/SAM/SOM analysis
+Growth strategy
+Operating model
+Target operating model
+Capability assessment
+Strategic options
+Options evaluation
+Decision matrix
+Business case
+Cost-benefit analysis
+Benefits realization
+Transformation roadmap
+Change impact assessment
+Stakeholder analysis
+Governance model
+Executive briefing
+Board briefing
+Steering committee briefing
+Workshop design
+Hypothesis tracker
+Recommendation register
+Implementation plan
+Value creation plan
+Post-implementation review
+
+## Finance, accounting, and budgeting
+Monthly budget
+Expense tracker
+Income tracker
+Savings plan
+Debt repayment plan
+Net worth snapshot
+Financial goals
+Purchase comparison
+Investment research
+Portfolio review notes
+Financial decision record
+Cash flow forecast
+Scenario analysis
+Cost estimate
+Budget variance analysis
+Business case
+Pricing analysis
+Unit economics
+Revenue analysis
+Margin analysis
+Invoice reference
+Receipt reference
+Tax document checklist
+Audit preparation
+Financial close checklist
+Reconciliation checklist
+Financial assumptions log
+Personal financial review
+
+## Education and learning
+Class notes
+Lecture notes
+Course notes
+Study plan
+Revision plan
+Exam preparation
+Flashcards
+Question-and-answer study notes
+Concept explanation
+Feynman technique
+Topic summary
+Chapter summary
+Research question
+Assignment plan
+Essay outline
+Lab notes
+Experiment log
+Reading notes
+Language learning
+Vocabulary list
+Spaced repetition record
+Learning objective
+Course review
+Certification preparation
+Study retrospective
+Knowledge gap list
+
+## Research and evidence
+Research brief
+Literature review
+Paper summary
+Research question
+Hypothesis
+Methodology
+Experiment design
+Experiment log
+Observation log
+Evidence register
+Source evaluation
+Citation record
+Annotated bibliography
+Interview protocol
+Field notes
+Data dictionary
+Research findings
+Limitations
+Reproducibility checklist
+Research synthesis
+Open questions
+Research retrospective
+
+## Reading, books, media, and entertainment
+Book notes
+Chapter notes
+Book review
+Reading list
+Reading progress
+Article summary
+Research article notes
+Podcast notes
+Video notes
+Course video notes
+Film review
+TV series notes
+Music discovery
+Quote collection
+Author profile
+Media recommendation
+Watchlist
+Listening list
+Reading highlights
+Knowledge extracted from media
+
+## Writing and publishing
+Writing brief
+Article outline
+Blog post
+Newsletter
+Essay
+Long-form article
+Book outline
+Chapter draft
+Story concept
+Character profile
+Worldbuilding
+Plot outline
+Scene notes
+Dialogue ideas
+Research for writing
+Editorial review
+Revision checklist
+Publication plan
+Content calendar
+Headline brainstorming
+Personal writing style guide
+Editorial decision log
+
+## Creativity and ideation
+Idea capture
+Idea expansion
+Brainstorm
+Mind map outline
+SCAMPER exercise
+Creative brief
+Design inspiration
+Mood board reference
+Problem reframing
+What-if exploration
+Analogy collection
+Invention notebook
+Creative experiment
+Feedback record
+Concept evaluation
+Idea backlog
+Innovation pipeline
+Prototype notes
+Creative retrospective
+
+## Software engineering and IT
+Technical design
+Architecture decision record
+API reference
+API endpoint notes
+Bug report
+Incident report
+Root cause analysis
+Postmortem
+Runbook
+Deployment checklist
+Release notes
+Code review notes for personal reference
+Database design
+Data migration plan
+Performance investigation
+Security review
+Threat model
+Test plan
+Test case
+Troubleshooting guide
+Environment setup
+Development log
+Technical debt register
+Dependency review
+System diagram notes
+Infrastructure notes
+DevOps checklist
+Disaster recovery plan
+Service-level objective notes
+Feature specification
+User story
+Acceptance criteria
+Developer learning notes
+
+## Product, UX, and design
+Product brief
+Product requirements document
+Feature specification
+User persona
+User journey
+User story map
+Jobs-to-be-done
+Problem interview
+Usability test plan
+Usability observation
+UX audit
+Heuristic evaluation
+Accessibility audit
+Competitive product review
+Design critique
+Design system notes
+Component specification
+Wireframe annotations
+Prototype feedback
+Experiment hypothesis
+Product analytics plan
+Feature prioritization
+Roadmap proposal
+Launch checklist
+Product retrospective
+Voice-of-customer notes
+
+## Sales, marketing, and customer success
+Marketing brief
+Campaign plan
+Campaign retrospective
+Content strategy
+Content calendar
+SEO research
+Keyword research
+Competitor messaging
+Brand positioning
+Value proposition
+Customer persona
+Customer journey
+Lead research
+Sales discovery
+Qualification notes
+Account research
+Account plan
+Opportunity review
+Objection handling
+Proposal outline
+Negotiation preparation
+Customer onboarding
+Customer success plan
+Renewal preparation
+Customer feedback
+Churn analysis
+Case study outline
+Webinar plan
+Social content
+Messaging test
+Marketing experiment
+
+## Leadership, HR, and career management
+One-to-one preparation
+Feedback preparation
+Performance review
+Development plan
+Career goals
+Skills matrix
+Interview preparation
+Interview debrief
+Role research
+Job application tracker
+Resume achievements
+Promotion case
+Personal leadership principles
+Delegation plan
+Coaching notes
+Mentoring session
+Training plan
+Onboarding checklist
+Offboarding checklist
+Hiring scorecard
+Personal career retrospective
+Professional networking notes
+
+## Legal, compliance, and governance
+Contract summary
+Contract obligation checklist
+Legal research notes
+Case brief
+Policy summary
+Compliance checklist
+Regulatory change log
+Audit evidence index
+Control assessment
+Risk assessment
+Data inventory
+Privacy review
+Vendor assessment
+Incident record
+Document retention checklist
+Approval requirements reference
+Governance meeting notes
+Decision rationale
+Legal consultation preparation
+Compliance action list
+
+## Health, fitness, and well-being
+Fitness goal
+Workout log
+Exercise progress
+Running log
+Training plan
+Meal planning
+Recipe notes
+Sleep journal
+Habit tracking
+Wellness reflection
+Appointment preparation
+Questions for a healthcare professional
+General symptom diary
+Personal health record index
+Medication information record
+Rehabilitation exercise notes as prescribed by a professional
+
+## Travel and outdoor activities
+Trip overview
+Itinerary
+Packing list
+Travel budget
+Reservation reference
+Flight details
+Accommodation details
+Destination research
+Places to visit
+Restaurant research
+Local transportation notes
+Travel journal
+Emergency information
+Travel document checklist
+Hiking plan
+Camping checklist
+Road trip planner
+Post-trip review
+
+## Home, family, and personal administration
+Home inventory
+Home maintenance
+Cleaning schedule
+Repair record
+Warranty register
+Appliance information
+Renovation plan
+Household budget
+Moving checklist
+Emergency preparedness
+Pet care notes
+Family event plan
+Gift ideas
+Recipe collection
+Meal plan
+Gardening log
+Plant care
+Personal document index
+Subscription register
+Renewal reminders
+Household reference guide
+
+## Real estate and property
+Property comparison
+Property viewing checklist
+Rental property notes
+Tenant reference notes
+Lease obligation tracker
+Maintenance record
+Renovation estimate
+Property expense tracker
+Inspection notes
+Mortgage comparison
+Property investment assumptions
+Real estate due diligence
+Closing checklist
+Property document index
+
+## Operations, supply chain, and manufacturing
+Standard operating procedure
+Work instruction
+Process map notes
+Supplier assessment
+Vendor comparison
+Inventory observation
+Procurement checklist
+Quality inspection
+Nonconformance report
+Corrective action
+Preventive action
+Maintenance log
+Equipment record
+Production observation
+Process improvement
+Lean waste observation
+Value stream analysis
+Operational risk register
+Capacity planning
+Continuity plan
+Audit preparation
+Warehouse checklist
+Shipment exception record
+
+## Analytics and data science
+Analytics question
+KPI definition
+Metric specification
+Dashboard review
+Data quality issue
+Data profiling
+SQL query notes
+Python experiment
+Statistical analysis
+Experiment design
+A/B test hypothesis
+Model evaluation
+Data pipeline incident
+Data lineage notes
+Data dictionary
+Dashboard requirements
+Insight summary
+Forecast assumptions
+Business performance review
+Measurement plan
+Analytics retrospective
+
+## Startups and entrepreneurship
+Startup idea
+Problem validation
+Customer discovery
+Market sizing
+Business model
+Founder journal
+Pitch outline
+Investor research
+Fundraising tracker
+Financial assumptions
+Pricing experiment
+Product-market fit observations
+Go-to-market plan
+Launch checklist
+Competitive landscape
+Risk register
+Hiring plan
+Partnership research
+Startup retrospective
+Business operating plan
+
+## Career, hobbies, and personal interests
+Career plan
+Skill development
+Certification tracker
+Portfolio project
+Networking notes
+Hobby project
+Photography log
+Art practice
+Music practice
+Sports practice
+Gaming notes
+Collectibles inventory
+Personal challenges
+Bucket list
+Life goals
+Personal milestones
+Volunteer activity
+Community event notes
+Personal knowledge roadmap
+
+## Events and conferences
+Event plan
+Conference schedule
+Speaker notes
+Session summary
+Networking preparation
+Event checklist
+Event budget
+Vendor checklist
+Workshop plan
+Post-event retrospective
+Lessons learned
+Follow-up reminders
+
+## Personal knowledge management
+Permanent note
+Literature note
+Fleeting note
+Evergreen note
+Concept note
+Topic overview
+Knowledge map
+Source note
+Claim and evidence
+Contradictory evidence
+Open question
+Research backlog
+Synthesis note
+Glossary
+Personal encyclopedia entry
+Cross-reference index
+Knowledge review
+Orphan-note review
+Personal wiki page
+Topic learning plan
+
+## AI and prompt engineering
+Prompt library entry
+System prompt design
+Prompt experiment
+Model comparison
+Evaluation rubric
+AI workflow
+Agent specification
+AI-generated content review
+Hallucination investigation
+Retrieval evaluation
+Knowledge-grounding test
+Prompt injection test
+AI project brief
+Model limitation notes
+AI privacy assessment
+Automation specification
+Prompt version history
+
+## Security and reliability
+Threat model
+Security checklist
+Vulnerability observation
+Incident timeline
+Root cause analysis
+Recovery procedure
+Backup verification
+Access review for personal accounts
+Device security checklist
+Privacy impact notes
+Disaster recovery plan
+Data retention review
+Software dependency audit
+
+## Nonprofit, volunteering, and community
+Volunteer activity
+Fundraising idea
+Grant research
+Grant application outline
+Program plan
+Impact measurement
+Community needs assessment
+Event notes
+Outreach plan
+Volunteer reflection
+Donation record
+Program retrospective
+
+## Spirituality and personal reflection
+Personal reflection
+Values journal
+Meditation journal
+Reading reflection
+Prayer or contemplation journal
+Life lessons
+Personal commitments
+Gratitude reflection
+Meaningful experiences
+Personal principles
+
+## Generic and meta-templates
+Blank note
+Structured note
+Research note
+Checklist
+Comparison
+Decision record
+Reference entry
+Timeline
+Meeting record
+Project summary
+Personal review
+Question list
+Information capture
+Reusable document
+Custom template specification
