@@ -117,7 +117,7 @@ The logo and tagline appear on the first-launch screen, in the home screen's top
 ## Project layout
 
 ```
-core/domain   Pure Kotlin: models, editor commands, autosave, search, templates (525 built-in),
+core/domain   Pure Kotlin: models, editor commands, autosave, search, templates (524 built-in),
               tasks/recurrence, import/export/backup, on-device assistant, security rules
 core/data     Room database + FTS search index, repositories, DataStore settings, Keystore
 app           Compose UI: home, notes, editor, search, folders/tags, templates, tasks/reminders,

@@ -26,7 +26,7 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Backlinks and related notes (§10.4) | VERIFIED, with the visual graph PARTIAL (text views only) |
 | Search (§11.1–11.2) | VERIFIED (parser, FTS, fuzzy, 10k-note timing) |
 | Semantic search (§11.3) | DEFERRED |
-| Templates (§12) | VERIFIED: 525 templates cover all 674 catalogue entries |
+| Templates (§12) | VERIFIED: 524 templates cover all 673 catalogue entries |
 | Tasks and reminders (§13) | VERIFIED (recurrence, buckets, DST), IMPLEMENTED alarms |
 | AI (§14) | VERIFIED policy, grounding, providers and errors; IMPLEMENTED UI, including the hidden OpenAI setup |
 | Data: database, backup, import, export (§15–16) | VERIFIED codecs, archive, encryption, SQL |
@@ -111,7 +111,7 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Item | Status |
 |---|---|
 | Schema engine: field types, validation, sections, repeatables, conditionals, versioning, migration | VERIFIED |
-| Built-in library: 525 templates covering all 674 catalogue entries (A–AF) | VERIFIED: every template generates a valid note (`BuiltInTemplatesTest`) |
+| Built-in library: 524 templates covering all 673 catalogue entries (A–AF) | VERIFIED: every template generates a valid note (`BuiltInTemplatesTest`) |
 | Custom templates, duplication, reset, template builder, JSON import/export | VERIFIED codecs, IMPLEMENTED UI |
 | Per-template inventory | `docs/TEMPLATE_INVENTORY.md` |
 

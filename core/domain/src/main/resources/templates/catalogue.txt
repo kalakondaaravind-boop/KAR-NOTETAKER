@@ -97,7 +97,7 @@ Retrospective
 Stakeholder conversation
 Phone call record
 Follow-up email preparation
-Meeting action tracker
+#! Removed at the owner's request (Oct 2026): Meeting action tracker
 Meeting decision record
 Conference session notes
 Training session notes

@@ -222,15 +222,6 @@ list asks "What I'm asking for"
 date deadline "Deadline to mention"
 long draft "Draft"
 
-=== meeting-action-tracker
-name: Meeting action tracker
-category: Meetings and conversations
-icon: playlist_add_check
-description: Track actions coming out of recurring meetings.
-## Actions
-text series "Meeting series" *
-table actions "Actions" [Action|Who|Due|Status]
-
 === conference-session-notes
 name: Conference session notes
 category: Meetings and conversations
