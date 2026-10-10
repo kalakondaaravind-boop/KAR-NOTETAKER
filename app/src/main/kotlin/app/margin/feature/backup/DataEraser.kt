@@ -34,7 +34,7 @@ class DataEraser @Inject constructor(
 ) {
     suspend fun eraseEverything(): EraseReport = withContext(Dispatchers.IO) {
         DataErasure.run(
-            mapOf(
+            mapOf<EraseStep, suspend () -> Unit>(
                 EraseStep.REMINDERS to suspend { tasks.tasksWithReminders().forEach { scheduler.cancel(it.id) } },
                 EraseStep.LIBRARY to suspend { library.wipeAll() },
                 EraseStep.SECRETS to suspend { secrets.remove(SECRET_AI_KEY) },

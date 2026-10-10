@@ -237,7 +237,7 @@ private fun FieldEditor(f: FieldDraft, index: Int, count: Int, onChange: (FieldD
             ExposedDropdownMenuBox(expanded, { expanded = it }, Modifier.weight(1f)) {
                 OutlinedTextField(fieldTypeLabel(f.type), {}, readOnly = true, label = { Text(stringResource(R.string.field_type)) },
                     trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded) }, modifier = Modifier.menuAnchor(MenuAnchorType.PrimaryNotEditable).fillMaxWidth())
-                androidx.compose.material3.ExposedDropdownMenu(expanded, { expanded = false }) {
+                ExposedDropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                     FieldType.entries.forEach { t -> DropdownMenuItem(text = { Text(fieldTypeLabel(t)) }, onClick = { onChange(f.copy(type = t)); expanded = false }) }
                 }
             }

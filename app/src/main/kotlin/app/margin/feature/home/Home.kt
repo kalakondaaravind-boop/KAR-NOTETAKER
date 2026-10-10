@@ -93,7 +93,6 @@ import app.margin.domain.organization.SmartCollection
 import app.margin.domain.organization.SortField
 import app.margin.domain.organization.SortOrder
 import app.margin.domain.repository.FolderRepository
-import app.margin.domain.repository.LibraryRepository
 import app.margin.domain.repository.NoteRepository
 import app.margin.domain.repository.TaskRepository
 import app.margin.domain.repository.TemplateRepository
@@ -145,7 +144,6 @@ class HomeViewModel @Inject constructor(
     templates: TemplateRepository,
     private val settings: SettingsRepository,
     private val clock: Clock,
-    library: LibraryRepository,
 ) : ViewModel() {
     private val now = clock.now()
 
@@ -162,7 +160,7 @@ class HomeViewModel @Inject constructor(
 
     val state: StateFlow<HomeState> = combine(
         noteLists, tasks.observeOpenTasks(), folders.observeFolders(), recentTemplates,
-        combine(settings.settings, library.observeCounts()) { s, c -> s to c },
+        combine(settings.settings, notes.observeCounts()) { s, c -> s to c },
     ) { (pinned, recent, favs), openTasks, folderList, tpl, (s, counts) ->
         val zone = ZoneId.systemDefault()
         val n = clock.now()
