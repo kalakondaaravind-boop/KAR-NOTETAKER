@@ -62,6 +62,12 @@ class FileAttachmentSource(private val file: File, override val mimeType: String
     override fun open(): InputStream = file.inputStream()
 }
 
+/** In-memory attachment content (drawings, rendered images, imported media). */
+class BytesSource(private val bytes: ByteArray, override val mimeType: String, override val displayName: String) : AttachmentSource {
+    override val sizeHint: Long get() = bytes.size.toLong()
+    override fun open(): InputStream = bytes.inputStream()
+}
+
 object Files {
     fun authority(context: Context) = context.packageName + ".files"
 
@@ -80,6 +86,20 @@ object Files {
         f.writeText(content)
         return FileProvider.getUriForFile(context, authority(context), f)
     }
+
+    /** Like [shareableText] for binary content (PNG, PDF, DOCX exports). */
+    fun shareableBytes(context: Context, fileName: String, content: ByteArray): Uri {
+        val dir = File(context.cacheDir, "share").apply { mkdirs() }
+        dir.listFiles()?.filter { System.currentTimeMillis() - it.lastModified() > 3_600_000 }?.forEach { it.delete() }
+        val f = File(dir, fileName)
+        f.writeBytes(content)
+        return FileProvider.getUriForFile(context, authority(context), f)
+    }
+
+    /** Writes [content] to a document the user picked (Storage Access Framework). */
+    fun writeTo(context: Context, uri: Uri, content: ByteArray): Boolean = try {
+        context.contentResolver.openOutputStream(uri, "wt")?.use { it.write(content) } != null
+    } catch (e: Exception) { false }
 
     fun attachmentUri(context: Context, storagePath: String): Uri =
         FileProvider.getUriForFile(context, authority(context), File(File(context.filesDir, "attachments"), storagePath))

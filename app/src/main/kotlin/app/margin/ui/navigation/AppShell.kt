@@ -225,6 +225,11 @@ private fun AppNavHost(nav: NavHostController, start: String, n: Navigator, modi
             navArgument("preview") { type = NavType.BoolType; defaultValue = false },
         )) { EditorScreen(n) }
         composable(Routes.REVISIONS, arguments = listOf(navArgument("noteId") { type = NavType.StringType })) { RevisionsScreen(n) }
+        composable(Routes.DRAWING, arguments = listOf(
+            navArgument("noteId") { type = NavType.StringType },
+            navArgument("attachment") { type = NavType.StringType; defaultValue = "" },
+            navArgument("page") { type = NavType.StringType; defaultValue = "" },
+        )) { app.margin.feature.drawing.DrawingScreen(n) }
         composable(Routes.SEARCH, arguments = listOf(
             navArgument("q") { type = NavType.StringType; defaultValue = "" },
             navArgument("folder") { type = NavType.StringType; defaultValue = "" },

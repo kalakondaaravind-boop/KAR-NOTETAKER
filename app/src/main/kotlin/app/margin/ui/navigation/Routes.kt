@@ -23,6 +23,7 @@ object Routes {
     const val SETTINGS_PRIVACY = "settings/privacy"
     const val SETTINGS_DATA = "settings/data"
     const val REVISIONS = "revisions/{noteId}"
+    const val DRAWING = "drawing/{noteId}?attachment={attachment}&page={page}"
 
     fun notes(c: Collection) = "notes?collection=${Uri.encode(c.encode())}"
     fun editor(noteId: String, preview: Boolean = false) = "editor/${Uri.encode(noteId)}?preview=$preview"
@@ -31,6 +32,8 @@ object Routes {
     fun templateForm(id: String) = "template/${Uri.encode(id)}"
     fun templateBuilder(id: String? = null) = "template-builder?id=${Uri.encode(id ?: "")}"
     fun revisions(noteId: String) = "revisions/${Uri.encode(noteId)}"
+    fun drawing(noteId: String, attachment: String? = null, page: String? = null) =
+        "drawing/${Uri.encode(noteId)}?attachment=${Uri.encode(attachment ?: "")}&page=${Uri.encode(page ?: "")}"
 }
 
 /** What a notes list shows. Encoded into the route as "kind:arg". */

@@ -188,5 +188,17 @@ object DrawingImages {
         }
     }
 
+    /** One PDF page with the drawing at A4 width (595 pt), keeping the page's proportions. */
+    fun pdf(context: Context, d: Drawing): ByteArray {
+        val doc = android.graphics.pdf.PdfDocument()
+        try {
+            val w = 595; val h = (595f * d.height / d.width).toInt().coerceIn(200, 14_000)
+            val page = doc.startPage(android.graphics.pdf.PdfDocument.PageInfo.Builder(w, h, 1).create())
+            drawOn(context, page.canvas, d, w.toFloat(), h.toFloat())
+            doc.finishPage(page)
+            return ByteArrayOutputStream().use { doc.writeTo(it); it.toByteArray() }
+        } finally { doc.close() }
+    }
+
     fun svg(d: Drawing): String = DrawingSvg.render(d, clipartPath = ClipartLibrary::svgPath) { id -> app.margin.domain.text.NoteFont.from(id)?.css ?: "sans-serif" }
 }

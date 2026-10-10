@@ -15,6 +15,8 @@ import androidx.compose.material.icons.outlined.Backup
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.Groups
 import androidx.compose.material.icons.outlined.Mic
+import androidx.compose.material.icons.outlined.PostAdd
+import androidx.compose.material.icons.outlined.Draw
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -194,6 +196,14 @@ class HomeViewModel @Inject constructor(
         onCreated(notes.create(body = body, folderId = s.defaultFolderId).id)
     }
 
+    /** A new page from a page template: a text note with that paper, or a drawing page. */
+    fun newPage(t: app.margin.domain.model.PageTemplate, onCreated: (noteId: String, drawing: Boolean) -> Unit) = viewModelScope.launch {
+        val s = settings.current()
+        val body = if (t.drawing) t.starter else app.margin.domain.model.NoteMeta.join(app.margin.domain.model.NoteMeta(page = t.page), t.starter)
+        val note = notes.create(title = if (t.drawing) t.name else "", body = body, folderId = s.defaultFolderId)
+        onCreated(note.id, t.drawing)
+    }
+
     /** Completing from Home is undoable (snackbar), so a mis-tap never loses a task. */
     fun completeTask(id: String) = viewModelScope.launch { tasks.complete(id) }
     fun reopenTask(id: String) = viewModelScope.launch { tasks.reopen(id) }
@@ -205,6 +215,11 @@ fun HomeScreen(n: Navigator, vm: HomeViewModel = hiltViewModel()) {
     val state by vm.state.collectAsStateWithLifecycle()
     val sp = LocalSpacing.current
     var capture by rememberSaveable { mutableStateOf("") }
+    var showPageTemplates by rememberSaveable { mutableStateOf(false) }
+    if (showPageTemplates) app.margin.feature.drawing.PageTemplateSheet(onDismiss = { showPageTemplates = false }) { t ->
+        showPageTemplates = false
+        vm.newPage(t) { id, drawing -> n.open(if (drawing) Routes.drawing(id, page = t.page.id) else Routes.editor(id)) }
+    }
     var savedMessage by rememberSaveable { mutableStateOf(false) }
     val clipboard = LocalClipboardManager.current
     val snackbar = remember { SnackbarHostState() }
@@ -293,6 +308,12 @@ fun HomeScreen(n: Navigator, vm: HomeViewModel = hiltViewModel()) {
                             }
                             QuickActions(
                                 onNewNote = { vm.newNote { n.open(Routes.editor(it)) } },
+                                onNewPage = { showPageTemplates = true },
+                                onDrawing = {
+                                    vm.newPage(app.margin.domain.model.PageTemplates.byId("sketch") ?: app.margin.domain.model.PageTemplates.all.first { it.drawing }) { id, _ ->
+                                        n.open(Routes.drawing(id, page = "plain"))
+                                    }
+                                },
                                 onVoiceNote = dictateNewNote,
                                 onChecklist = { vm.newNote("- [ ] ") { n.open(Routes.editor(it)) } },
                                 onOpen = n::open,
@@ -401,7 +422,7 @@ private fun PanelDivider() = HorizontalDivider(
  * Template tiles open the built-in templates by their stable ids.
  */
 @Composable
-private fun QuickActions(onNewNote: () -> Unit, onVoiceNote: () -> Unit, onChecklist: () -> Unit, onOpen: (String) -> Unit) {
+private fun QuickActions(onNewNote: () -> Unit, onNewPage: () -> Unit, onDrawing: () -> Unit, onVoiceNote: () -> Unit, onChecklist: () -> Unit, onOpen: (String) -> Unit) {
     val sp = LocalSpacing.current
     FlowRow(
         Modifier.fillMaxWidth().padding(start = sp.l, end = sp.l, top = sp.xs, bottom = sp.l),
@@ -409,10 +430,11 @@ private fun QuickActions(onNewNote: () -> Unit, onVoiceNote: () -> Unit, onCheck
         verticalArrangement = Arrangement.spacedBy(sp.s),
     ) {
         QuickTile(Icons.Outlined.EditNote, R.string.new_note, onNewNote)
+        QuickTile(Icons.Outlined.PostAdd, R.string.new_page, onNewPage)
+        QuickTile(Icons.Outlined.Draw, R.string.new_drawing, onDrawing)
         QuickTile(Icons.Outlined.Mic, R.string.voice_note, onVoiceNote)
         QuickTile(Icons.Outlined.Checklist, R.string.shortcut_new_checklist, onChecklist)
         QuickTile(Icons.Outlined.Groups, R.string.qa_meeting) { onOpen(Routes.templateForm(QUICK_MEETING_TEMPLATE)) }
-        QuickTile(Icons.Outlined.Today, R.string.qa_journal) { onOpen(Routes.templateForm(QUICK_JOURNAL_TEMPLATE)) }
         QuickTile(Icons.Outlined.AutoAwesome, R.string.ask_notes) { onOpen(Routes.ASK) }
         QuickTile(Icons.Outlined.Dashboard, R.string.templates) { onOpen(Routes.templates()) }
     }
