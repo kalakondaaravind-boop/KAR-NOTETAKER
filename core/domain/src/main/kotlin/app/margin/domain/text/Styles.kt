@@ -49,6 +49,8 @@ object Palette {
     const val DEFAULT_MARK: Long = 0xFFFFF59D
 
     fun toHex(argb: Long): String = "#%06X".format(argb and 0xFFFFFF)
+    /** "#AARRGGBB", keeping transparency (drawings, highlighter ink). */
+    fun toArgbHex(argb: Long): String = "#%08X".format(argb and 0xFFFFFFFFL)
 
     /** "#RGB", "#RRGGBB" or "#AARRGGBB" → ARGB; null for anything else (names, rgb(), injections). */
     fun parseHex(value: String?): Long? {
