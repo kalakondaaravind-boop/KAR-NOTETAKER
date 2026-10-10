@@ -5,8 +5,13 @@ name: Android build
 
 on:
   push:
+    branches-ignore: ['ci-logs-*']
   pull_request:
   workflow_dispatch:
+
+permissions:
+  # contents: write lets CI publish logs and screenshots to the ci-logs-* branches (never touches main).
+  contents: write
 
 concurrency:
   group: android-${{ github.ref }}
@@ -18,9 +23,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -31,7 +36,15 @@ jobs:
         run: ./gradlew --no-daemon :core:domain:test
 
       - name: Build debug APK
-        run: ./gradlew --no-daemon :app:assembleDebug
+        shell: bash
+        run: |
+          mkdir -p ci-out
+          set -o pipefail
+          ./gradlew --no-daemon --continue :app:assembleDebug 2>&1 | tee ci-out/build.log
+
+      - name: Show build errors on the run page
+        if: failure()
+        run: bash tools/ci-annotate.sh ci-out/build.log
 
       - name: Checksum
         run: |
@@ -50,6 +63,15 @@ jobs:
         run: ./gradlew --no-daemon :app:lintDebug
         continue-on-error: true
 
+      - name: Publish build log to the ci-logs-build branch
+        if: always() && github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          grep -E '^e: |error: |^\* What went wrong' -A2 ci-out/build.log > ci-out/errors.txt 2>/dev/null || true
+          cp -r app/build/outputs/apk/debug ci-out/apk 2>/dev/null || true
+          bash tools/ci-publish.sh ci-out ci-logs-build
+
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -66,9 +88,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 60
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: "17"
@@ -106,6 +128,12 @@ jobs:
             adb shell dumpsys package com.kargroup.notetaker.debug | grep -i "android.permission" > screenshots/granted-permissions.txt || true
             adb logcat -d -b crash > screenshots/crash-log.txt || true
             ./gradlew --no-daemon connectedDebugAndroidTest || echo "instrumented tests failed - see reports" > screenshots/instrumented-tests-FAILED.txt
+
+      - name: Publish screenshots to the ci-logs-tablet branch
+        if: always() && github.event_name == 'push'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: bash tools/ci-publish.sh screenshots ci-logs-tablet
 
       - name: Upload screenshots
         if: always()
