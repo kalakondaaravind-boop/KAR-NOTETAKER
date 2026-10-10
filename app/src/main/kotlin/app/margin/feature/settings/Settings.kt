@@ -257,9 +257,9 @@ fun PrivacySettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel(),
         }
         Header(stringResource(R.string.notifications))
         SwitchRow(stringResource(R.string.notification_previews), s.notificationPreviews, stringResource(R.string.notification_previews_sub)) { v -> vm.update { it.copy(notificationPreviews = v) } }
-        Header(stringResource(R.string.ai_settings))
-        ListItem(headlineContent = { Text(stringResource(if (s.ai.cloudConsent) R.string.ai_cloud_consent_given else R.string.ai_cloud_consent_not_given)) },
-            trailingContent = { if (s.ai.cloudConsent) TextButton(onClick = vm::revokeCloud) { Text(stringResource(R.string.revoke)) } })
+        Header(stringResource(R.string.storage_location))
+        ListItem(headlineContent = { Text(stringResource(R.string.storage_tablet_only)) },
+            supportingContent = { Text(stringResource(R.string.storage_tablet_only_sub)) })
         Header(stringResource(R.string.data_collection))
         Text(stringResource(R.string.no_telemetry), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.bodyMedium)
         Header(stringResource(R.string.danger_zone))
@@ -291,8 +291,6 @@ fun AiSettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel()) {
         listOf(
             ProviderType.NONE to (R.string.ai_provider_none to R.string.ai_provider_none_sub),
             ProviderType.LOCAL to (R.string.ai_provider_local to R.string.ai_provider_local_sub),
-            ProviderType.OPENAI_COMPATIBLE to (R.string.ai_provider_openai to R.string.ai_provider_openai_sub),
-            ProviderType.ANTHROPIC to (R.string.ai_provider_anthropic to R.string.ai_provider_anthropic_sub),
         ).forEach { (p, labels) ->
             ListItem(headlineContent = { Text(stringResource(labels.first)) }, supportingContent = { Text(stringResource(labels.second)) },
                 leadingContent = { RadioButton(s.ai.provider == p, { vm.update { it.copy(ai = it.ai.copy(provider = p, cloudConsent = if (p == it.ai.provider) it.ai.cloudConsent else false)) } }) },

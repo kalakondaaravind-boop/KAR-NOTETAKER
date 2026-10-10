@@ -1,0 +1,157 @@
+<!doctype html>
+<!--
+  Design preview of KAR Notes on a 1280×800dp tablet. This is NOT a device screenshot: it reproduces the
+  Compose layouts (AppShell, HomeScreen, LibraryDrawer, OnboardingScreen, EditorScreen) with the exact
+  colour tokens from ui/theme/Theme.kt and the real strings from tools/strings_source.py.
+  Note titles shown are sample content. Usage: preview.html?screen=home|drawer|onboarding|editor&theme=light|dark
+-->
+<html><head><meta charset="utf-8"><title>KAR Notes preview</title>
+<style>
+:root{--primary:#2A76AD;--onPrimary:#fff;--pc:#CDE7FA;--onPc:#0A2A42;--sc:#DCEAF6;--onSc:#13293C;--tertiary:#5C6BB0;
+--bg:#F4F9FE;--on:#13212E;--onV:#3F4D5A;--sv:#DEE8F2;--cLow:#EEF5FC;--c:#E8F1FA;--cHigh:#E1ECF7;--cHighest:#DAE7F4;--outline:#6F7E8C;--outlineV:#C2D0DD;--lowest:#fff;--scrim:rgba(19,33,46,.32);--codeBg:#E6F0F9}
+.dark{--primary:#9DD0F7;--onPrimary:#00344F;--pc:#1D4E72;--onPc:#CDE7FA;--sc:#36506A;--onSc:#DCEAF6;--tertiary:#BFC6F5;
+--bg:#0E1822;--on:#DCE6F0;--onV:#BCC8D4;--sv:#3C4855;--cLow:#15212C;--c:#192531;--cHigh:#23303C;--cHighest:#2E3B47;--outline:#86939F;--outlineV:#3C4855;--lowest:#09121A;--scrim:rgba(0,0,0,.5);--codeBg:#1A2733}
+*{box-sizing:border-box}html,body{margin:0}
+body{font-family:Inter,Roboto,sans-serif;background:#0b0f14;}
+.device{width:1280px;height:800px;background:var(--bg);color:var(--on);position:relative;overflow:hidden;display:flex;flex-direction:column}
+.status{height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;color:var(--on)}
+.main{flex:1;display:flex;min-height:0}
+.rail{width:80px;display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:12px;background:var(--bg)}
+.ri{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--onV)}
+.ri .pill{width:56px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center}
+.ri.sel .pill{background:var(--sc)}.ri.sel{color:var(--on)}
+svg.i{width:24px;height:24px;fill:currentColor;flex:none}
+.content{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
+.topbar{height:80px;display:flex;align-items:center;padding:0 4px 0 4px;gap:4px}
+.ib{width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:var(--onV);border-radius:24px}
+.title{flex:1;padding-left:4px}
+.lockup{display:inline-flex;flex-direction:column;gap:2px}
+.lockup .row{display:flex;align-items:center}
+.lockup .k{font-weight:800;letter-spacing:.03em;color:var(--on)}.lockup .g{font-weight:500;letter-spacing:.09em;color:var(--primary)}
+.lockup .tag{color:var(--onV);font-weight:500;letter-spacing:.12em}
+.scroll{flex:1;overflow:hidden;display:flex;justify-content:center}
+.col{width:720px;max-width:100%}
+.capture{display:flex;align-items:center;gap:4px;padding:8px 16px}
+.field{flex:1;height:56px;border:1px solid var(--outline);border-radius:6px;display:flex;align-items:center;padding:0 16px;color:var(--onV);font-size:16px}
+.sh{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 4px 16px}
+.sh h3{margin:0;font-size:14px;font-weight:600;color:var(--primary);letter-spacing:.01em}
+.tb{color:var(--primary);font-weight:600;font-size:14px;padding:10px 12px}
+.note{padding:12px 16px;display:flex;flex-direction:column;gap:3px}
+.note .t{font-size:16px;font-weight:600;display:flex;align-items:center;gap:6px}
+.note .t svg{width:16px;height:16px;fill:var(--tertiary)}
+.note .s{font-size:14px;color:var(--onV);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.note .m{font-size:12px;color:var(--onV);display:flex;gap:8px;align-items:center}
+.chip{display:inline-flex;align-items:center;gap:6px;height:32px;padding:0 12px;border:1px solid var(--outlineV);border-radius:8px;font-size:14px;font-weight:500;color:var(--on)}
+.chip svg{width:18px;height:18px;fill:var(--primary)}
+.tag2{background:var(--sc);color:var(--onSc);border-radius:6px;padding:1px 6px;font-size:11px;font-weight:600}
+.chips{display:flex;flex-wrap:wrap;gap:8px;padding:4px 16px}
+.task{display:flex;align-items:center;gap:12px;padding:10px 16px}
+.cb{width:18px;height:18px;border:2px solid var(--onV);border-radius:3px}
+.due{font-size:12px;color:var(--primary);font-weight:600}.over{color:#B3261E}
+.dark .over{color:#F2B8B5}
+.fab{position:absolute;right:24px;bottom:24px;height:56px;border-radius:16px;background:var(--pc);color:var(--onPc);display:flex;align-items:center;gap:12px;padding:0 20px 0 16px;font-weight:600;font-size:14px;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.fab svg{fill:var(--onPc)}
+.navbar{height:24px}
+/* drawer */
+.scrim{position:absolute;inset:0;background:var(--scrim)}
+.drawer{position:absolute;left:0;top:0;bottom:0;width:300px;background:var(--cLow);border-radius:0 16px 16px 0;padding-top:28px}
+.di{display:flex;align-items:center;gap:12px;height:52px;margin:0 12px;padding:0 16px;border-radius:28px;font-size:14px;font-weight:500;color:var(--onV)}
+.di.sel{background:var(--sc);color:var(--onSc)}
+.hr{height:1px;background:var(--outlineV);margin:8px 24px}
+/* onboarding */
+.onb{flex:1;display:flex;align-items:center;justify-content:center}
+.onbc{width:560px;padding:24px;display:flex;flex-direction:column;gap:16px}
+.prog{height:4px;border-radius:2px;background:var(--sv);overflow:hidden}.prog i{display:block;height:100%;width:25%;background:var(--primary)}
+.btn{height:40px;border-radius:20px;padding:0 24px;display:inline-flex;align-items:center;font-weight:600;font-size:14px}
+.filled{background:var(--primary);color:var(--onPrimary)}.text{color:var(--primary)}
+/* editor */
+.eb{padding:8px 24px;font-size:16px;line-height:26px}
+.toolbar{display:flex;gap:2px;padding:6px 8px;background:var(--c);border-radius:28px;margin:0 16px 16px;align-self:center}
+.toolbar span{width:40px;height:40px;display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--onV);border-radius:20px;font-size:15px}
+.etb{display:flex;gap:0;padding:4px 4px 0;background:var(--c);height:56px;align-items:center}.etb span{filter:grayscale(1) opacity(.8);width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:var(--onV);font-size:17px;font-weight:600}
+.saved{font-size:12px;color:var(--onV);display:flex;align-items:center;gap:4px;padding-right:8px}
+.badge{position:absolute;left:50%;top:6px;transform:translateX(-50%);background:rgba(19,33,46,.78);color:#fff;font:600 11px Inter,sans-serif;letter-spacing:.06em;padding:4px 10px;border-radius:10px;z-index:9}
+</style></head>
+<body><div id="app"></div>
+<script>
+const P={menu:"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
+search:"M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
+settings:"M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z",
+home:"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
+notes:"M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z",
+tasks:"M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.11 0 2-.9 2-2V5c0-1.1-.89-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z",
+send:"M2.01 21L23 12 2.01 3 2 10l15 2-15 2z",add:"M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z",
+pin:"M16 9V4h1c.55 0 1-.45 1-1s-.45-1-1-1H7c-.55 0-1 .45-1 1s.45 1 1 1h1v5c0 1.66-1.34 3-3 3v2h5.97v7l1 1 1-1v-7H19v-2c-1.66 0-3-1.34-3-3z",
+folder:"M10 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2h-8l-2-2z",
+star:"M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z",
+inbox:"M19 3H4.99c-1.11 0-1.98.89-1.98 2L3 19c0 1.1.88 2 1.99 2H19c1.1 0 2-.9 2-2V5c0-1.11-.9-2-2-2zm0 12h-4c0 1.66-1.35 3-3 3s-3-1.34-3-3H4.99V5H19v10z",
+label:"M17.63 5.84C17.27 5.33 16.67 5 16 5L5 5.01C3.9 5.01 3 5.9 3 7v10c0 1.1.9 1.99 2 1.99L16 19c.67 0 1.27-.33 1.63-.84L22 12l-4.37-6.16z",
+dash:"M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z",
+attach:"M16.5 6v11.5c0 2.21-1.79 4-4 4s-4-1.79-4-4V5a2.5 2.5 0 0 1 5 0v10.5c0 .55-.45 1-1 1s-1-.45-1-1V6H10v9.5a2.5 2.5 0 0 0 5 0V5c0-2.21-1.79-4-4-4S7 2.79 7 5v12.5c0 3.04 2.46 5.5 5.5 5.5s5.5-2.46 5.5-5.5V6h-1.5z",
+archive:"M20.54 5.23l-1.39-1.68C18.88 3.21 18.47 3 18 3H6c-.47 0-.88.21-1.16.55L3.46 5.23C3.17 5.57 3 6.02 3 6.5V19c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V6.5c0-.48-.17-.93-.46-1.27zM12 17.5L6.5 12H10v-2h4v2h3.5L12 17.5zM5.12 5l.81-1h12l.94 1H5.12z",
+del:"M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zM19 4h-3.5l-1-1h-5l-1 1H5v2h14V4z",
+undo:"M12.5 8c-2.65 0-5.05.99-6.9 2.6L2 7v9h9l-3.62-3.62c1.39-1.16 3.16-1.88 5.12-1.88 3.54 0 6.55 2.31 7.6 5.5l2.37-.78C21.08 11.03 17.15 8 12.5 8z",
+redo:"M18.4 10.6C16.55 8.99 14.15 8 11.5 8c-4.65 0-8.58 3.03-9.96 7.22L3.9 16c1.05-3.19 4.05-5.5 7.6-5.5 1.95 0 3.73.72 5.12 1.88L13 16h9V7l-3.6 3.6z",
+eye:"M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z",
+back:"M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z",
+check:"M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z",
+more:"M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z",
+spark:"M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z",
+hub:"M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 16a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm14 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM11 8.8V11l-4.6 4.2 1.4 1.4L12 13l4.2 3.6 1.4-1.4L13 11V8.8z"};
+const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24"${s?` style="width:${s}px;height:${s}px"`:""}><path d="${P[n]}"/></svg>`;
+const mark=s=>`<svg viewBox="0 0 48 48" width="${s}" height="${s}"><path fill="#2A76AD" d="M12,0 H34 L48,14 V36 A12,12 0 0 1 36,48 H12 A12,12 0 0 1 0,36 V12 A12,12 0 0 1 12,0 Z"/><path fill="#CDE7FA" d="M34,0 V10 A4,4 0 0 0 38,14 H48 Z"/><path fill="#fff" d="M13,12 H19 V22.2 L28.4,12 H36 L24.6,24 L36,36 H28.2 L19,27.4 V36 H13 Z"/></svg>`;
+// Mirrors BrandLockup(markSize, centered)
+const lockup=(m,centered)=>`<div class="lockup" style="${centered?'align-items:center;display:flex;':''}gap:${m*.08}px"><div class="row">${mark(m)}<span style="width:${m*.25}px"></span><span style="font-size:${m*.6}px"><span class="k">KAR</span> <span class="g">GROUP</span></span></div><div class="tag" style="font-size:${Math.max(12,m*.32)}px;${centered?'':`padding-left:${m*1.25}px`}">Note taker</div></div>`;
+const q=new URLSearchParams(location.search), screen=q.get("screen")||"home", theme=q.get("theme")||"light";
+const status=`<div class="status"><span>9:41</span><span>100%</span></div>`;
+const rail=`<div class="rail">${[["home","Home",1],["notes","Notes"],["tasks","Tasks"],["search","Search"]].map(([i,l,s])=>`<div class="ri ${s?"sel":""}"><div class="pill">${ic(i)}</div>${l}</div>`).join("")}</div>`;
+const note=(t,s,m,o={})=>`<div class="note"><div class="t">${t}${o.pin?`<svg viewBox="0 0 24 24"><path d="${P.pin}"/></svg>`:""}${o.fav?`<svg viewBox="0 0 24 24"><path d="${P.star}"/></svg>`:""}</div><div class="s">${s}</div><div class="m">${m}</div></div>`;
+const home=()=>`
+<div class="topbar"><div class="ib">${ic("menu")}</div><div class="title">${lockup(30)}</div><div class="ib">${ic("search")}</div><div class="ib">${ic("settings")}</div></div>
+<div class="scroll"><div class="col">
+ <div class="capture"><div class="field">Capture a thought…</div><div class="ib" style="opacity:.38">${ic("send")}</div></div>
+ <div class="sh"><h3>Pinned</h3><span class="tb">See all</span></div>
+ ${note("Q4 planning workshop","Agenda, owners and the three decisions we need by Friday…",`Today 09:12 <span class="tag2">planning</span>`,{pin:1})}
+ ${note("Supplier comparison","Lead times, MOQ and payment terms for the three shortlisted vendors…",`Yesterday <span class="tag2">procurement</span>`,{pin:1,fav:1})}
+ <div class="sh"><h3>Recent</h3><span class="tb">See all</span></div>
+ ${note("Site visit — branch office","Checklist: fire exits ✓, server room temperature, signage…","8 Oct · Operations")}
+ ${note("Weekly review","Wins: closed two vendor contracts. Next: hiring plan draft…","6 Oct · Journal")}
+ <div class="sh"><h3>Upcoming tasks</h3><span class="tb">See all</span></div>
+ <div class="task"><div class="cb"></div><div style="flex:1;font-size:15px">Send revised budget to finance</div><span class="due over">Overdue · 9 Oct</span></div>
+ <div class="task"><div class="cb"></div><div style="flex:1;font-size:15px">Book venue for the planning workshop</div><span class="due">Today 17:00</span></div>
+</div></div>
+<div class="fab">${ic("add")}New note</div>`;
+const md=t=>`<span style="color:var(--outline)">${t}</span>`;
+const editor=()=>`
+<div class="topbar"><div class="ib">${ic("back")}</div><div class="title"><span class="saved" style="font-size:14px">${ic("check",18)}Saved</span></div><div class="ib">${ic("undo")}</div><div class="ib" style="opacity:.38">${ic("redo")}</div><div class="ib">${ic("eye")}</div><div class="ib">${ic("more")}</div></div>
+<div class="scroll"><div class="col eb">
+<div style="font-size:24px;font-weight:600;margin:4px 0 14px">Q4 planning workshop</div>
+<div style="font-weight:700">${md("## ")}Agenda</div>
+<div>${md("1. ")}Review Q3 outcomes against targets</div><div>${md("2. ")}Agree ${md("**")}<b>three priorities</b>${md("**")} for Q4</div><div>${md("3. ")}Owners and dates for each priority</div>
+<div>&nbsp;</div>
+<div style="font-weight:700">${md("## ")}Before the session</div>
+<div>${md("- [x] ")}<s style="color:var(--onV)">Share last quarter's numbers</s></div>
+<div>${md("- [ ] ")}Book a room with a whiteboard</div>
+<div>&nbsp;</div>
+<div style="color:var(--onV);font-style:italic">${md("> ")}Fewer priorities, clearly owned.</div>
+<div>&nbsp;</div>
+<div>Related: <span style="color:var(--primary)">[[Supplier comparison]]</span> <span style="color:var(--tertiary)">#planning</span></div>
+</div></div>
+<div class="etb">${["<b>B</b>","<i>I</i>","<u>U</u>","<s>S</s>","T","☐","•≡","1≡","⇥","⇤","❝","🔗","&lt;/&gt;","{ }","▦","—","📅","🗣","🎙","📎","📷"].map(x=>`<span>${x}</span>`).join("")}</div>`;
+const drawer=()=>home()+`<div class="scrim"></div><div class="drawer">
+ <div style="padding:0 24px 20px">${lockup(40)}</div>
+ ${[["inbox","Inbox"],["pin","Pinned"],["star","Favorites"],["folder","Folders"],["label","Tags"],["dash","Templates"],["attach","Attachments"],["hub","Knowledge"],["spark","Ask my notes"]].map(([i,l,s])=>`<div class="di ${s?"sel":""}">${ic(i)}${l}</div>`).join("")}
+ <div class="hr"></div>${[["archive","Archive"],["del","Trash"]].map(([i,l])=>`<div class="di">${ic(i)}${l}</div>`).join("")}<div class="hr"></div><div class="di">${ic("settings")}Settings</div>
+</div>`;
+const onb=()=>`<div class="onb"><div class="onbc">
+ <div class="prog"><i></i></div>
+ <div style="padding:24px 0;display:flex;justify-content:center">${lockup(64,true)}</div>
+ <div style="font-size:24px;font-weight:600">Welcome to KAR Notes</div>
+ <div style="font-size:16px;line-height:26px">A calm place to capture anything, write naturally, organise with notebooks and tags, and find things instantly. Notes are written in Markdown, so they stay portable.</div>
+ <div style="display:flex;align-items:center;margin-top:8px"><span style="flex:1"></span><span class="btn text">Skip</span><span class="btn filled">Next</span></div>
+</div></div>`;
+const isRail=screen==="home"||screen==="drawer";
+document.getElementById("app").innerHTML=`<div class="device ${theme}">${status}<div class="main">${isRail&&screen!=="drawer"?rail:""}<div class="content">${({home,editor,drawer,onboarding:onb})[screen]()}</div></div><div class="navbar"></div></div>`;
+if(screen==="drawer"){document.querySelector(".main").insertAdjacentHTML("afterbegin","");document.querySelector(".content").insertAdjacentHTML("beforebegin",rail);
+ const c=document.querySelector(".device"); const s=c.querySelector(".scrim"),d=c.querySelector(".drawer"); c.appendChild(s); c.appendChild(d);}
+</script></body></html>

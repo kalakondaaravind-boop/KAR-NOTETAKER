@@ -25,43 +25,45 @@ import androidx.compose.ui.unit.sp
 import app.margin.domain.settings.ThemeMode
 
 /*
- * Design tokens. A calm, paper-like palette: warm neutral surfaces, a muted green-grey primary,
- * and an ochre accent used sparingly (pins, highlights). Contrast of on-colours ≥ 4.5:1.
+ * Design tokens — "Sky & Pastel Blue". A clear sky-blue primary on very pale blue surfaces, with
+ * pastel-blue containers and a soft periwinkle accent used sparingly. Every text/background pair
+ * meets WCAG AA (≥ 4.5:1); ratios are recorded in docs/DESIGN.md.
  */
-private val Ink = Color(0xFF1F2A26)
-private val Paper = Color(0xFFFBF8F3)
-private val Moss = Color(0xFF3F5F55)
-private val Ochre = Color(0xFF8A5A12)
+private val Ink = Color(0xFF13212E)
+private val SkyMist = Color(0xFFF4F9FE)
+val SkyBlue = Color(0xFF2A76AD)
+val PastelBlue = Color(0xFFCDE7FA)
+private val Periwinkle = Color(0xFF5C6BB0)
 
 private val LightColors = lightColorScheme(
-    primary = Moss, onPrimary = Color.White,
-    primaryContainer = Color(0xFFC6E3D8), onPrimaryContainer = Color(0xFF00201A),
-    secondary = Color(0xFF4F6259), onSecondary = Color.White,
-    secondaryContainer = Color(0xFFD9E6DF), onSecondaryContainer = Color(0xFF0C1F18),
-    tertiary = Ochre, onTertiary = Color.White,
-    tertiaryContainer = Color(0xFFFFDDB3), onTertiaryContainer = Color(0xFF2B1700),
-    background = Paper, onBackground = Ink,
-    surface = Paper, onSurface = Ink,
-    surfaceVariant = Color(0xFFE6E2DA), onSurfaceVariant = Color(0xFF4A4740),
-    surfaceContainerLowest = Color.White, surfaceContainerLow = Color(0xFFF6F2EC),
-    surfaceContainer = Color(0xFFF1EDE6), surfaceContainerHigh = Color(0xFFEBE7E0), surfaceContainerHighest = Color(0xFFE5E1DA),
-    outline = Color(0xFF7B776F), outlineVariant = Color(0xFFCBC6BC),
+    primary = SkyBlue, onPrimary = Color.White,
+    primaryContainer = PastelBlue, onPrimaryContainer = Color(0xFF0A2A42),
+    secondary = Color(0xFF4E6E8C), onSecondary = Color.White,
+    secondaryContainer = Color(0xFFDCEAF6), onSecondaryContainer = Color(0xFF13293C),
+    tertiary = Periwinkle, onTertiary = Color.White,
+    tertiaryContainer = Color(0xFFDDE1FA), onTertiaryContainer = Color(0xFF18204A),
+    background = SkyMist, onBackground = Ink,
+    surface = SkyMist, onSurface = Ink,
+    surfaceVariant = Color(0xFFDEE8F2), onSurfaceVariant = Color(0xFF3F4D5A),
+    surfaceContainerLowest = Color.White, surfaceContainerLow = Color(0xFFEEF5FC),
+    surfaceContainer = Color(0xFFE8F1FA), surfaceContainerHigh = Color(0xFFE1ECF7), surfaceContainerHighest = Color(0xFFDAE7F4),
+    outline = Color(0xFF6F7E8C), outlineVariant = Color(0xFFC2D0DD),
     error = Color(0xFFB3261E), onError = Color.White, errorContainer = Color(0xFFF9DEDC), onErrorContainer = Color(0xFF410E0B),
 )
 
 private val DarkColors = darkColorScheme(
-    primary = Color(0xFFA9CCC0), onPrimary = Color(0xFF12352C),
-    primaryContainer = Color(0xFF284B41), onPrimaryContainer = Color(0xFFC6E3D8),
-    secondary = Color(0xFFB6CBC1), onSecondary = Color(0xFF21342D),
-    secondaryContainer = Color(0xFF384B43), onSecondaryContainer = Color(0xFFD9E6DF),
-    tertiary = Color(0xFFF2BD72), onTertiary = Color(0xFF472A00),
-    tertiaryContainer = Color(0xFF653F00), onTertiaryContainer = Color(0xFFFFDDB3),
-    background = Color(0xFF141714), onBackground = Color(0xFFE4E9E5),
-    surface = Color(0xFF141714), onSurface = Color(0xFFE4E9E5),
-    surfaceVariant = Color(0xFF3F4943), onSurfaceVariant = Color(0xFFBFC9C2),
-    surfaceContainerLowest = Color(0xFF0F120F), surfaceContainerLow = Color(0xFF1C201D),
-    surfaceContainer = Color(0xFF202421), surfaceContainerHigh = Color(0xFF2A2E2B), surfaceContainerHighest = Color(0xFF353936),
-    outline = Color(0xFF89938C), outlineVariant = Color(0xFF3F4943),
+    primary = Color(0xFF9DD0F7), onPrimary = Color(0xFF00344F),
+    primaryContainer = Color(0xFF1D4E72), onPrimaryContainer = PastelBlue,
+    secondary = Color(0xFFB5CCE3), onSecondary = Color(0xFF1F3448),
+    secondaryContainer = Color(0xFF36506A), onSecondaryContainer = Color(0xFFDCEAF6),
+    tertiary = Color(0xFFBFC6F5), onTertiary = Color(0xFF283272),
+    tertiaryContainer = Color(0xFF3F4A8A), onTertiaryContainer = Color(0xFFDDE1FA),
+    background = Color(0xFF0E1822), onBackground = Color(0xFFDCE6F0),
+    surface = Color(0xFF0E1822), onSurface = Color(0xFFDCE6F0),
+    surfaceVariant = Color(0xFF3C4855), onSurfaceVariant = Color(0xFFBCC8D4),
+    surfaceContainerLowest = Color(0xFF09121A), surfaceContainerLow = Color(0xFF15212C),
+    surfaceContainer = Color(0xFF192531), surfaceContainerHigh = Color(0xFF23303C), surfaceContainerHighest = Color(0xFF2E3B47),
+    outline = Color(0xFF86939F), outlineVariant = Color(0xFF3C4855),
 )
 
 /** Spacing scale (4dp grid). Use these instead of ad-hoc values. */
@@ -92,7 +94,7 @@ data class SemanticColors(
 
 val LocalSpacing = staticCompositionLocalOf { Spacing() }
 val LocalSemanticColors = staticCompositionLocalOf {
-    SemanticColors(Color(0xFFFFE8A3), Ink, Color(0xFF2E6B3F), Color(0xFF8A5A12), Color(0xFF5B4A9E), Color(0xFFEFEAE2), Moss)
+    SemanticColors(Color(0xFFBFE0FF), Ink, Color(0xFF2E6B3F), Color(0xFF8A5A12), Periwinkle, Color(0xFFE6F0F9), SkyBlue)
 }
 
 private val AppTypography = Typography().let { base ->
@@ -117,7 +119,7 @@ fun editorTextStyle(base: TextStyle, scale: Float, monospace: Boolean): TextStyl
 )
 
 @Composable
-fun MarginTheme(mode: ThemeMode = ThemeMode.SYSTEM, dynamicColor: Boolean = true, content: @Composable () -> Unit) {
+fun MarginTheme(mode: ThemeMode = ThemeMode.SYSTEM, dynamicColor: Boolean = false, content: @Composable () -> Unit) {
     val dark = when (mode) { ThemeMode.SYSTEM -> isSystemInDarkTheme(); ThemeMode.DARK -> true; ThemeMode.LIGHT -> false }
     val context = LocalContext.current
     val colors: ColorScheme = when {
@@ -126,9 +128,9 @@ fun MarginTheme(mode: ThemeMode = ThemeMode.SYSTEM, dynamicColor: Boolean = true
         else -> LightColors
     }
     val semantic = if (dark) {
-        SemanticColors(Color(0xFF5C4A12), Color(0xFFFFF1C9), Color(0xFF8FD3A0), Color(0xFFF2BD72), Color(0xFFC8B8FF), Color(0xFF262B28), colors.primary)
+        SemanticColors(Color(0xFF1F4A6E), Color(0xFFE3F1FF), Color(0xFF8FD3A0), Color(0xFFF2BD72), Color(0xFFBFC6F5), Color(0xFF1A2733), colors.primary)
     } else {
-        SemanticColors(Color(0xFFFFE8A3), Ink, Color(0xFF2E6B3F), Ochre, Color(0xFF5B4A9E), Color(0xFFEFEAE2), colors.primary)
+        SemanticColors(Color(0xFFBFE0FF), Ink, Color(0xFF2E6B3F), Color(0xFF8A5A12), Periwinkle, Color(0xFFE6F0F9), colors.primary)
     }
     androidx.compose.runtime.CompositionLocalProvider(LocalSemanticColors provides semantic, LocalSpacing provides Spacing()) {
         MaterialTheme(colorScheme = colors, typography = AppTypography, shapes = AppShapes, content = content)

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 110" width="900" height="330">
+  <g transform="translate(6,14)">
+    <path fill="#2A76AD" d="M12,0 H34 L48,14 V36 A12,12 0 0 1 36,48 H12 A12,12 0 0 1 0,36 V12 A12,12 0 0 1 12,0 Z"/>
+    <path fill="#CDE7FA" d="M34,0 V10 A4,4 0 0 0 38,14 H48 Z"/>
+  <path fill="#FFFFFF" d="M13,12 H19 V22.2 L28.4,12 H36 L24.6,24 L36,36 H28.2 L19,27.4 V36 H13 Z"/>
+  </g>
+  <text x="66" y="46" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-weight="800" font-size="34" fill="#13212E" letter-spacing="1">KAR</text>
+  <text x="153" y="46" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="34" fill="#2A76AD" letter-spacing="3">GROUP</text>
+  <text x="67" y="90" font-family="Inter, 'Helvetica Neue', Arial, sans-serif" font-weight="500" font-size="17" fill="#4E6E8C" letter-spacing="2.5">Note taker</text>
+</svg>

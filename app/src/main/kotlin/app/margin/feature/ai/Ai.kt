@@ -64,11 +64,8 @@ import app.margin.domain.ai.AiProvider
 import app.margin.domain.ai.AiRequest
 import app.margin.domain.ai.AiResult
 import app.margin.domain.ai.AiService
-import app.margin.domain.ai.AnthropicProvider
-import app.margin.domain.ai.HttpProviderConfig
 import app.margin.domain.ai.KnowledgeRetrieval
 import app.margin.domain.ai.LocalAiProvider
-import app.margin.domain.ai.OpenAiCompatibleProvider
 import app.margin.domain.ai.ProviderType
 import app.margin.domain.ai.ResponseParser
 import app.margin.domain.ai.SourceNote
@@ -103,11 +100,13 @@ class AiCoordinator @Inject constructor(
     private val notes: NoteRepository,
     private val clock: Clock,
 ) {
-    suspend fun provider(s: AppSettings): AiProvider? = when (s.ai.provider) {
-        ProviderType.NONE -> null
+    /**
+     * Tablet-only build: the on-device provider is the only one wired in. Cloud provider types that may
+     * linger in old settings resolve to "no provider", and the app has no INTERNET permission anyway.
+     */
+    fun provider(s: AppSettings): AiProvider? = when (s.ai.provider) {
         ProviderType.LOCAL -> LocalAiProvider()
-        ProviderType.OPENAI_COMPATIBLE -> OpenAiCompatibleProvider(HttpProviderConfig(s.aiBaseUrl, secrets.get(SECRET_AI_KEY).orEmpty(), s.aiModel))
-        ProviderType.ANTHROPIC -> AnthropicProvider(HttpProviderConfig(s.aiBaseUrl.ifBlank { "https://api.anthropic.com" }, secrets.get(SECRET_AI_KEY).orEmpty(), s.aiModel))
+        ProviderType.NONE, ProviderType.OPENAI_COMPATIBLE, ProviderType.ANTHROPIC -> null
     }
 
     suspend fun run(request: AiRequest, primaryNoteId: String?): AiResult {
@@ -126,7 +125,7 @@ class AiCoordinator @Inject constructor(
         return run(AiRequest(AiAction.ASK_KNOWLEDGE_BASE, "", sources, question = question), null)
     }
 
-    suspend fun isCloud(): Boolean = settings.current().let { it.ai.provider == ProviderType.OPENAI_COMPATIBLE || it.ai.provider == ProviderType.ANTHROPIC }
+    @Suppress("RedundantSuspendModifier") suspend fun isCloud(): Boolean = false
 }
 
 data class AiUi(val running: Boolean = false, val action: AiAction? = null, val result: AiResult? = null)

@@ -2,8 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- Only used when the user configures an optional cloud AI provider. Core features never use the network. -->
-    <uses-permission android:name="android.permission.INTERNET" />
+    <!--
+      Tablet-only storage: the app must never reach the network. INTERNET and network-state permissions
+      are explicitly removed, including any that a library (e.g. ML Kit) would otherwise merge in, so
+      Android itself blocks every socket the app could open.
+    -->
+    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
     <!-- Reminders. Requested at the moment the user schedules their first reminder. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />

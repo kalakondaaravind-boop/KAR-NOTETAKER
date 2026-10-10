@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- Sky & Pastel Blue. Mirrors ui/theme/Theme.kt for the parts Android draws before Compose (window, icon, widget). -->
 <resources>
-    <color name="window_background">#FFFBF8F3</color>
-    <color name="brand">#FF3F5F55</color>
-    <color name="icon_foreground">#FFFBF8F3</color>
-    <color name="widget_background">#F2EEE9E1</color>
-    <color name="widget_text">#FF1F2A26</color>
+    <color name="window_background">#FFF4F9FE</color>
+    <color name="brand">#FF2A76AD</color>
+    <color name="brand_pastel">#FFCDE7FA</color>
+    <color name="icon_foreground">#FFFFFFFF</color>
+    <color name="widget_background">#F2E8F1FA</color>
+    <color name="widget_text">#FF13212E</color>
 </resources>

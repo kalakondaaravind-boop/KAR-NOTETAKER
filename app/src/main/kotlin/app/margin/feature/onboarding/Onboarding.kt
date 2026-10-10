@@ -16,7 +16,6 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Backup
-import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.PhoneAndroid
 import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
@@ -43,6 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.margin.R
+import app.margin.ui.components.BrandLockup
 import app.margin.domain.ai.ProviderType
 import app.margin.domain.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -67,7 +67,11 @@ fun OnboardingScreen(onFinished: () -> Unit, vm: OnboardingViewModel = hiltViewM
         Column(Modifier.widthIn(max = 560.dp).fillMaxWidth().padding(24.dp).verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             LinearProgressIndicator(progress = { (page + 1) / pages.toFloat() }, modifier = Modifier.fillMaxWidth())
             when (page) {
-                0 -> Page(Icons.Outlined.EditNote, stringResource(R.string.onb_welcome_title), stringResource(R.string.onb_welcome_body))
+                0 -> {
+                    BrandLockup(Modifier.fillMaxWidth().padding(vertical = 24.dp), markSize = 64.dp, centered = true)
+                    Text(stringResource(R.string.onb_welcome_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.semantics { heading() })
+                    Text(stringResource(R.string.onb_welcome_body), style = MaterialTheme.typography.bodyLarge)
+                }
                 1 -> {
                     Page(Icons.Outlined.PhoneAndroid, stringResource(R.string.onb_private_title), stringResource(R.string.onb_private_body))
                 }

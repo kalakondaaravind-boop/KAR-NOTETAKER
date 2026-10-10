@@ -13,3 +13,4 @@ keystore.properties
 *.jks
 *.keystore
 secrets.properties
+__pycache__/

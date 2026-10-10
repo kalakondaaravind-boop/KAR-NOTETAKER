@@ -15,7 +15,7 @@ enum class HomeSection { QUICK_CAPTURE, PINNED, RECENT, FAVORITES, TASKS, FOLDER
 data class AppSettings(
     val onboardingCompleted: Boolean = false,
     val theme: ThemeMode = ThemeMode.SYSTEM,
-    val dynamicColor: Boolean = true,
+    val dynamicColor: Boolean = false,
     val reducedMotion: Boolean = false,
     /** Editor text scale (1.0 = system default). Clamped to 0.8–2.0. */
     val editorTextScale: Float = 1.0f,

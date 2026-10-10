@@ -67,6 +67,7 @@ import app.margin.domain.settings.SettingsRepository
 import app.margin.domain.task.TaskBucket
 import app.margin.domain.task.TaskRules
 import app.margin.domain.template.TemplateDefinition
+import app.margin.ui.components.BrandLockup
 import app.margin.ui.components.EmptyState
 import app.margin.ui.components.NoteRow
 import app.margin.ui.components.SectionHeader
@@ -160,7 +161,8 @@ fun HomeScreen(n: Navigator, vm: HomeViewModel = hiltViewModel()) {
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(stringResource(R.string.app_name)) },
+                expandedHeight = 80.dp,
+                title = { BrandLockup(markSize = 30.dp) },
                 navigationIcon = { IconButton(onClick = n::openDrawer) { Icon(Icons.Outlined.Menu, stringResource(R.string.open_library)) } },
                 actions = {
                     IconButton(onClick = { n.open(Routes.search()) }) { Icon(Icons.Outlined.Search, stringResource(R.string.nav_search)) }
