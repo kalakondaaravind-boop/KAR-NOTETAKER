@@ -44,6 +44,7 @@ object ImportLimits {
     const val MAX_TEXT_BYTES = 10L * 1024 * 1024
     const val MAX_FILES = 5_000
     const val MAX_ATTACHMENT_BYTES = 200L * 1024 * 1024
+    const val MAX_TABLE_ROWS = 20_000
 }
 
 object TextDecoding {
