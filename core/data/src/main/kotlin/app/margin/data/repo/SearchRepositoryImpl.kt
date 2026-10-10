@@ -68,11 +68,11 @@ class SearchRepositoryImpl(private val db: MarginDatabase, private val clock: Cl
             return candidateIds.chunked(900).flatMap { chunk ->
                 val w = mutableListOf("n.id IN (${chunk.joinToString(",") { "?" }})")
                 val a = ArrayList<Any>(chunk)
-                scopeIds?.let { s -> w += "n.folder_id IN (${s.joinToString(",") { "?" }})"; a += s }
+                scopeIds?.let { s -> w += "n.folder_id IN (${s.joinToString(",") { "?" }})"; a.addAll(s) }
                 db.notes().searchRows(SimpleSQLiteQuery("SELECT $SEARCH_COLUMNS FROM notes n WHERE ${w.joinToString(" AND ")}", a.toTypedArray()))
             }
         }
-        scopeIds?.let { s -> where += "n.folder_id IN (${s.joinToString(",") { "?" }})"; args += s }
+        scopeIds?.let { s -> where += "n.folder_id IN (${s.joinToString(",") { "?" }})"; args.addAll(s) }
         val sql = "SELECT $SEARCH_COLUMNS FROM notes n" + if (where.isEmpty()) "" else " WHERE " + where.joinToString(" AND ")
         return db.notes().searchRows(SimpleSQLiteQuery(sql, args.toTypedArray()))
     }
