@@ -231,8 +231,18 @@ class BackupViewModel @Inject constructor(
                     val src = app.margin.platform.UriAttachmentSource(context.contentResolver, uri)
                     val name = src.displayName
                     val ext = name.substringAfterLast('.', "").lowercase()
-                    val bytes = app.margin.platform.Files.readBounded(context, uri, app.margin.domain.io.ImportLimits.MAX_TEXT_BYTES.toInt())
+                    val binary = ext == "docx" || ext == "pdf"
+                    val limit = if (binary) MAX_DOCUMENT_BYTES else app.margin.domain.io.ImportLimits.MAX_TEXT_BYTES.toInt()
+                    val bytes = app.margin.platform.Files.readBounded(context, uri, limit)
                     if (bytes == null) { issues += ImportIssue.Failed(name, FailReason.TOO_LARGE); continue }
+                    if (binary) {
+                        try {
+                            candidates += if (ext == "docx") app.margin.domain.io.DocxImporter.parse(name, bytes).let { r -> r.candidate.copy(media = r.media) }
+                            else app.margin.platform.PdfImport.parse(context, name, bytes)
+                        } catch (e: ImportFailure) { issues += ImportIssue.Failed(name, e.reason, e.message) }
+                        catch (e: Exception) { issues += ImportIssue.Failed(name, FailReason.MALFORMED, e.message) }
+                        continue
+                    }
                     val text = TextDecoding.decode(bytes).getOrElse { e ->
                         issues += ImportIssue.Failed(name, (e as? ImportFailure)?.reason ?: FailReason.ENCODING); null
                     } ?: continue
@@ -243,6 +253,8 @@ class BackupViewModel @Inject constructor(
                             jsonRestored += snapshot.notes.size
                         } catch (e: Exception) { issues += ImportIssue.Failed(name, FailReason.MALFORMED, e.message) }
                         ext == "md" || ext == "markdown" -> candidates += MarkdownImporter.parse(name, text)
+                        ext == "rtf" -> try { candidates += app.margin.domain.io.RtfImporter.parse(name, text) } catch (e: ImportFailure) { issues += ImportIssue.Failed(name, e.reason) }
+                        ext == "csv" || ext == "tsv" -> candidates += app.margin.domain.io.CsvImporter.parse(name, text)
                         ext == "txt" || ext == "text" || src.mimeType == "text/plain" -> candidates += PlainTextImporter.parse(name, text)
                         ext == "html" || ext == "htm" || src.mimeType == "text/html" -> candidates += HtmlImporter.parse(name, text)
                         else -> issues += ImportIssue.Failed(name, FailReason.UNSUPPORTED_TYPE)
@@ -267,3 +279,6 @@ class BackupViewModel @Inject constructor(
         _op.value = DataOp.Erased(eraser.eraseEverything())
     }
 }
+
+/** Word and PDF files are read whole (zip / page rendering), so they get a larger, still bounded, limit. */
+private const val MAX_DOCUMENT_BYTES = 50 * 1024 * 1024

@@ -235,6 +235,7 @@
     <string name="drawing_load_failed">This drawing could not be opened. The file is kept unchanged.</string>
     <string name="drawing_save_failed">Couldn\'t save the drawing. Your changes are kept on screen; try again.</string>
     <string name="drawing_title">Drawing</string>
+    <string name="drawings">Drawings</string>
     <string name="duplicate">Duplicate</string>
     <string name="duplicates">Duplicates</string>
     <string name="duplicates_explainer">Notes whose text overlaps a lot. Review them and merge or delete as you see fit.</string>
@@ -299,6 +300,7 @@
     <string name="export_json_sub">Complete library in documented JSON (lossless, without attachment files)</string>
     <string name="export_markdown">Markdown (.zip)</string>
     <string name="export_markdown_sub">One .md file per note with front matter, folders as directories, attachments included</string>
+    <string name="export_note">Export note</string>
     <string name="export_saved">Saved</string>
     <string name="export_text">Plain text (.zip)</string>
     <string name="export_text_sub">Text only, no formatting</string>
@@ -316,23 +318,28 @@
     <string name="fmt_bold">Bold</string>
     <string name="fmt_bullets">Bulleted list</string>
     <string name="fmt_checklist">Checklist</string>
+    <string name="fmt_clear_style">Clear colour, highlight and font</string>
     <string name="fmt_code_block">Code block</string>
     <string name="fmt_datetime">Insert date and time</string>
     <string name="fmt_divider">Divider</string>
+    <string name="fmt_font">Font</string>
     <string name="fmt_h1">Heading 1</string>
     <string name="fmt_h2">Heading 2</string>
     <string name="fmt_h3">Heading 3</string>
     <string name="fmt_heading">Heading</string>
+    <string name="fmt_highlight">Highlight</string>
     <string name="fmt_indent">Indent</string>
     <string name="fmt_inline_code">Inline code</string>
     <string name="fmt_italic">Italic</string>
     <string name="fmt_link">Link</string>
+    <string name="fmt_no_highlight">No highlight</string>
     <string name="fmt_numbered">Numbered list</string>
     <string name="fmt_outdent">Outdent</string>
     <string name="fmt_plain">Normal text</string>
     <string name="fmt_quote">Quote</string>
     <string name="fmt_strike">Strikethrough</string>
     <string name="fmt_table">Table</string>
+    <string name="fmt_text_colour">Text colour</string>
     <string name="fmt_underline">Underline</string>
     <string name="focus_mode">Focus mode</string>
     <string name="folder">Folder</string>
@@ -345,6 +352,11 @@
     <string name="folders_empty_title">No notebooks yet</string>
     <string name="font_default">Default font</string>
     <string name="form_has_errors">Please fix the highlighted fields.</string>
+    <string name="format_html">Web page (HTML)</string>
+    <string name="format_markdown">Markdown</string>
+    <string name="format_pdf">PDF</string>
+    <string name="format_text">Plain text</string>
+    <string name="format_word">Word document</string>
     <string name="ft_checkbox">Yes/no</string>
     <string name="ft_checklist">Checklist</string>
     <string name="ft_currency">Amount</string>
@@ -380,7 +392,7 @@
     <string name="import_done">Import finished</string>
     <string name="import_failed">Import failed</string>
     <string name="import_files">Import files</string>
-    <string name="import_files_sub">Markdown, text, HTML, or a KAR Notes JSON export</string>
+    <string name="import_files_sub">Word (.docx), PDF (read on this tablet), RTF, CSV, Markdown, text, HTML, or a KAR Notes JSON export</string>
     <string name="import_header">Import</string>
     <string name="import_summary">Imported: %1$d · Skipped: %2$d · Failed: %3$d</string>
     <string name="import_template">Import template</string>
@@ -397,6 +409,7 @@
     <string name="info_words">Words: %1$d</string>
     <string name="insert">Insert</string>
     <string name="insert_clipart">Clipart</string>
+    <string name="insert_drawing">Drawing</string>
     <string name="insert_extracted_text">Insert recognised text</string>
     <string name="insert_link">Insert link</string>
     <string name="insert_symbol">Symbols</string>
@@ -631,6 +644,7 @@
     <string name="save_saved">Saved</string>
     <string name="save_saving">Saving…</string>
     <string name="save_search">Save search</string>
+    <string name="save_to_device">Save to tablet</string>
     <string name="saved_searches">Saved searches</string>
     <string name="search">Search</string>
     <string name="search_help">Search help</string>
@@ -663,6 +677,7 @@
     <string name="shape_rounded">Rounded</string>
     <string name="shape_star">Star</string>
     <string name="shape_triangle">Triangle</string>
+    <string name="share">Share</string>
     <string name="share_append_to">Save into</string>
     <string name="share_as_image">Share as image</string>
     <string name="share_as_pdf">Share as PDF</string>
@@ -676,6 +691,7 @@
     <string name="shortcut_new_note">New note</string>
     <string name="shortcut_search">Search notes</string>
     <string name="show_archived">Show archived</string>
+    <string name="show_formatting_marks">Show formatting marks while editing</string>
     <string name="show_replace">Show replace</string>
     <string name="skip">Skip</string>
     <string name="skip_duplicates">Skip it</string>

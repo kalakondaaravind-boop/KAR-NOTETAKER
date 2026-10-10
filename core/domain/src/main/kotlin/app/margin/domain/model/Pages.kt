@@ -55,6 +55,8 @@ data class NoteMeta(val page: PageStyle = PageStyle.PLAIN, val font: NoteFont? =
             return NoteMeta(page, font) to body.substring(m.range.last + 1)
         }
 
+        fun isDirectiveLine(line: String): Boolean = re.find(line)?.range?.first == 0
+
         /** Inverse of [split]; default meta adds nothing, so ordinary notes stay plain Markdown. */
         fun join(meta: NoteMeta, content: String): String = if (meta.isDefault) content else meta.directive() + "\n" + content
     }

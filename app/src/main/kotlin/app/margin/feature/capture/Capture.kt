@@ -137,10 +137,22 @@ class ShareViewModel @Inject constructor(
             notes.create(title = title.trim(), body = body.trim(), folderId = folderId ?: settings.current().defaultFolderId, tags = tagList).id
         }
         var failed = 0
+        val converted = StringBuilder()
         for (uri in content.uris) {
-            val r = attachments.add(id, UriAttachmentSource(context.contentResolver, uri))
-            if (r.isFailure) failed++
+            val src = UriAttachmentSource(context.contentResolver, uri)
+            val r = attachments.add(id, src)
+            if (r.isFailure) { failed++; continue }
+            // Word and PDF files are also turned into editable note text (the original stays attached).
+            val name = src.displayName
+            val ext = name.substringAfterLast('.', "").lowercase()
+            if (ext == "docx" || ext == "pdf") runCatching {
+                val bytes = app.margin.platform.Files.readBounded(context, uri, 50 * 1024 * 1024) ?: return@runCatching
+                val md = if (ext == "docx") app.margin.domain.io.DocxImporter.parse(name, bytes).candidate.body
+                    else app.margin.platform.PdfImport.parse(context, name, bytes).body
+                if (md.isNotBlank()) converted.append("\n\n").append(md.trim())
+            }
         }
+        if (converted.isNotBlank()) notes.getNote(id)?.let { n -> notes.saveContent(n.id, n.title, n.body.trimEnd() + converted + "\n", n.lastCursor) }
         done(Result(id, failed))
     }
 }

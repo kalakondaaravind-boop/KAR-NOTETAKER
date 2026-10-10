@@ -172,6 +172,7 @@ fun SettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel()) {
             Slider(s.editorTextScale, { v -> vm.update { it.copy(editorTextScale = (Math.round(v * 20) / 20f)) } }, valueRange = 0.8f..2.0f, steps = 23)
         })
         SwitchRow(stringResource(R.string.monospace_editor), s.editorMonospace) { v -> vm.update { it.copy(editorMonospace = v) } }
+        SwitchRow(stringResource(R.string.show_formatting_marks), s.showFormattingMarks) { v -> vm.update { it.copy(showFormattingMarks = v) } }
         SwitchRow(stringResource(R.string.open_in_preview), s.openInPreview, stringResource(R.string.open_in_preview_sub)) { v -> vm.update { it.copy(openInPreview = v) } }
         SwitchRow(stringResource(R.string.reduced_motion), s.reducedMotion) { v -> vm.update { it.copy(reducedMotion = v) } }
 

@@ -1,5 +1,25 @@
 package app.margin.feature.editor
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.filled.BorderColor
+import androidx.compose.material.icons.filled.FormatClear
+import androidx.compose.material.icons.filled.FormatColorText
+import androidx.compose.material.icons.outlined.Draw
+import androidx.compose.material.icons.outlined.EmojiEmotions
+import androidx.compose.material.icons.outlined.GridOn
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.sp
+import app.margin.feature.drawing.ColorPickerDialog
+import app.margin.feature.drawing.Swatch
+import app.margin.ui.components.ClipartPickerSheet
+import app.margin.ui.components.FontMenu
+import app.margin.ui.components.StyleGlyph
+import app.margin.ui.components.SymbolPickerSheet
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
@@ -82,20 +102,65 @@ fun FormattingToolbar(
     onDictate: () -> Unit,
     recording: Boolean,
     onRecord: () -> Unit,
+    onDrawing: () -> Unit,
+    onClipart: (String) -> Unit,
+    onPageStyle: () -> Unit,
+    noteFont: app.margin.domain.text.NoteFont?,
+    hasSelection: Boolean,
 ) {
     var headingMenu by remember { mutableStateOf(false) }
+    var fontMenu by remember { mutableStateOf(false) }
+    var colorDialog by remember { mutableStateOf(false) }
+    var highlightMenu by remember { mutableStateOf(false) }
+    var symbols by remember { mutableStateOf(false) }
+    var clipart by remember { mutableStateOf(false) }
+    var textColor by remember { mutableStateOf(0xFFE53935L) }
     Surface(tonalElevation = 3.dp, modifier = Modifier.fillMaxWidth()) {
         Row(Modifier.horizontalScroll(rememberScrollState()).navigationBarsPadding().padding(horizontal = 4.dp), verticalAlignment = Alignment.CenterVertically) {
             @Composable fun B(icon: ImageVector, label: Int, onClick: () -> Unit) =
                 IconButton(onClick = onClick) { Icon(icon, stringResource(label)) }
-            B(Icons.Filled.FormatBold, R.string.fmt_bold) { vm.toggleInline(InlineStyle.BOLD) }
-            B(Icons.Filled.FormatItalic, R.string.fmt_italic) { vm.toggleInline(InlineStyle.ITALIC) }
-            B(Icons.Filled.FormatUnderlined, R.string.fmt_underline) { vm.toggleInline(InlineStyle.UNDERLINE) }
-            B(Icons.Filled.FormatStrikethrough, R.string.fmt_strike) { vm.toggleInline(InlineStyle.STRIKE) }
-            IconButton(onClick = { headingMenu = true }) { Icon(Icons.Filled.Title, stringResource(R.string.fmt_heading)) }
-            DropdownMenu(expanded = headingMenu, onDismissRequest = { headingMenu = false }) {
-                listOf(LineStyle.HEADING1 to R.string.fmt_h1, LineStyle.HEADING2 to R.string.fmt_h2, LineStyle.HEADING3 to R.string.fmt_h3, LineStyle.PLAIN to R.string.fmt_plain).forEach { (s, l) ->
-                    DropdownMenuItem(text = { Text(stringResource(l)) }, onClick = { headingMenu = false; vm.setLineStyle(s) })
+            // Buttons look like what they do: a bold B, an italic I, an underlined U, a struck S.
+            GlyphButton("bold", stringResource(R.string.fmt_bold)) { vm.toggleInline(InlineStyle.BOLD) }
+            GlyphButton("italic", stringResource(R.string.fmt_italic)) { vm.toggleInline(InlineStyle.ITALIC) }
+            GlyphButton("underline", stringResource(R.string.fmt_underline)) { vm.toggleInline(InlineStyle.UNDERLINE) }
+            GlyphButton("strike", stringResource(R.string.fmt_strike)) { vm.toggleInline(InlineStyle.STRIKE) }
+            Box {
+                TextButton(onClick = { fontMenu = true }) {
+                    Text(stringResource(R.string.fmt_font), fontFamily = app.margin.ui.theme.NoteFonts.family(noteFont), style = MaterialTheme.typography.titleSmall)
+                }
+                FontMenu(fontMenu, noteFont, onDismiss = { fontMenu = false }, onPick = { f ->
+                    fontMenu = false
+                    // With text selected the font applies to that text; otherwise to the whole note.
+                    if (hasSelection) vm.setSelectionFont(f) else vm.setNoteFont(f)
+                })
+            }
+            IconButton(onClick = { colorDialog = true }) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    Icon(Icons.Filled.FormatColorText, stringResource(R.string.fmt_text_colour), Modifier.size(20.dp))
+                    Box(Modifier.size(width = 18.dp, height = 4.dp).background(Color(textColor)))
+                }
+            }
+            Box {
+                IconButton(onClick = { highlightMenu = true }) { Icon(Icons.Filled.BorderColor, stringResource(R.string.fmt_highlight)) }
+                DropdownMenu(expanded = highlightMenu, onDismissRequest = { highlightMenu = false }) {
+                    Row(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        app.margin.domain.text.Palette.highlight.take(5).forEach { c -> Swatch(c, false, 32.dp) { highlightMenu = false; vm.setHighlight(c) } }
+                    }
+                    Row(Modifier.padding(horizontal = 12.dp, vertical = 6.dp), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        app.margin.domain.text.Palette.highlight.drop(5).forEach { c -> Swatch(c, false, 32.dp) { highlightMenu = false; vm.setHighlight(c) } }
+                    }
+                    DropdownMenuItem(text = { Text(stringResource(R.string.fmt_no_highlight)) }, onClick = { highlightMenu = false; vm.setHighlight(null) })
+                }
+            }
+            B(Icons.Filled.FormatClear, R.string.fmt_clear_style) { vm.clearStyles() }
+            Box {
+                TextButton(onClick = { headingMenu = true }) { Text("H", fontWeight = FontWeight.Bold, style = MaterialTheme.typography.titleMedium) }
+                DropdownMenu(expanded = headingMenu, onDismissRequest = { headingMenu = false }) {
+                    // Each option is drawn at its own size so the menu previews the result.
+                    listOf(Triple(LineStyle.HEADING1, R.string.fmt_h1, 26), Triple(LineStyle.HEADING2, R.string.fmt_h2, 22), Triple(LineStyle.HEADING3, R.string.fmt_h3, 18), Triple(LineStyle.PLAIN, R.string.fmt_plain, 15)).forEach { (s, l, size) ->
+                        DropdownMenuItem(text = { Text(stringResource(l), fontSize = size.sp, fontWeight = if (s == LineStyle.PLAIN) FontWeight.Normal else FontWeight.Bold) },
+                            onClick = { headingMenu = false; vm.setLineStyle(s) })
+                    }
                 }
             }
             B(Icons.Outlined.CheckBox, R.string.fmt_checklist) { vm.setLineStyle(LineStyle.CHECKLIST) }
@@ -110,6 +175,10 @@ fun FormattingToolbar(
             B(Icons.Filled.TableChart, R.string.fmt_table) { vm.insertTable() }
             B(Icons.Filled.HorizontalRule, R.string.fmt_divider) { vm.insertDivider() }
             B(Icons.Outlined.Event, R.string.fmt_datetime) { vm.insertDateTime() }
+            TextButton(onClick = { symbols = true }) { Text("Ω", fontSize = 20.sp) }
+            B(Icons.Outlined.EmojiEmotions, R.string.insert_clipart) { clipart = true }
+            B(Icons.Outlined.Draw, R.string.insert_drawing, onDrawing)
+            B(Icons.Outlined.GridOn, R.string.page_style, onPageStyle)
             B(Icons.Outlined.RecordVoiceOver, R.string.dictate, onDictate)
             IconButton(onClick = onRecord) {
                 Icon(if (recording) Icons.Outlined.StopCircle else Icons.Outlined.Mic, stringResource(if (recording) R.string.stop_recording else R.string.record_voice),
@@ -122,6 +191,17 @@ fun FormattingToolbar(
             }
         }
     }
+    if (colorDialog) ColorPickerDialog(textColor, stringResource(R.string.fmt_text_colour), allowAlpha = false, onDismiss = { colorDialog = false }) { c ->
+        colorDialog = false; textColor = c; vm.setColor(c)
+    }
+    if (symbols) SymbolPickerSheet(onDismiss = { symbols = false }) { sym -> vm.insertText(sym) }
+    if (clipart) ClipartPickerSheet(onDismiss = { clipart = false }) { key -> clipart = false; onClipart(key) }
+}
+
+/** A toolbar button whose label is drawn in the style it applies. */
+@Composable
+private fun GlyphButton(kind: String, label: String, onClick: () -> Unit) {
+    IconButton(onClick = onClick, modifier = Modifier.semantics { contentDescription = label }) { StyleGlyph(kind) }
 }
 
 @Composable

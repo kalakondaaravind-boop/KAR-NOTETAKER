@@ -22,6 +22,8 @@ data class AppSettings(
     /** Editor text scale (1.0 = system default). Clamped to 0.8–2.0. */
     val editorTextScale: Float = 1.0f,
     val editorMonospace: Boolean = false,
+    /** Show Markdown marks (**, #, -) while editing instead of only the formatted result. */
+    val showFormattingMarks: Boolean = false,
     /** Open notes in rendered preview instead of the editor. */
     val openInPreview: Boolean = false,
     val defaultSort: SortOrder = SortOrder(SortField.UPDATED, true),

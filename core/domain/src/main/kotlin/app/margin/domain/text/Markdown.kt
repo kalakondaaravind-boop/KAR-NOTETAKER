@@ -60,7 +60,9 @@ object MarkdownParser {
     private val commentLineRe = Regex("""^\s*<!--.*-->\s*$""")
 
     fun parse(markdown: String): List<Block> {
-        val lines = markdown.replace("\r\n", "\n").replace('\r', '\n').split('\n')
+        val lines = markdown.replace("\r\n", "\n").replace('\r', '\n').split('\n').toMutableList()
+        // The hidden page/font directive (see NoteMeta) is not content; blank it but keep line numbers.
+        if (lines.isNotEmpty() && app.margin.domain.model.NoteMeta.isDirectiveLine(lines[0])) lines[0] = ""
         val blocks = ArrayList<Block>()
         var i = 0
         while (i < lines.size) {

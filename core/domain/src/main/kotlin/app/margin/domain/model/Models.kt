@@ -55,7 +55,7 @@ data class Note(
 
         private val markdownPrefix = Regex("""^(\s*(#{1,6}|>|[-*+]|\d+[.)])\s+)*(\[[ xX]]\s+)?""")
 
-        fun derivedTitle(body: String): String? = body.lineSequence()
+        fun derivedTitle(body: String): String? = NoteMeta.split(body).second.lineSequence()
             .map { it.trim().replaceFirst(markdownPrefix, "").trim() }
             .filterNot { it.startsWith("```") || it == "---" }
             .firstOrNull { it.isNotEmpty() }

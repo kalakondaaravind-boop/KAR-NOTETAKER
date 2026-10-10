@@ -18,6 +18,9 @@ import app.margin.domain.model.Attachment
 import app.margin.domain.model.Clock
 import app.margin.domain.model.Folder
 import app.margin.domain.model.Note
+import app.margin.domain.model.NoteMeta
+import app.margin.domain.model.PageStyle
+import app.margin.domain.text.NoteFont
 import app.margin.domain.model.NoteState
 import app.margin.domain.model.NoteSummary
 import app.margin.domain.model.Tag
@@ -83,8 +86,14 @@ class EditorViewModel @Inject constructor(
     private val _title = MutableStateFlow(saved.get<String>(KEY_TITLE) ?: "")
     val title: StateFlow<String> = _title.asStateFlow()
 
-    private val _body = MutableStateFlow(TextFieldValue(saved.get<String>(KEY_BODY) ?: ""))
+    private val restored = NoteMeta.split(saved.get<String>(KEY_BODY) ?: "")
+    private val _body = MutableStateFlow(TextFieldValue(restored.second))
     val body: StateFlow<TextFieldValue> = _body.asStateFlow()
+
+    /** Paper style and note font, stored as a hidden first line of the body (see [NoteMeta]). */
+    private val _page = MutableStateFlow(restored.first)
+    val page: StateFlow<NoteMeta> = _page.asStateFlow()
+    private fun prefixLen() = NoteMeta.join(_page.value, "").length
 
     private val _preview = MutableStateFlow(saved.get<Boolean>("preview") ?: false)
     val preview: StateFlow<Boolean> = _preview.asStateFlow()
@@ -128,12 +137,14 @@ class EditorViewModel @Inject constructor(
             autosave.seed(Draft(note.id, note.title, note.body, note.lastCursor))
             if (restoredTitle == null && restoredBody == null) {
                 _title.value = note.title
-                val cursor = note.lastCursor.coerceIn(0, note.body.length)
-                _body.value = TextFieldValue(note.body, TextRange(cursor))
+                val (m, content) = NoteMeta.split(note.body)
+                _page.value = m
+                val cursor = (note.lastCursor - prefixLen()).coerceIn(0, content.length)
+                _body.value = TextFieldValue(content, TextRange(cursor))
             } else {
                 autosave.onEdit(currentDraft())
             }
-            if (saved.get<Boolean>("preview") == null) _preview.value = settings.value.openInPreview && note.body.isNotEmpty()
+            if (saved.get<Boolean>("preview") == null) _preview.value = settings.value.openInPreview && _body.value.text.isNotEmpty()
             _meta.value = EditorMeta(note = note, loading = false)
             notes.markOpened(noteId)
             watchExternalChanges()
@@ -152,7 +163,9 @@ class EditorViewModel @Inject constructor(
             if (stored.title != local.title || stored.body != local.body) {
                 autosave.seed(Draft(stored.id, stored.title, stored.body, stored.lastCursor))
                 _title.value = stored.title
-                _body.value = TextFieldValue(stored.body, TextRange(_body.value.selection.start.coerceIn(0, stored.body.length)))
+                val (m, content) = NoteMeta.split(stored.body)
+                _page.value = m
+                _body.value = TextFieldValue(content, TextRange(_body.value.selection.start.coerceIn(0, content.length)))
                 undo.clear()
                 _canUndo.value = false; _canRedo.value = false
                 mirror()
@@ -160,11 +173,20 @@ class EditorViewModel @Inject constructor(
         }
     }
 
-    private fun currentDraft() = Draft(noteId, _title.value, _body.value.text, _body.value.selection.start)
+    private fun currentDraft() = Draft(noteId, _title.value, NoteMeta.join(_page.value, _body.value.text), _body.value.selection.start + prefixLen())
+
+    fun setPageStyle(p: PageStyle) { if (_page.value.page != p) { _page.value = _page.value.copy(page = p); afterEdit() } }
+    fun setNoteFont(f: NoteFont?) { if (_page.value.font != f) { _page.value = _page.value.copy(font = f); afterEdit() } }
+
+    // Character styles: colour, highlight and font on the selection (or the word at the cursor).
+    fun setColor(argb: Long?) = apply { EditorCommands.setColor(it, argb) }
+    fun setHighlight(argb: Long?) = apply { EditorCommands.setHighlight(it, argb) }
+    fun setSelectionFont(f: NoteFont?) = apply { EditorCommands.setFont(it, f) }
+    fun clearStyles() = apply { EditorCommands.clearStyles(it) }
 
     private fun mirror() {
         // SavedStateHandle lives in a Bundle; keep it well under the Binder transaction limit.
-        val b = _body.value.text
+        val b = NoteMeta.join(_page.value, _body.value.text)
         if (b.length <= MAX_SAVED_STATE_CHARS) { saved[KEY_BODY] = b; saved[KEY_TITLE] = _title.value }
         else { saved.remove<String>(KEY_BODY); saved.remove<String>(KEY_TITLE) }
     }
@@ -289,6 +311,14 @@ class EditorViewModel @Inject constructor(
     fun addAttachment(source: AttachmentSource, onResult: (Result<Attachment>) -> Unit) = viewModelScope.launch {
         onResult(attachments.add(noteId, source))
     }
+    /** Clipart goes in as a small drawing, so it can later be moved, resized and recoloured on the canvas. */
+    fun addClipartDrawing(key: String, color: Long, onResult: (Result<Attachment>) -> Unit) = viewModelScope.launch {
+        val d = app.margin.domain.drawing.Drawing(width = 600f, height = 600f,
+            elements = listOf(app.margin.domain.drawing.Clipart("c" + java.util.UUID.randomUUID().toString().take(8), key, 100f, 100f, 400f, color)))
+        val bytes = app.margin.domain.drawing.DrawingCodec.encode(d).toByteArray()
+        onResult(attachments.add(noteId, app.margin.platform.BytesSource(bytes, app.margin.domain.drawing.DrawingCodec.MIME, "Clipart." + app.margin.domain.drawing.DrawingCodec.EXTENSION)))
+    }
+
     fun removeAttachment(id: String) = viewModelScope.launch { attachments.remove(id) }
     fun setExtractedText(id: String, text: String) = viewModelScope.launch { attachments.setExtractedText(id, text) }
 

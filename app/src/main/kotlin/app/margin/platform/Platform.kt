@@ -147,8 +147,11 @@ object Files {
  * The original image is kept as an attachment; recognised text is stored separately for search.
  */
 object Ocr {
-    suspend fun recognize(context: Context, uri: Uri): String = withContext(Dispatchers.Default) {
-        val image = InputImage.fromFilePath(context, uri)
+    suspend fun recognize(context: Context, uri: Uri): String = recognize(InputImage.fromFilePath(context, uri))
+
+    suspend fun recognize(bitmap: android.graphics.Bitmap): String = recognize(InputImage.fromBitmap(bitmap, 0))
+
+    private suspend fun recognize(image: InputImage): String = withContext(Dispatchers.Default) {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
         try {
             suspendCancellableCoroutine { cont ->
@@ -159,6 +162,55 @@ object Ocr {
         } finally {
             recognizer.close()
         }
+    }
+}
+
+/**
+ * PDF import, entirely on the tablet: each page is rendered and read with on-device text recognition
+ * (Android has no PDF text API). The original PDF is kept with the note as an attachment.
+ */
+object PdfImport {
+    const val MAX_PAGES = 60
+
+    suspend fun parse(context: Context, fileName: String, bytes: ByteArray): app.margin.domain.io.ImportCandidate = withContext(Dispatchers.IO) {
+        val tmp = File(context.cacheDir, "import-${System.nanoTime()}.pdf")
+        try {
+            tmp.writeBytes(bytes)
+            val pages = ArrayList<String>()
+            var total = 0
+            android.os.ParcelFileDescriptor.open(tmp, android.os.ParcelFileDescriptor.MODE_READ_ONLY).use { fd ->
+                android.graphics.pdf.PdfRenderer(fd).use { r ->
+                    total = r.pageCount
+                    for (i in 0 until minOf(r.pageCount, MAX_PAGES)) {
+                        val text = r.openPage(i).use { page ->
+                            val scale = 1240f / page.width.coerceAtLeast(1)
+                            val w = 1240; val h = (page.height * scale).toInt().coerceIn(1, 4000)
+                            val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
+                            bmp.eraseColor(android.graphics.Color.WHITE)
+                            page.render(bmp, null, null, android.graphics.pdf.PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
+                            try { runCatching { Ocr.recognize(bmp) }.getOrDefault("") } finally { bmp.recycle() }
+                        }
+                        pages += text.trim()
+                    }
+                }
+            }
+            val title = fileName.substringBeforeLast('.').ifBlank { "PDF" }
+            val body = buildString {
+                pages.forEachIndexed { i, t ->
+                    if (pages.size > 1) append("## Page ").append(i + 1).append("\n\n")
+                    append(t.ifBlank { "_(no readable text on this page)_" }).append("\n\n")
+                }
+                if (total > MAX_PAGES) append("_Only the first ").append(MAX_PAGES).append(" of ").append(total).append(" pages were read; the full PDF is attached._\n")
+            }.trimEnd()
+            app.margin.domain.io.ImportCandidate(
+                sourceName = fileName, title = title, body = body,
+                media = listOf(app.margin.domain.io.ImportMedia(fileName, "application/pdf", bytes)),
+            )
+        } catch (e: SecurityException) {
+            throw app.margin.domain.io.ImportFailure(app.margin.domain.io.FailReason.MALFORMED) // password-protected
+        } catch (e: IOException) {
+            throw app.margin.domain.io.ImportFailure(app.margin.domain.io.FailReason.MALFORMED)
+        } finally { tmp.delete() }
     }
 }
 

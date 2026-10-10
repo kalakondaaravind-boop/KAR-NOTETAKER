@@ -37,6 +37,7 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
         val reducedMotion = booleanPreferencesKey("reduced_motion")
         val textScale = floatPreferencesKey("editor_text_scale")
         val mono = booleanPreferencesKey("editor_monospace")
+        val marks = booleanPreferencesKey("editor_show_marks")
         val openInPreview = booleanPreferencesKey("open_in_preview")
         val sortField = stringPreferencesKey("sort_field")
         val sortDesc = booleanPreferencesKey("sort_desc")
@@ -90,6 +91,7 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
                 reducedMotion = p[K.reducedMotion] ?: false,
                 editorTextScale = p[K.textScale] ?: 1f,
                 editorMonospace = p[K.mono] ?: false,
+                showFormattingMarks = p[K.marks] ?: false,
                 openInPreview = p[K.openInPreview] ?: false,
                 defaultSort = SortOrder(enumOr(p[K.sortField], SortField.UPDATED), p[K.sortDesc] ?: true),
                 defaultFolderId = p[K.defaultFolder],
@@ -143,6 +145,7 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
         p[K.reducedMotion] = s.reducedMotion
         p[K.textScale] = s.editorTextScale
         p[K.mono] = s.editorMonospace
+        p[K.marks] = s.showFormattingMarks
         p[K.openInPreview] = s.openInPreview
         p[K.sortField] = s.defaultSort.field.name
         p[K.sortDesc] = s.defaultSort.descending

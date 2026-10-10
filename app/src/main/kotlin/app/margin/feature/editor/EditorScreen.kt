@@ -26,6 +26,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.outlined.Label
@@ -141,6 +142,7 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
     val find by vm.find.collectAsStateWithLifecycle()
     val canUndo by vm.canUndo.collectAsStateWithLifecycle()
     val canRedo by vm.canRedo.collectAsStateWithLifecycle()
+    val page by vm.page.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val sp = LocalSpacing.current
     val semantic = LocalSemanticColors.current
@@ -160,6 +162,9 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
     var recording by remember { mutableStateOf(false) }
     val recorder = remember { AudioRecorder(context) }
     var pendingCamera by rememberSaveable { mutableStateOf<String?>(null) }
+    var pageSheet by rememberSaveable { mutableStateOf(false) }
+    var exportMenu by remember { mutableStateOf(false) }
+    var exportFormat by remember { mutableStateOf<NoteExport.Format?>(null) }
 
     val trashed = live?.state == NoteState.TRASHED
     val archived = live?.state == NoteState.ARCHIVED
@@ -186,6 +191,16 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
                     .onSuccess { text -> if (text.isNotBlank()) { vm.setExtractedText(a.id, text); snackbar.showSnackbar(msgOcrDone) } }
                     .onFailure { snackbar.showSnackbar(msgOcrFailed) }
             }
+        }
+    }
+
+    var pendingExport by remember { mutableStateOf<ByteArray?>(null) }
+    val saveDoc = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("*/*")) { uri ->
+        val bytes = pendingExport
+        pendingExport = null
+        if (uri != null && bytes != null) scope.launch {
+            val ok = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { Files.writeTo(context, uri, bytes) }
+            snackbar.showSnackbar(context.getString(if (ok) R.string.export_saved else R.string.export_failed))
         }
     }
 
@@ -218,8 +233,19 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
         return
     }
 
-    val bodyStyle = editorTextStyle(MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface), settings.editorTextScale, settings.editorMonospace)
-    val transformation = remember(semantic, settings.editorTextScale) { MarkdownVisualTransformation(semantic, androidx.compose.ui.graphics.Color.Gray) }
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    val baseStyle = editorTextStyle(MaterialTheme.typography.bodyLarge.copy(color = MaterialTheme.colorScheme.onSurface), settings.editorTextScale, settings.editorMonospace)
+        .let { st -> page.font?.let { st.copy(fontFamily = app.margin.ui.theme.NoteFonts.family(it)) } ?: st }
+    // On lined paper every text line sits on a ruled line: line height = the paper's spacing.
+    val lineSpacingPx = with(density) { maxOf(page.page.spacingDp.dp.toPx(), baseStyle.fontSize.toPx() * 1.45f) }
+    val bodyStyle = if (page.page == app.margin.domain.model.PageStyle.PLAIN) baseStyle else baseStyle.copy(
+        lineHeight = with(density) { lineSpacingPx.toSp() },
+        lineHeightStyle = androidx.compose.ui.text.style.LineHeightStyle(
+            androidx.compose.ui.text.style.LineHeightStyle.Alignment.Center, androidx.compose.ui.text.style.LineHeightStyle.Trim.None),
+    )
+    val transformation = remember(semantic, settings.editorTextScale, settings.showFormattingMarks) {
+        MarkdownVisualTransformation(semantic, androidx.compose.ui.graphics.Color.Gray, showMarks = settings.showFormattingMarks)
+    }
     val bodyFocus = remember { FocusRequester() }
 
     Scaffold(
@@ -253,12 +279,7 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
                         DropdownMenuItem(text = { Text(stringResource(R.string.history)) }, leadingIcon = { Icon(Icons.Outlined.History, null) }, onClick = { menu = false; vm.flush { n.open(Routes.revisions(vm.noteId)) } })
                         DropdownMenuItem(text = { Text(stringResource(R.string.note_info)) }, leadingIcon = { Icon(Icons.Outlined.Info, null) }, onClick = { menu = false; infoDialog = true })
                         DropdownMenuItem(text = { Text(stringResource(R.string.share_export)) }, leadingIcon = { Icon(Icons.Outlined.Share, null) }, onClick = {
-                            menu = false
-                            // Export what is on screen (including edits not yet flushed), not the last stored row.
-                            val current = (note ?: return@DropdownMenuItem).copy(title = title, body = body.text)
-                            val md = app.margin.domain.io.NoteExporter.markdown(current, app.margin.domain.io.NoteExportContext(tags.map { it.name }, emptyList()))
-                            val uri = Files.shareableText(context, app.margin.domain.io.NoteExporter.safeFileName(title.ifBlank { "Note" }) + ".md", md)
-                            Files.share(context, uri, "text/markdown", title.ifBlank { context.getString(R.string.untitled) })
+                            menu = false; exportMenu = true
                         })
                         if (!readOnly) {
                             DropdownMenuItem(text = { Text(stringResource(R.string.duplicate)) }, leadingIcon = { Icon(Icons.Outlined.ContentCopy, null) }, onClick = { menu = false; vm.duplicate { n.replace(Routes.editor(it)) } })
@@ -297,6 +318,11 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
                                 recorder.stop()?.let { attach(FileAttachmentSource(it, "audio/mp4")) }
                             } else micPermission.launch(Manifest.permission.RECORD_AUDIO)
                         },
+                        onDrawing = { vm.flush { n.open(Routes.drawing(vm.noteId, page = "plain")) } },
+                        onClipart = { key -> vm.addClipartDrawing(key, 0xFF1E88E5) { r -> r.onFailure { scope.launch { snackbar.showSnackbar(msgAttachFailed) } } } },
+                        onPageStyle = { pageSheet = true },
+                        noteFont = page.font,
+                        hasSelection = !body.selection.collapsed,
                     )
                 }
             }
@@ -362,7 +388,9 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
                             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
                             visualTransformation = transformation,
                             keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Sentences),
-                            modifier = Modifier.fillMaxWidth().heightIn(min = 320.dp).focusRequester(bodyFocus)
+                            modifier = Modifier.fillMaxWidth().heightIn(min = 320.dp)
+                                .drawBehind { drawEditorPaper(page.page, lineSpacingPx, size.width, size.height) }
+                                .focusRequester(bodyFocus)
                                 .semantics { contentDescription = context.getString(R.string.note_body) },
                             decorationBox = { inner ->
                                 if (body.text.isEmpty()) Text(stringResource(R.string.body_placeholder), style = bodyStyle, color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.6f))
@@ -370,7 +398,13 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
                             },
                         )
                     }
-                    if (attachments.isNotEmpty() && !focusMode) AttachmentStrip(attachments, readOnly, onOpen = { a ->
+                    val drawingAttachments = attachments.filter { it.isDrawing() }
+                    if (drawingAttachments.isNotEmpty() && !focusMode) DrawingStrip(drawingAttachments, readOnly,
+                        onOpen = { a -> vm.flush { n.open(Routes.drawing(vm.noteId, attachment = a.id)) } },
+                        onNew = { vm.flush { n.open(Routes.drawing(vm.noteId, page = "plain")) } },
+                        onRemove = vm::removeAttachment)
+                    val otherAttachments = attachments.filterNot { it.isDrawing() }
+                    if (otherAttachments.isNotEmpty() && !focusMode) AttachmentStrip(otherAttachments, readOnly, onOpen = { a ->
                         if (!Files.openAttachment(context, a.storagePath, a.mimeType)) scope.launch { snackbar.showSnackbar(context.getString(R.string.no_app_to_open)) }
                     }, onRemove = vm::removeAttachment, onInsertText = { t -> vm.insertBlock(t) })
                     if (backlinks.isNotEmpty() && !focusMode) {
@@ -384,6 +418,23 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
         }
     }
 
+    if (pageSheet) app.margin.feature.drawing.PageStyleSheet(page.page, onDismiss = { pageSheet = false }) { st -> pageSheet = false; vm.setPageStyle(st) }
+    if (exportMenu) ExportDialog(onDismiss = { exportMenu = false }) { f, save ->
+        exportMenu = false
+        val note = live ?: return@ExportDialog
+        // Export what is on screen (including edits not yet flushed), not the last stored row.
+        val current = note.copy(title = title, body = app.margin.domain.model.NoteMeta.join(page, body.text))
+        val name = app.margin.domain.io.NoteExporter.safeFileName(title.ifBlank { current.displayTitle(context.getString(R.string.untitled)) }) + "." + f.ext
+        scope.launch {
+            val bytes = runCatching { kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.Default) { NoteExport.bytes(context, f, current, tags.map { it.name }, attachments) } }
+                .getOrElse { snackbar.showSnackbar(context.getString(R.string.export_failed)); return@launch }
+            if (save) { pendingExport = bytes; exportFormat = f; saveDoc.launch(name) }
+            else {
+                val uri = kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) { Files.shareableBytes(context, name, bytes) }
+                Files.share(context, uri, f.mime, title.ifBlank { context.getString(R.string.untitled) })
+            }
+        }
+    }
     if (tagDialog) TagEditorDialog(tags.map { it.name }, allTags, onSave = { vm.setTags(it); tagDialog = false }, onDismiss = { tagDialog = false })
     if (moveDialog) FolderPickerDialog(folders, stringResource(R.string.move_to), onPick = { vm.move(it); moveDialog = false }, onDismiss = { moveDialog = false })
     if (linkDialog) LinkDialog(onInsertUrl = { url, label -> vm.insertLink(url, label) }, onInsertNoteLink = { vm.insertWikiLink(it) }, onDismiss = { linkDialog = false })
