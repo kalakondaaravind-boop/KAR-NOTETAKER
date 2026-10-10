@@ -19,10 +19,12 @@ launch() { adb shell am start -W -n "$PKG/app.margin.MainActivity" >/dev/null; s
 # Prints "x y" of the first element of the app matching: text/desc equal to $1, or contains $1 when $2=contains,
 # or class equal to $1 when $2=class. Each dump is kept in ui-dumps/ for debugging.
 find_center() {
-  STEP=$((STEP+1))
-  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1
-  adb exec-out cat /sdcard/ui.xml > "$OUT/ui-dumps/$(printf %02d $STEP).xml"
-  python3 - "$1" "${2:-equals}" "$PKG" "$OUT/ui-dumps/$(printf %02d $STEP).xml" <<'PY'
+  # runs in a subshell ($(...)), so the step number comes from the files already saved
+  local n; n=$(( $(ls "$OUT/ui-dumps" | wc -l) + 1 ))
+  local f; f="$OUT/ui-dumps/$(printf %02d $n)-$(echo "$1" | tr -c 'A-Za-z0-9' '_' | cut -c1-24).xml"
+  adb shell uiautomator dump /sdcard/ui.xml >/dev/null 2>&1 || log "uiautomator dump failed"
+  adb exec-out cat /sdcard/ui.xml > "$f"
+  python3 - "$1" "${2:-equals}" "$PKG" "$f" <<'PY'
 import re, sys, xml.etree.ElementTree as ET
 want, mode, pkg, path = sys.argv[1:5]
 try: root = ET.parse(path).getroot()
@@ -62,23 +64,27 @@ fi
 
 tap "Skip"
 shot 03-home-empty 6
+# Home is a scrolling list: make sure we start at the top.
+scroll_top() { for _ in 1 2; do adb shell input swipe 1280 500 1280 1400 200; done; sleep 1; }
+scroll_top
 
 # Quick-capture notes so Home has content (3+ notes also shows the backup reminder).
 for t in "Q4 planning workshop agenda" "Supplier comparison for three vendors" "Weekly review wins and next steps"; do
   if tap "android.widget.EditText" class; then type_text "$t"; tap "Save quick note" || true; fi
 done
-adb shell input keyevent KEYCODE_ESCAPE; sleep 1
+adb shell input keyevent KEYCODE_ESCAPE; sleep 1; scroll_top
 shot 04-home-with-notes 3
 
 if tap "Open library"; then shot 05-library-menu 2; adb shell input keyevent KEYCODE_BACK; sleep 2; fi
 shot 05b-after-back-closes-menu 1
+scroll_top
 
 if tap "New note"; then
   sleep 3; type_text "Board briefing"; adb shell input keyevent KEYCODE_TAB
   type_text "Key decisions and owners"; shot 06-editor 2
   adb shell input keyevent KEYCODE_ESCAPE; sleep 1; adb shell input keyevent KEYCODE_BACK; sleep 2
 fi
-launch 2
+launch 2; scroll_top
 
 # Drawing canvas: pen strokes, a shape, clipart, selection with cut/copy/paste.
 if tap "Drawing"; then
@@ -105,7 +111,7 @@ if tap "Drawing"; then
   fi
   adb shell input keyevent KEYCODE_BACK; sleep 3
 fi
-launch 2
+launch 2; scroll_top
 
 # Page templates: a to-do page with check boxes printed on the paper.
 if tap "New page"; then
