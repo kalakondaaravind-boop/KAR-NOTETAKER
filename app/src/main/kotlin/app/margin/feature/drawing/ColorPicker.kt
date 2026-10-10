@@ -185,6 +185,7 @@ fun ColorPickerDialog(
     )
 }
 
+@OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
 @Composable
 private fun GradientSlider(label: String, value: Float, colors: List<Color>, onChange: (Float) -> Unit) {
     Column {
