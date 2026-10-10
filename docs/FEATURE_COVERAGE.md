@@ -6,13 +6,13 @@ Audited 10 Oct 2026 against the specification sections (§) the app was built fr
 
 | Status | Meaning |
 |---|---|
-| **VERIFIED** | The logic lives in `core/domain` (or is SQL) and is covered by passing automated tests: 152 JVM tests, plus 91 SQL statements run against SQLite. |
-| **IMPLEMENTED** | UI and wiring exist in the Android modules but haven't been compiled or run yet. The first GitHub Actions build is the first compile. |
+| **VERIFIED** | The logic lives in `core/domain` (or is SQL) and is covered by passing automated tests: 177 JVM tests, plus 91 SQL statements run against SQLite. |
+| **IMPLEMENTED** | UI and wiring exist in the Android modules, compile in GitHub Actions and are installed on a tablet emulator, but haven't been tested by hand on a real tablet. |
 | **PARTIAL** | Part of the requirement is present. The gap is stated. |
 | **DEFERRED** | Not built. Planned for later. |
 | **EXCLUDED** | Deliberately not built, because of your instructions or the spec's exclusions. |
 
-Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. The GitHub workflow's emulator job is the first step towards that.
+The app compiles on every push, and the emulator job walks through key screens and saves real screenshots. That is a smoke test, not a full UI test, so Android screens stay **IMPLEMENTED** rather than **VERIFIED**.
 
 ## Summary
 
@@ -21,7 +21,7 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Notes and editor (§8) | VERIFIED logic, IMPLEMENTED UI |
 | Autosave and draft protection (§8.4) | VERIFIED (debounce, failure, retry, storage full, flush) |
 | Revision history (§8.5) | VERIFIED (retention policy, line diff), IMPLEMENTED UI |
-| Capture (§9) | IMPLEMENTED, with PDF text extraction PARTIAL |
+| Capture (§9) | IMPLEMENTED; PDF text is read when a PDF is imported or shared in, not when attached inside a note |
 | Organization: folders, tags, smart collections (§10) | VERIFIED rules and SQL |
 | Backlinks and related notes (§10.4) | VERIFIED, with the visual graph PARTIAL (text views only) |
 | Search (§11.1–11.2) | VERIFIED (parser, FTS, fuzzy, 10k-note timing) |
@@ -36,8 +36,10 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Performance (§19) | PARTIAL: search measured on the JVM only, nothing measured on a device |
 | Settings (§20) | IMPLEMENTED |
 | Platform integration (§21) | IMPLEMENTED |
-| Tests (§22) | PARTIAL: JVM and SQL tests run; the instrumented tests are written but have never run |
-| Release (§23) | PARTIAL: the CI workflow builds the APK and computes its checksum, but nothing has been built yet |
+| Tests (§22) | PARTIAL: JVM and SQL tests run; instrumented tests run on the emulator in CI |
+| Drawing canvas, page templates, fonts, colours, symbols, clipart (added) | VERIFIED engine (lasso, eraser, clipboard, undo, page lines, file format, SVG), IMPLEMENTED UI |
+| Word / PDF / RTF / CSV import, Word / PDF / HTML / text export (added) | VERIFIED Word, RTF and CSV converters; IMPLEMENTED PDF reading (on-device OCR) and PDF export |
+| Release (§23) | PARTIAL: the CI workflow builds a debug APK with a checksum on every push; no signed release build yet |
 
 ## Detail
 
@@ -82,7 +84,7 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Camera (through the system camera app), voice recording | IMPLEMENTED |
 | Speech-to-text: Home *Voice note* tile (new note), mic in Quick capture, editor dictation at the cursor; offline recognition requested | IMPLEMENTED |
 | OCR from images on the device (ML Kit), original image kept | IMPLEMENTED |
-| PDF import | PARTIAL: stored as an attachment, but its text isn't extracted or searchable |
+| PDF import | IMPLEMENTED: Import files or Share → KAR Notes reads each page with on-device OCR into the note; a PDF attached from inside a note is stored only |
 | Clipboard capture | IMPLEMENTED: optional paste button on Home that reads the clipboard only on tap (added in this pass) |
 | Quick-capture notification | IMPLEMENTED: optional, Settings → Capture (added in this pass) |
 | App shortcuts, home-screen widget | IMPLEMENTED |
@@ -163,9 +165,26 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Device performance measurements | DEFERRED until the app runs |
 | Release signing through a git-ignored `keystore.properties` | IMPLEMENTED |
 
+### Added: drawing, pages, fonts and file formats
+| Item | Status | Where |
+|---|---|---|
+| Pen, pencil, marker, highlighter with stylus pressure; partial / whole-stroke eraser | VERIFIED engine, IMPLEMENTED UI | `domain/drawing`, `feature/drawing/DrawingScreen.kt` |
+| Shapes (line, arrow, rectangle, rounded, ellipse, triangle, star) with fill; text boxes in any font, bold/italic | VERIFIED geometry, IMPLEMENTED UI | `Drawing.kt`, `DrawingRender.kt` |
+| Lasso and tap selection; move, resize, cut, copy, paste (also between drawings), duplicate, recolour, front/back, delete | VERIFIED (`DrawingTest`), IMPLEMENTED UI | `DrawingOps.kt` |
+| Undo / redo (100 steps), autosave, pinch zoom and pan, stylus-only mode | VERIFIED history, IMPLEMENTED UI | `DrawingHistory`, `DrawingViewModel.kt` |
+| Colour picker: palette, highlighter colours, recent colours, HSV + opacity, hex; six pen-colour slots | IMPLEMENTED | `ColorPicker.kt` |
+| Page templates: blank, ruled, narrow ruled, squared, dots, to-do, Cornell, daily/weekly planner, meeting, sketch, graph, music, storyboard | VERIFIED page geometry, IMPLEMENTED UI | `Pages.kt`, `PageTemplateSheet.kt`, `EditorPaper.kt` |
+| Formatting shown as formatting (marks hidden while typing; toggle in Settings) | VERIFIED offset mapping (`LiveMarkdown`), IMPLEMENTED UI | `LiveMarkdown.kt`, `MarkdownViews.kt` |
+| Fonts (9, six bundled under SIL OFL) for a note or selected text; text colour; highlight | VERIFIED storage format, IMPLEMENTED UI | `Styles.kt`, `EditorCommands.kt`, `Fonts.kt` |
+| Symbols (11 categories, search) and clipart (106 vector pictures) | IMPLEMENTED | `Symbols.kt`, `ClipartLibrary.kt`, `InsertPickers.kt` |
+| Import Word .docx (with images), RTF, CSV/TSV | VERIFIED (`OfficeImportExportTest`, XXE rejected) | `Docx.kt`, `MoreImporters.kt` |
+| Import PDF (on-device OCR per page, original kept) | IMPLEMENTED; text quality depends on the scan | `platform/Platform.kt` (`PdfImport`) |
+| Export note: Word (drawings as pictures), PDF, Markdown, HTML, text; save or share | VERIFIED Word writer, IMPLEMENTED PDF and UI | `NoteExport.kt`, `EditorPaper.kt` |
+| Export drawing: PNG, SVG, PDF | VERIFIED SVG, IMPLEMENTED PNG/PDF | `DrawingRender.kt` |
+
 ## Highest-impact remaining work
-1. **First compile on GitHub**, then fix whatever it reports. This blocks everything else.
-2. Run the instrumented tests and the critical regression flows (§22.4) on the emulator.
-3. Extract PDF text so PDFs become searchable.
+1. Try the drawing canvas with a stylus on your real tablet (feel, pressure, palm rejection) and report anything that feels wrong.
+2. Make all instrumented tests pass on the emulator and add the critical regression flows (§22.4).
+3. Read text from PDFs attached inside a note too (today only imported/shared PDFs are read).
 4. Semantic search using OpenAI embeddings. This is optional and would send note text to OpenAI only after consent.
 5. Translations, and a TalkBack pass on a real tablet.

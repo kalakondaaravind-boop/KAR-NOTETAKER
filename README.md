@@ -50,6 +50,25 @@ The setup is hidden from screen readers too: the logo isn't announced as a butto
 
 This uses Android's built-in speech recogniser. The app asks it to recognise speech **offline**, so audio stays on the tablet. To guarantee that, download the offline speech language in Android Settings → System → Languages → Speech (exact menu names vary by tablet). Without an offline language pack, the device's speech service may use its own online recognition.
 
+## Drawing, pages, fonts and colours
+
+- **Drawing canvas** (Home → Drawing, or the ✏️ Drawing button in a note's toolbar): pen, pencil, marker and highlighter (pressure from a stylus is recorded), an eraser that removes part of a stroke or whole strokes, shapes (line, arrow, rectangle, rounded box, ellipse, triangle, star) with optional fill, text boxes in any of the fonts, clipart and symbols. Pinch with two fingers to zoom and pan; the hand tool pans with one finger, and "Draw with stylus only" lets your palm rest on the screen.
+- **Select, cut, copy, paste:** the lasso tool selects one item with a tap or several by drawing a loop. The selection bar has Cut, Copy, Paste, Duplicate, Change colour, Bring to front, Send to back and Delete; drag to move, drag the round handle to resize. Copied items can be pasted into another drawing. Unlimited-feeling undo/redo (100 steps).
+- **Colours:** six pen-colour slots under the tools (long-press a slot to change it), a 32-colour palette, highlighter colours, recent colours, and a custom colour with hue, saturation, brightness, opacity or a hex code.
+- **Page templates** (Home → New page): blank, ruled, narrow ruled, squared, dot grid, to-do list, Cornell notes, daily and weekly planner, meeting page, plus drawing pages (sketch, graph paper, music staff, storyboard). A note's paper can be changed any time from the toolbar's page button; text sits on the ruled lines.
+- **Formatting shows as formatting:** bold text looks bold, italic looks italic, headings are bigger, and the `**`/`#` marks are hidden while you type (Settings → Appearance → "Show formatting marks while editing" brings them back). The toolbar buttons look like what they do (**B**, *I*, U̲, S̶) and the font list shows every font in its own typeface.
+- **Fonts:** Sans, Serif, Mono plus bundled Caveat and Patrick Hand (handwriting), Dancing Script, Lora, Montserrat and Playfair Display (all SIL Open Font License, shipped in the app, no downloads). Choose a font for the whole note, or select text to change only that text.
+- **Text colour and highlight** on selected text, and "clear colour, highlight and font".
+- **Symbols** (Ω): arrows, maths, Greek, currency, shapes, ticks and crosses, faces, nature, music, with search. **Clipart:** about 100 vector pictures that stay sharp at any size and take any colour.
+
+Drawings are stored on the tablet as attachments of their note (`.kardraw`, a small JSON file), are included in backups, and the text you type on a drawing is searchable.
+
+## Import and export
+
+- **Import** (Settings → Backup & data → Import files, or share a file to KAR Notes): Word `.docx` (headings, bold/italic/underline/strike, colours and highlights, lists, check boxes, tables, links, images), **PDF** (each page is read with on-device text recognition; the original PDF stays attached), RTF, CSV/TSV (becomes a table), Markdown, text, HTML and KAR Notes JSON exports. Nothing is uploaded to convert files.
+- **Export a note** (note ⋮ → Share / export): Word `.docx` (with drawings as pictures), PDF (with a page per drawing), Markdown, web page (HTML) or plain text. Each can be saved to the tablet or shared to another app.
+- **Export a drawing** (drawing ⋮): PNG image, SVG vector or PDF.
+
 ## Erase all data
 
 Settings → Privacy (or the bottom of Backup & data) → **Erase all data**. You're asked to confirm three times:
@@ -138,8 +157,10 @@ Full feature-by-feature audit against the specification: **[docs/FEATURE_COVERAG
 ## Verification status
 
 What has been verified so far:
-- **Domain module:** compiles, and all 152 unit tests pass (`tools/verify-domain.sh`).
-- **SQL:** all 91 Room queries run against real SQLite 3.45, including the search index and cascade behaviour (`tools/verify-sql.py`).
+- **Domain module:** compiles, and all 177 unit tests pass (`tools/verify-domain.sh`). This covers the drawing engine (lasso, eraser, cut/copy/paste, undo, page lines, file format, SVG), Word import/export round trips, RTF and CSV import, the hidden-formatting editor view, and page/font settings.
+- **SQL:** all Room queries run against real SQLite (`tools/verify-sql.py`).
 - **Resources:** every string and resource reference resolves (`tools/check-resources.py`).
+- **Android build:** the app compiles and the debug APK is built by GitHub Actions on every push.
+- **Tablet emulator:** the workflow installs the APK on a Pixel Tablet emulator, walks through the app (including the drawing canvas and page templates) and saves real screenshots to the `ci-logs-tablet` branch.
 
-**Not yet verified:** the Android modules (`app`, `core/data`) have not been compiled. The machine that wrote them had no access to Google's Maven repository or the Android SDK. The first GitHub Actions run is the first real Android compile. If it reports errors, open the failed step's log and fix them, or ask Claude to fix them from that log. Treat the app as unreleased until the **build** and **tablet** jobs are green and you have tried the screenshots and APK yourself.
+**Not yet verified:** handwriting feel, stylus pressure and palm rejection on a real tablet; PDF text recognition quality on your own documents; how exported Word files look in your version of Word. Try these on your tablet before relying on them.
