@@ -16,6 +16,8 @@ data class AppSettings(
     val onboardingCompleted: Boolean = false,
     val theme: ThemeMode = ThemeMode.SYSTEM,
     val dynamicColor: Boolean = false,
+    /** KAR 3D glossy surfaces (depth, gradient, sheen). Off = flat Material 3. */
+    val glossyStyle: Boolean = true,
     val reducedMotion: Boolean = false,
     /** Editor text scale (1.0 = system default). Clamped to 0.8–2.0. */
     val editorTextScale: Float = 1.0f,
@@ -41,6 +43,14 @@ data class AppSettings(
     /** Whether an API key is stored (the key itself is kept encrypted, never in this object). */
     val aiKeyStored: Boolean = false,
     val clipboardCaptureSuggestion: Boolean = false,
+    /** When the last backup file was written successfully (drives the Home backup reminder). */
+    val lastBackupAt: java.time.Instant? = null,
+    /** Remind on Home when the last backup is older than this many days; 0 turns the reminder off. */
+    val backupReminderDays: Int = 14,
+    val backupReminderSnoozedUntil: java.time.Instant? = null,
+    /** Transparency log: AI requests that actually reached OpenAI, and when the last one did. */
+    val aiCloudRequests: Int = 0,
+    val aiCloudLastAt: java.time.Instant? = null,
 ) {
     val visibleHomeSections get() = homeSections.filter { it !in hiddenHomeSections }
 
@@ -55,6 +65,8 @@ data class AppSettings(
             homeSections = (s.homeSections.distinct() + HomeSection.entries.filter { it !in s.homeSections }),
             recentSearches = s.recentSearches.distinct().take(MAX_RECENT_SEARCHES),
             defaultReminderOffsetMinutes = s.defaultReminderOffsetMinutes.coerceIn(0, 60 * 24 * 7),
+            backupReminderDays = s.backupReminderDays.coerceIn(0, 365),
+            aiCloudRequests = s.aiCloudRequests.coerceAtLeast(0),
             ai = s.ai.copy(maxContextChars = s.ai.maxContextChars.coerceIn(2_000, 100_000),
                 cloudConsent = s.ai.cloudConsent && s.ai.provider != ProviderType.NONE),
         )

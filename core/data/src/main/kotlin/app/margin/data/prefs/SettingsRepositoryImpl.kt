@@ -33,6 +33,7 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
         val onboarding = booleanPreferencesKey("onboarding_completed")
         val theme = stringPreferencesKey("theme")
         val dynamicColor = booleanPreferencesKey("dynamic_color")
+        val glossy = booleanPreferencesKey("glossy_style")
         val reducedMotion = booleanPreferencesKey("reduced_motion")
         val textScale = floatPreferencesKey("editor_text_scale")
         val mono = booleanPreferencesKey("editor_monospace")
@@ -66,6 +67,11 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
         val aiModel = stringPreferencesKey("ai_model")
         val aiKeyStored = booleanPreferencesKey("ai_key_stored")
         val clipboard = booleanPreferencesKey("clipboard_suggestion")
+        val lastBackup = longPreferencesKey("last_backup_ms")
+        val backupDays = intPreferencesKey("backup_reminder_days")
+        val backupSnooze = longPreferencesKey("backup_snooze_until_ms")
+        val aiCloudCount = intPreferencesKey("ai_cloud_requests")
+        val aiCloudLast = longPreferencesKey("ai_cloud_last_ms")
     }
 
     private inline fun <reified E : Enum<E>> enumOr(v: String?, d: E): E = v?.let { s -> enumValues<E>().firstOrNull { it.name == s } } ?: d
@@ -80,6 +86,7 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
                 onboardingCompleted = p[K.onboarding] ?: false,
                 theme = enumOr(p[K.theme], ThemeMode.SYSTEM),
                 dynamicColor = p[K.dynamicColor] ?: d.dynamicColor,
+                glossyStyle = p[K.glossy] ?: d.glossyStyle,
                 reducedMotion = p[K.reducedMotion] ?: false,
                 editorTextScale = p[K.textScale] ?: 1f,
                 editorMonospace = p[K.mono] ?: false,
@@ -119,6 +126,11 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
                 aiModel = p[K.aiModel] ?: "",
                 aiKeyStored = p[K.aiKeyStored] ?: false,
                 clipboardCaptureSuggestion = p[K.clipboard] ?: false,
+                lastBackupAt = p[K.lastBackup]?.let(java.time.Instant::ofEpochMilli),
+                backupReminderDays = p[K.backupDays] ?: d.backupReminderDays,
+                backupReminderSnoozedUntil = p[K.backupSnooze]?.let(java.time.Instant::ofEpochMilli),
+                aiCloudRequests = p[K.aiCloudCount] ?: 0,
+                aiCloudLastAt = p[K.aiCloudLast]?.let(java.time.Instant::ofEpochMilli),
             ),
         )
     }
@@ -127,6 +139,7 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
         p[K.onboarding] = s.onboardingCompleted
         p[K.theme] = s.theme.name
         p[K.dynamicColor] = s.dynamicColor
+        p[K.glossy] = s.glossyStyle
         p[K.reducedMotion] = s.reducedMotion
         p[K.textScale] = s.editorTextScale
         p[K.mono] = s.editorMonospace
@@ -162,6 +175,11 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
         p[K.aiModel] = s.aiModel
         p[K.aiKeyStored] = s.aiKeyStored
         p[K.clipboard] = s.clipboardCaptureSuggestion
+        s.lastBackupAt?.let { p[K.lastBackup] = it.toEpochMilli() } ?: p.remove(K.lastBackup)
+        p[K.backupDays] = s.backupReminderDays
+        s.backupReminderSnoozedUntil?.let { p[K.backupSnooze] = it.toEpochMilli() } ?: p.remove(K.backupSnooze)
+        p[K.aiCloudCount] = s.aiCloudRequests
+        s.aiCloudLastAt?.let { p[K.aiCloudLast] = it.toEpochMilli() } ?: p.remove(K.aiCloudLast)
     }
 
     override val settings: Flow<AppSettings> = store.data.map { read(it) }

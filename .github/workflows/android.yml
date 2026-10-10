@@ -1,4 +1,5 @@
-# Builds KAR Notes, runs the tests, and captures real screenshots on a tablet emulator.
+# Builds KAR Notes, runs the tests, and captures real screenshots on a tablet emulator
+# (welcome, hidden OpenAI setup, home, library, editor, dark mode, settings - see tools/ci-ui-tour.sh).
 # Results appear under the run's "Artifacts": kar-notes-debug-apk and tablet-screenshots.
 name: Android build
 
@@ -101,13 +102,7 @@ jobs:
             adb shell svc data disable || true
             adb shell settings put system user_rotation 1
             adb install -r apk/*.apk
-            adb shell am start -W -n com.kargroup.notetaker.debug/app.margin.MainActivity
-            sleep 10
-            adb exec-out screencap -p > screenshots/01-first-launch-light.png
-            adb shell cmd uimode night yes
-            sleep 4
-            adb exec-out screencap -p > screenshots/02-first-launch-dark.png
-            adb shell cmd uimode night no
+            bash tools/ci-ui-tour.sh screenshots
             adb shell dumpsys package com.kargroup.notetaker.debug | grep -i "android.permission" > screenshots/granted-permissions.txt || true
             adb logcat -d -b crash > screenshots/crash-log.txt || true
             ./gradlew --no-daemon connectedDebugAndroidTest || echo "instrumented tests failed - see reports" > screenshots/instrumented-tests-FAILED.txt

@@ -93,7 +93,7 @@ class MainActivity : FragmentActivity() {
             LaunchedEffect(s.quickCaptureNotification) {
                 app.margin.feature.capture.QuickCaptureNotification.sync(applicationContext, s.quickCaptureNotification)
             }
-            MarginTheme(s.theme, s.dynamicColor) {
+            MarginTheme(s.theme, s.dynamicColor, s.glossyStyle) {
                 val locked by lock.locked.collectAsStateWithLifecycle()
                 var authError by remember { mutableStateOf<String?>(null) }
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {

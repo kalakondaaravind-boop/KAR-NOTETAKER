@@ -1,6 +1,8 @@
 # KAR Notes — Note taker by KAR Group
 
-A private note-taking app for Android tablets (it also adapts to phones and foldables). Kotlin, Jetpack Compose, Material 3, in a Sky & Pastel Blue theme.
+A private note-taking app for Android tablets (it also adapts to phones and foldables). Kotlin, Jetpack Compose, Material 3, in a Sky & Pastel Blue theme with a **3D glossy** look (raised panels, glossy buttons and logo). A flat style can be chosen in Settings → Appearance.
+
+**Read next:** [improvement review and roadmap](docs/IMPROVEMENT_REVIEW.md) · [feature coverage](docs/FEATURE_COVERAGE.md) · [design system](docs/DESIGN.md)
 
 **All data is stored on the tablet.** There is no account, no online storage, no sync and no analytics. Optional AI can use your own OpenAI key; see [AI](#ai-and-the-hidden-openai-setup).
 
@@ -15,7 +17,7 @@ A private note-taking app for Android tablets (it also adapts to phones and fold
 | Notes, folders, tags, tasks, templates, history | Room/SQLite database in the app's private storage | No |
 | Attachments (photos, PDFs, voice notes) | App-private `files/attachments` | No |
 | Settings | DataStore in app-private storage | No |
-| Backups | A file **you** save with the Android file picker (Downloads, SD card, USB drive) | Only if you move it yourself |
+| Backups | A file **you** save with the Android file picker (Downloads, SD card, USB drive). Home reminds you when there are 3+ notes and no backup in 14 days; the interval can be changed or switched off in Settings → Backup & data. | Only if you move it yourself |
 
 How this is enforced:
 
@@ -35,7 +37,7 @@ To connect **OpenAI**:
 2. Paste your API key (it starts with `sk-`). You can change the model; the default is `gpt-5.4-mini`.
 3. Tap **Save and turn on**.
 
-The key is encrypted with the Android Keystore and never shown again. Once it's saved, OpenAI appears in Settings → AI, where you can change the model and let AI search across all your notes. Settings → Privacy shows "OpenAI connected", with a **Disconnect** button. To replace or remove the key, tap the logo 10 times again. With OpenAI connected, every AI action (a note's ⋮ menu → AI assist) and "Ask my notes" use it, and answers cite the notes they came from.
+The key is encrypted with the Android Keystore and never shown again. Once it's saved, OpenAI appears in Settings → AI, where you can change the model and let AI search across all your notes. Settings → Privacy shows "OpenAI connected", with a **Disconnect** button, and a log of how many requests have actually been sent to OpenAI and when the last one was. To replace or remove the key, tap the logo 10 times again. With OpenAI connected, every AI action (a note's ⋮ menu → AI assist) and "Ask my notes" use it, and answers cite the notes they came from.
 
 The setup is hidden from screen readers too: the logo isn't announced as a button.
 
@@ -53,7 +55,7 @@ The setup is hidden from screen readers too: the logo isn't announced as a butto
    Alternatively, use the website. GitHub's **Add file → Upload files** works too, but drag the *contents* of the `kar-notes` folder, including the hidden `.github` folder, which some file managers hide.
 3. Open the repository's **Actions** tab. The **Android build** workflow runs automatically, in two parts:
    - **build** runs the domain unit tests, builds the debug APK, and records its SHA-256 checksum. The download is the artifact **kar-notes-debug-apk**.
-   - **tablet** installs the APK on a Pixel Tablet emulator with Wi-Fi and data switched off and screenshots the app in light and dark mode. It also lists the permissions Android granted and runs the instrumented tests. The download is the artifact **tablet-screenshots**.
+   - **tablet** installs the APK on a Pixel Tablet emulator with Wi-Fi and data switched off. A scripted walkthrough (`tools/ci-ui-tour.sh`) then takes real screenshots: the welcome screen, the hidden OpenAI popup (10 logo taps), Home with notes, the library menu, the editor, dark mode and Settings. The job also lists the permissions Android granted and runs the instrumented tests. The download is the artifact **tablet-screenshots**, which includes `ui-tour.log`.
 4. To install on a tablet, copy the APK across, open it and allow "install unknown apps" for your file manager. Or use `adb install kar-notes-*.apk`.
 
 ## Build locally (Android Studio)
@@ -101,7 +103,7 @@ Full feature-by-feature audit against the specification: **[docs/FEATURE_COVERAG
 ## Verification status
 
 What has been verified so far:
-- **Domain module:** compiles, and all 143 unit tests pass (`tools/verify-domain.sh`).
+- **Domain module:** compiles, and all 149 unit tests pass (`tools/verify-domain.sh`).
 - **SQL:** all 91 Room queries run against real SQLite 3.45, including the search index and cascade behaviour (`tools/verify-sql.py`).
 - **Resources:** every string and resource reference resolves (`tools/check-resources.py`).
 

@@ -162,7 +162,7 @@ class ShareActivity : FragmentActivity() {
         setContent {
             val s by settingsRepo.settings.collectAsStateWithLifecycle(initialValue = null)
             val settings = s ?: return@setContent
-            MarginTheme(settings.theme, settings.dynamicColor) {
+            MarginTheme(settings.theme, settings.dynamicColor, settings.glossyStyle) {
                 val locked by lock.locked.collectAsStateWithLifecycle()
                 var authError by rememberSaveable { mutableStateOf<String?>(null) }
                 if (settings.lock.enabled && locked) {

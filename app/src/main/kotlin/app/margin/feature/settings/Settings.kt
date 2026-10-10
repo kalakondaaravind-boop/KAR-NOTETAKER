@@ -157,6 +157,7 @@ fun SettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel()) {
                 FilterChip(s.theme == m, { vm.update { it.copy(theme = m) } }, label = { Text(stringResource(l)) })
             }
         }
+        SwitchRow(stringResource(R.string.glossy_style), s.glossyStyle, stringResource(R.string.glossy_style_sub)) { v -> vm.update { it.copy(glossyStyle = v) } }
         SwitchRow(stringResource(R.string.dynamic_color), s.dynamicColor, stringResource(R.string.dynamic_color_sub)) { v -> vm.update { it.copy(dynamicColor = v) } }
         ListItem(headlineContent = { Text(stringResource(R.string.editor_text_size, (s.editorTextScale * 100).toInt())) }, supportingContent = {
             Slider(s.editorTextScale, { v -> vm.update { it.copy(editorTextScale = (Math.round(v * 20) / 20f)) } }, valueRange = 0.8f..2.0f, steps = 23)
@@ -279,6 +280,13 @@ fun PrivacySettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel(),
                 supportingContent = { Text(stringResource(R.string.openai_connected_sub)) },
                 trailingContent = { TextButton(onClick = vm::revokeCloud) { Text(stringResource(R.string.disconnect)) } })
         }
+        if (s.aiCloudRequests > 0 || s.aiKeyStored) {
+            // Transparency log: how much has actually been sent to OpenAI (counted only when a request left the tablet).
+            ListItem(headlineContent = { Text(stringResource(R.string.ai_sent_log, s.aiCloudRequests)) }, supportingContent = {
+                Text(s.aiCloudLastAt?.let { stringResource(R.string.ai_sent_last, java.time.format.DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.MEDIUM, java.time.format.FormatStyle.SHORT).withZone(java.time.ZoneId.systemDefault()).format(it)) }
+                    ?: stringResource(R.string.ai_sent_none))
+            })
+        }
         Header(stringResource(R.string.data_collection))
         Text(stringResource(R.string.no_telemetry), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.bodyMedium)
         Header(stringResource(R.string.danger_zone))
@@ -356,7 +364,8 @@ fun AiSettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel()) {
 }
 
 @Composable
-fun DataSettingsScreen(n: Navigator, vm: BackupViewModel = hiltViewModel()) {
+fun DataSettingsScreen(n: Navigator, vm: BackupViewModel = hiltViewModel(), sv: SettingsViewModel = hiltViewModel()) {
+    val s by sv.settings.collectAsStateWithLifecycle()
     var passDialog by rememberSaveable { mutableStateOf(false) }
     var backupPass by remember { mutableStateOf("") }
     var policy by rememberSaveable { mutableStateOf(DuplicatePolicy.SKIP) }
@@ -375,11 +384,22 @@ fun DataSettingsScreen(n: Navigator, vm: BackupViewModel = hiltViewModel()) {
         Header(stringResource(R.string.backup))
         LinkRow(stringResource(R.string.create_backup), stringResource(R.string.create_backup_sub)) { passDialog = true }
         LinkRow(stringResource(R.string.restore_backup), stringResource(R.string.restore_backup_sub)) { openBackup.launch(arrayOf("*/*")) }
+        ListItem(headlineContent = { Text(stringResource(R.string.last_backup)) }, supportingContent = {
+            Text(s.lastBackupAt?.let { java.time.format.DateTimeFormatter.ofLocalizedDateTime(java.time.format.FormatStyle.MEDIUM, java.time.format.FormatStyle.SHORT).withZone(java.time.ZoneId.systemDefault()).format(it) }
+                ?: stringResource(R.string.never))
+        })
+        Text(stringResource(R.string.backup_reminder), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.labelLarge)
+        FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            listOf(7, 14, 30, 0).forEach { d ->
+                FilterChip(s.backupReminderDays == d, { sv.update { it.copy(backupReminderDays = d) } },
+                    label = { Text(if (d == 0) stringResource(R.string.off) else stringResource(R.string.n_days, d)) })
+            }
+        }
         Header(stringResource(R.string.export))
-        LinkRow(stringResource(R.string.export_markdown), stringResource(R.string.export_markdown_sub)) { exportKind = ExportKind.MARKDOWN_ZIP; exportZip.launch("margin-markdown-$today.zip") }
-        LinkRow(stringResource(R.string.export_html), stringResource(R.string.export_html_sub)) { exportKind = ExportKind.HTML_ZIP; exportZip.launch("margin-html-$today.zip") }
-        LinkRow(stringResource(R.string.export_text), stringResource(R.string.export_text_sub)) { exportKind = ExportKind.TEXT_ZIP; exportZip.launch("margin-text-$today.zip") }
-        LinkRow(stringResource(R.string.export_json), stringResource(R.string.export_json_sub)) { exportJson.launch("margin-library-$today.json") }
+        LinkRow(stringResource(R.string.export_markdown), stringResource(R.string.export_markdown_sub)) { exportKind = ExportKind.MARKDOWN_ZIP; exportZip.launch("kar-notes-markdown-$today.zip") }
+        LinkRow(stringResource(R.string.export_html), stringResource(R.string.export_html_sub)) { exportKind = ExportKind.HTML_ZIP; exportZip.launch("kar-notes-html-$today.zip") }
+        LinkRow(stringResource(R.string.export_text), stringResource(R.string.export_text_sub)) { exportKind = ExportKind.TEXT_ZIP; exportZip.launch("kar-notes-text-$today.zip") }
+        LinkRow(stringResource(R.string.export_json), stringResource(R.string.export_json_sub)) { exportJson.launch("kar-notes-library-$today.json") }
         Header(stringResource(R.string.import_header))
         Text(stringResource(R.string.duplicates_policy), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.labelLarge)
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -405,7 +425,7 @@ fun DataSettingsScreen(n: Navigator, vm: BackupViewModel = hiltViewModel()) {
             confirmButton = {
                 TextButton(enabled = show.isEmpty() || show.length >= 8, onClick = {
                     backupPass = show; passDialog = false
-                    createBackup.launch("margin-backup-$today" + if (show.isEmpty()) ".marginbackup" else ".marginbackup.enc")
+                    createBackup.launch("kar-notes-backup-$today" + if (show.isEmpty()) ".marginbackup" else ".marginbackup.enc")
                 }) { Text(stringResource(R.string.continue_label)) }
             },
             dismissButton = { TextButton(onClick = { passDialog = false }) { Text(stringResource(R.string.cancel)) } })

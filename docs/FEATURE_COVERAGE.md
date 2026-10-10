@@ -6,7 +6,7 @@ Audited 10 Oct 2026 against the specification sections (§) the app was built fr
 
 | Status | Meaning |
 |---|---|
-| **VERIFIED** | The logic lives in `core/domain` (or is SQL) and is covered by passing automated tests: 143 JVM tests, plus 91 SQL statements run against SQLite. |
+| **VERIFIED** | The logic lives in `core/domain` (or is SQL) and is covered by passing automated tests: 149 JVM tests, plus 91 SQL statements run against SQLite. |
 | **IMPLEMENTED** | UI and wiring exist in the Android modules but haven't been compiled or run yet. The first GitHub Actions build is the first compile. |
 | **PARTIAL** | Part of the requirement is present. The gap is stated. |
 | **DEFERRED** | Not built. Planned for later. |
@@ -48,13 +48,17 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Onboarding: storage, AI choice, backup explanation, skip | IMPLEMENTED | `feature/onboarding` |
 | Optional app lock during setup | PARTIAL | Lives in Settings → Privacy, not in onboarding |
 | Light/dark themes, Sky & Pastel Blue, contrast ≥ 4.5:1, dynamic colour toggle | IMPLEMENTED | `ui/theme/Theme.kt` |
-| KAR Group logo and "Note taker" tagline | IMPLEMENTED | `ui/components/Brand.kt` |
+| KAR Group logo and "Note taker" tagline (glossy) | IMPLEMENTED | `ui/components/Brand.kt`, `res/drawable/kar_logo_mark.xml` |
+| 3D glossy design layer with a flat fallback (Settings → Appearance) | IMPLEMENTED (contrast VERIFIED by calculation) | `ui/theme/Gloss.kt`, `docs/DESIGN.md` |
 
 ### §7 Home
 | Item | Status |
 |---|---|
 | Quick capture, pinned, recent, favorites, upcoming tasks, folders, recent templates | IMPLEMENTED |
 | Show, hide and reorder sections | IMPLEMENTED (Settings → Home screen) |
+| Quick actions: new note, checklist, meeting notes, daily journal, Ask my notes, templates | IMPLEMENTED |
+| Complete tasks from Home, with Undo | IMPLEMENTED |
+| Backup reminder (3+ notes, no backup in 7/14/30 days, snooze, off) | VERIFIED rule (`BackupHealth`), IMPLEMENTED banner |
 | Contextual suggestions | DEFERRED |
 
 ### §8 Notes and editor
@@ -127,6 +131,7 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Preview before insert; insert, replace, copy or discard; generated-text label; source citations; "not enough evidence" | VERIFIED parsing, IMPLEMENTED UI |
 | Prompt-injection separation; AI can't delete or export | VERIFIED |
 | Per-note "exclude from AI", archived and trashed notes excluded | VERIFIED |
+| Log of requests sent to OpenAI, with the last-sent time (Settings → Privacy) | VERIFIED rule (`AiAudit`), IMPLEMENTED UI |
 | Usage and cost display | DEFERRED |
 
 ### §15–16 Data

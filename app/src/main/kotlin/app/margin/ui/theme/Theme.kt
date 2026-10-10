@@ -119,7 +119,7 @@ fun editorTextStyle(base: TextStyle, scale: Float, monospace: Boolean): TextStyl
 )
 
 @Composable
-fun MarginTheme(mode: ThemeMode = ThemeMode.SYSTEM, dynamicColor: Boolean = false, content: @Composable () -> Unit) {
+fun MarginTheme(mode: ThemeMode = ThemeMode.SYSTEM, dynamicColor: Boolean = false, glossy: Boolean = true, content: @Composable () -> Unit) {
     val dark = when (mode) { ThemeMode.SYSTEM -> isSystemInDarkTheme(); ThemeMode.DARK -> true; ThemeMode.LIGHT -> false }
     val context = LocalContext.current
     val colors: ColorScheme = when {
@@ -132,7 +132,7 @@ fun MarginTheme(mode: ThemeMode = ThemeMode.SYSTEM, dynamicColor: Boolean = fals
     } else {
         SemanticColors(Color(0xFFBFE0FF), Ink, Color(0xFF2E6B3F), Color(0xFF8A5A12), Periwinkle, Color(0xFFE6F0F9), colors.primary)
     }
-    androidx.compose.runtime.CompositionLocalProvider(LocalSemanticColors provides semantic, LocalSpacing provides Spacing()) {
+    androidx.compose.runtime.CompositionLocalProvider(LocalSemanticColors provides semantic, LocalSpacing provides Spacing(), LocalGloss provides Gloss(enabled = glossy, dark = dark)) {
         MaterialTheme(colorScheme = colors, typography = AppTypography, shapes = AppShapes, content = content)
     }
 }

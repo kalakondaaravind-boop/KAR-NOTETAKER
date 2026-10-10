@@ -16,13 +16,13 @@ body{font-family:Inter,Roboto,sans-serif;background:#0b0f14;}
 .device{width:1280px;height:800px;background:var(--bg);color:var(--on);position:relative;overflow:hidden;display:flex;flex-direction:column}
 .status{height:28px;display:flex;align-items:center;justify-content:space-between;padding:0 20px;font-size:13px;font-weight:500;color:var(--on)}
 .main{flex:1;display:flex;min-height:0}
-.rail{width:80px;display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:12px;background:var(--bg)}
+.rail{width:80px;display:flex;flex-direction:column;align-items:center;padding-top:16px;gap:12px;background:var(--bar)}
 .ri{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:12px;font-weight:500;color:var(--onV)}
 .ri .pill{width:56px;height:32px;border-radius:16px;display:flex;align-items:center;justify-content:center}
 .ri.sel .pill{background:var(--sc)}.ri.sel{color:var(--on)}
 svg.i{width:24px;height:24px;fill:currentColor;flex:none}
 .content{flex:1;display:flex;flex-direction:column;min-width:0;position:relative}
-.topbar{height:80px;display:flex;align-items:center;padding:0 4px 0 4px;gap:4px}
+.topbar{background:var(--bar);height:80px;display:flex;align-items:center;padding:0 4px 0 4px;gap:4px}
 .ib{width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:var(--onV);border-radius:24px}
 .title{flex:1;padding-left:4px}
 .lockup{display:inline-flex;flex-direction:column;gap:2px}
@@ -32,7 +32,7 @@ svg.i{width:24px;height:24px;fill:currentColor;flex:none}
 .scroll{flex:1;overflow:hidden;display:flex;justify-content:center}
 .col{width:720px;max-width:100%}
 .capture{display:flex;align-items:center;gap:4px;padding:8px 16px}
-.field{flex:1;height:56px;border:1px solid var(--outline);border-radius:6px;display:flex;align-items:center;padding:0 16px;color:var(--onV);font-size:16px}
+.field{background:var(--bg);flex:1;height:56px;border:1px solid var(--outline);border-radius:6px;display:flex;align-items:center;padding:0 16px;color:var(--onV);font-size:16px}
 .sh{display:flex;align-items:center;justify-content:space-between;padding:16px 16px 4px 16px}
 .sh h3{margin:0;font-size:14px;font-weight:600;color:var(--primary);letter-spacing:.01em}
 .tb{color:var(--primary);font-weight:600;font-size:14px;padding:10px 12px}
@@ -49,7 +49,7 @@ svg.i{width:24px;height:24px;fill:currentColor;flex:none}
 .cb{width:18px;height:18px;border:2px solid var(--onV);border-radius:3px}
 .due{font-size:12px;color:var(--primary);font-weight:600}.over{color:#B3261E}
 .dark .over{color:#F2B8B5}
-.fab{position:absolute;right:24px;bottom:24px;height:56px;border-radius:16px;background:var(--pc);color:var(--onPc);display:flex;align-items:center;gap:12px;padding:0 20px 0 16px;font-weight:600;font-size:14px;box-shadow:0 3px 8px rgba(0,0,0,.18)}
+.fab{position:absolute;right:24px;bottom:24px;height:56px;border-radius:16px;display:flex;align-items:center;gap:12px;padding:0 20px 0 16px;font-weight:600;font-size:14px;box-shadow:0 3px 8px rgba(0,0,0,.18)}
 .fab svg{fill:var(--onPc)}
 .navbar{height:24px}
 /* drawer */
@@ -63,7 +63,7 @@ svg.i{width:24px;height:24px;fill:currentColor;flex:none}
 .onbc{width:560px;padding:24px;display:flex;flex-direction:column;gap:16px}
 .prog{height:4px;border-radius:2px;background:var(--sv);overflow:hidden}.prog i{display:block;height:100%;width:25%;background:var(--primary)}
 .btn{height:40px;border-radius:20px;padding:0 24px;display:inline-flex;align-items:center;font-weight:600;font-size:14px}
-.filled{background:var(--primary);color:var(--onPrimary)}.text{color:var(--primary)}
+.filled{}.text{color:var(--primary)}
 /* editor */
 .eb{padding:8px 24px;font-size:16px;line-height:26px}
 .toolbar{display:flex;gap:2px;padding:6px 8px;background:var(--c);border-radius:28px;margin:0 16px 16px;align-self:center}
@@ -71,10 +71,35 @@ svg.i{width:24px;height:24px;fill:currentColor;flex:none}
 .etb{display:flex;gap:0;padding:4px 4px 0;background:var(--c);height:56px;align-items:center}.etb span{filter:grayscale(1) opacity(.8);width:48px;height:48px;display:flex;align-items:center;justify-content:center;color:var(--onV);font-size:17px;font-weight:600}
 .saved{font-size:12px;color:var(--onV);display:flex;align-items:center;gap:4px;padding-right:8px}
 .badge{position:absolute;left:50%;top:6px;transform:translateX(-50%);background:rgba(19,33,46,.78);color:#fff;font:600 11px Inter,sans-serif;letter-spacing:.06em;padding:4px 10px;border-radius:10px;z-index:9}
-</style></head>
+
+/* ---- 3D glossy layer (mirrors ui/theme/Gloss.kt) ---- */
+:root{--gTopP:#2C74A9;--gBotP:#195685;--gSheenP:.18;--gTopPa:#DDF0FD;--gBotPa:#B9DCF5;--gSheenPa:.45;--gTopC:#fff;--gBotC:#EAF3FB;--gSheenC:.6;--gShadow:42,118,173;--gEdgeL:rgba(255,255,255,.85);--gEdgeD:rgba(113,156,192,.28);--onGP:#fff;--onGPa:#0A2A42;--bar:linear-gradient(var(--bg),rgba(205,231,250,.45))}
+.dark{--gTopP:#AEDAFA;--gBotP:#85C2EF;--gSheenP:.18;--gTopPa:#285D84;--gBotPa:#174264;--gSheenPa:.12;--gTopC:#22303D;--gBotC:#17232E;--gSheenC:.06;--gShadow:0,0,0;--gEdgeL:rgba(205,231,250,.2);--gEdgeD:rgba(0,0,0,.4);--onGP:#00344F;--onGPa:#CDE7FA;--bar:linear-gradient(var(--bg),rgba(29,78,114,.45))}
+.gl{position:relative;overflow:hidden;border:1px solid transparent;background-clip:padding-box}
+.gl::before{content:"";position:absolute;left:0;right:0;top:0;height:45%;pointer-events:none;z-index:0}
+.gl>*{position:relative;z-index:1}
+.gP{background:linear-gradient(var(--gTopP),var(--gBotP));color:var(--onGP);box-shadow:0 3px 6px rgba(var(--gShadow),.35),inset 0 1px 0 var(--gEdgeL),inset 0 -1px 0 var(--gEdgeD)}
+.gP::before{background:linear-gradient(rgba(255,255,255,var(--gSheenP)),rgba(255,255,255,0))}
+.gPa{background:linear-gradient(var(--gTopPa),var(--gBotPa));color:var(--onGPa);box-shadow:0 4px 10px rgba(var(--gShadow),.28),inset 0 1px 0 var(--gEdgeL),inset 0 -1px 0 var(--gEdgeD)}
+.gPa::before{background:linear-gradient(rgba(255,255,255,var(--gSheenPa)),rgba(255,255,255,0))}
+.gC{background:linear-gradient(var(--gTopC),var(--gBotC));box-shadow:0 2px 6px rgba(var(--gShadow),.16),0 1px 2px rgba(var(--gShadow),.12),inset 0 1px 0 var(--gEdgeL),inset 0 -1px 0 var(--gEdgeD)}
+.gC::before{background:linear-gradient(rgba(255,255,255,var(--gSheenC)),rgba(255,255,255,0))}
+.panel{border-radius:20px;margin:8px 16px}
+.panel .note+.note,.panel .task+.task{border-top:1px solid color-mix(in srgb,var(--outlineV) 60%,transparent);margin:0 16px;padding-left:0;padding-right:0}
+.tiles{display:flex;flex-wrap:wrap;gap:12px;padding:4px 16px 16px}
+.tile{width:96px;border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:600;text-align:center}
+.qbadge{width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center}
+.qbadge svg{width:22px;height:22px;fill:currentColor}
+.fab.gl{position:absolute}
+.banner{border-radius:20px;margin:8px 16px;padding:12px 16px;display:flex;align-items:center;gap:12px}
+.scrim{z-index:20}.drawer,.dlg{z-index:21}</style></head>
 <body><div id="app"></div>
 <script>
-const P={menu:"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
+const P={backup:"M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z",
+checklist:"M22 7h-9v2h9V7zm0 8h-9v2h9v-2zM5.54 11L2 7.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41L5.54 11zm0 8L2 15.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41L5.54 19z",
+groups:"M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z",
+today:"M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z",
+menu:"M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z",
 search:"M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z",
 settings:"M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.43.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.05.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z",
 home:"M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z",
@@ -99,7 +124,7 @@ more:"M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2
 spark:"M19 9l1.25-2.75L23 5l-2.75-1.25L19 1l-1.25 2.75L15 5l2.75 1.25L19 9zm-7.5.5L9 4 6.5 9.5 1 12l5.5 2.5L9 20l2.5-5.5L17 12l-5.5-2.5z",
 hub:"M12 2a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM5 16a3 3 0 1 0 0 6 3 3 0 0 0 0-6zm14 0a3 3 0 1 0 0 6 3 3 0 0 0 0-6zM11 8.8V11l-4.6 4.2 1.4 1.4L12 13l4.2 3.6 1.4-1.4L13 11V8.8z"};
 const ic=(n,s)=>`<svg class="i" viewBox="0 0 24 24"${s?` style="width:${s}px;height:${s}px"`:""}><path d="${P[n]}"/></svg>`;
-const mark=s=>`<svg viewBox="0 0 48 48" width="${s}" height="${s}"><path fill="#2A76AD" d="M12,0 H34 L48,14 V36 A12,12 0 0 1 36,48 H12 A12,12 0 0 1 0,36 V12 A12,12 0 0 1 12,0 Z"/><path fill="#CDE7FA" d="M34,0 V10 A4,4 0 0 0 38,14 H48 Z"/><path fill="#fff" d="M13,12 H19 V22.2 L28.4,12 H36 L24.6,24 L36,36 H28.2 L19,27.4 V36 H13 Z"/></svg>`;
+let _mk=0;const mark=s=>{const i=++_mk;const K="M13,12 H19 V22.2 L28.4,12 H36 L24.6,24 L36,36 H28.2 L19,27.4 V36 H13 Z";return `<svg viewBox="0 0 48 48" width="${s}" height="${s}" style="filter:drop-shadow(0 ${s/24}px ${s/16}px rgba(27,79,122,.35))"><defs><linearGradient id="b${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4D9AD2"/><stop offset=".55" stop-color="#2A76AD"/><stop offset="1" stop-color="#185583"/></linearGradient><linearGradient id="s${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".45"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><linearGradient id="f${i}" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#EAF6FE"/><stop offset="1" stop-color="#B3D9F3"/></linearGradient><linearGradient id="k${i}" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#E1EFFA"/></linearGradient></defs><path fill="url(#b${i})" d="M12,0 H34 L48,14 V36 A12,12 0 0 1 36,48 H12 A12,12 0 0 1 0,36 V12 A12,12 0 0 1 12,0 Z"/><path fill="url(#s${i})" d="M12,1 H33.6 L44.5,11.9 C38,18.5 22,21.5 1,21 V12 A11,11 0 0 1 12,1 Z"/><path fill="url(#f${i})" d="M34,0 V10 A4,4 0 0 0 38,14 H48 Z"/><path fill="#082F4D" fill-opacity=".25" transform="translate(.7 1.1)" d="${K}"/><path fill="url(#k${i})" d="${K}"/></svg>`};
 // Mirrors BrandLockup(markSize, centered)
 const lockup=(m,centered)=>`<div class="lockup" style="${centered?'align-items:center;display:flex;':''}gap:${m*.08}px"><div class="row">${mark(m)}<span style="width:${m*.25}px"></span><span style="font-size:${m*.6}px"><span class="k">KAR</span> <span class="g">GROUP</span></span></div><div class="tag" style="font-size:${Math.max(12,m*.32)}px;${centered?'':`padding-left:${m*1.25}px`}">Note taker</div></div>`;
 const q=new URLSearchParams(location.search), screen=q.get("screen")||"home", theme=q.get("theme")||"light";
@@ -109,18 +134,20 @@ const note=(t,s,m,o={})=>`<div class="note"><div class="t">${t}${o.pin?`<svg vie
 const home=()=>`
 <div class="topbar"><div class="ib">${ic("menu")}</div><div class="title">${lockup(30)}</div><div class="ib">${ic("search")}</div><div class="ib">${ic("settings")}</div></div>
 <div class="scroll"><div class="col">
- <div class="capture"><div class="field">Capture a thought…</div><div class="ib" style="opacity:.38">${ic("send")}</div></div>
- <div class="sh"><h3>Pinned</h3><span class="tb">See all</span></div>
+ <div class="banner gl gPa"><span style="display:flex">${ic("backup")}</span><div style="flex:1"><div style="font-weight:600;font-size:14px">Back up your notes</div><div style="font-size:12px;opacity:.9">Your notes exist only on this tablet. Save a backup file in case it is lost or damaged.</div></div><span class="btn text">Later</span><span class="btn filled gl gP">Back up now</span></div>
+ <div class="panel gl gC"><div class="capture" style="padding:16px 8px 8px 16px"><div class="field">Capture a thought…</div><div class="ib" style="opacity:.38">${ic("send")}</div></div>
+  <div class="tiles"><div class="tile gl gPa"><div class="qbadge gl gP">${ic("notes")}</div><span>New note</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("checklist")}</div><span>New checklist</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("groups")}</div><span>Meeting notes</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("today")}</div><span>Daily journal</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("spark")}</div><span>Ask my notes</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("dash")}</div><span>Templates</span></div></div></div>
+ <div class="panel gl gC"><div class="sh"><h3>Pinned</h3><span class="tb">See all</span></div>
  ${note("Q4 planning workshop","Agenda, owners and the three decisions we need by Friday…",`Today 09:12 <span class="tag2">planning</span>`,{pin:1})}
- ${note("Supplier comparison","Lead times, MOQ and payment terms for the three shortlisted vendors…",`Yesterday <span class="tag2">procurement</span>`,{pin:1,fav:1})}
- <div class="sh"><h3>Recent</h3><span class="tb">See all</span></div>
- ${note("Site visit — branch office","Checklist: fire exits ✓, server room temperature, signage…","8 Oct · Operations")}
- ${note("Weekly review","Wins: closed two vendor contracts. Next: hiring plan draft…","6 Oct · Journal")}
- <div class="sh"><h3>Upcoming tasks</h3><span class="tb">See all</span></div>
+ ${note("Supplier comparison","Lead times, MOQ and payment terms for the three shortlisted vendors…",`Yesterday <span class="tag2">procurement</span>`,{pin:1,fav:1})}<div style="height:4px"></div></div>
+ <div class="panel gl gC"><div class="sh"><h3>Upcoming tasks</h3><span class="tb">See all</span></div>
  <div class="task"><div class="cb"></div><div style="flex:1;font-size:15px">Send revised budget to finance</div><span class="due over">Overdue · 9 Oct</span></div>
- <div class="task"><div class="cb"></div><div style="flex:1;font-size:15px">Book venue for the planning workshop</div><span class="due">Today 17:00</span></div>
+ <div class="task"><div class="cb"></div><div style="flex:1;font-size:15px">Book venue for the planning workshop</div><span class="due">Today 17:00</span></div><div style="height:4px"></div></div>
+ <div class="panel gl gC"><div class="sh"><h3>Recent</h3><span class="tb">See all</span></div>
+ ${note("Site visit — branch office","Checklist: fire exits ✓, server room temperature, signage…","8 Oct · Operations")}
+ ${note("Weekly review","Wins: closed two vendor contracts. Next: hiring plan draft…","6 Oct · Journal")}</div>
 </div></div>
-<div class="fab">${ic("add")}New note</div>`;
+<div class="fab gl gPa">${ic("add")}New note</div>`;
 const md=t=>`<span style="color:var(--outline)">${t}</span>`;
 const editor=()=>`
 <div class="topbar"><div class="ib">${ic("back")}</div><div class="title"><span class="saved" style="font-size:14px">${ic("check",18)}Saved</span></div><div class="ib">${ic("undo")}</div><div class="ib" style="opacity:.38">${ic("redo")}</div><div class="ib">${ic("eye")}</div><div class="ib">${ic("more")}</div></div>
@@ -150,14 +177,14 @@ const aikey=()=>home()+`<div class="scrim"></div><div class="dlg" style="positio
  <div style="position:relative;border:2px solid var(--primary);border-radius:6px;height:56px;display:flex;align-items:center;padding:0 16px;font-size:16px;letter-spacing:3px">••••••••••••••••••••••••<span style="position:absolute;top:-9px;left:12px;background:var(--cHigh);padding:0 4px;font-size:12px;letter-spacing:0;color:var(--primary)">OpenAI API key</span></div>
  <div><div style="position:relative;border:1px solid var(--outline);border-radius:6px;height:56px;display:flex;align-items:center;padding:0 16px;font-size:16px">gpt-5.4-mini<span style="position:absolute;top:-9px;left:12px;background:var(--cHigh);padding:0 4px;font-size:12px;color:var(--onV)">Model name</span></div>
  <div style="font-size:12px;color:var(--onV);padding:4px 16px 0">Default: gpt-5.4-mini. You can enter any model your key can use.</div></div>
- <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px"><span class="btn text">Cancel</span><span class="btn filled">Save and turn on</span></div>
+ <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px"><span class="btn text">Cancel</span><span class="btn filled gl gP">Save and turn on</span></div>
 </div>`;
 const onb=()=>`<div class="onb"><div class="onbc">
  <div class="prog"><i></i></div>
  <div style="padding:24px 0;display:flex;justify-content:center">${lockup(64,true)}</div>
  <div style="font-size:24px;font-weight:600">Welcome to KAR Notes</div>
  <div style="font-size:16px;line-height:26px">A calm place to capture anything, write naturally, organise with notebooks and tags, and find things instantly. Notes are written in Markdown, so they stay portable.</div>
- <div style="display:flex;align-items:center;margin-top:8px"><span style="flex:1"></span><span class="btn text">Skip</span><span class="btn filled">Next</span></div>
+ <div style="display:flex;align-items:center;margin-top:8px"><span style="flex:1"></span><span class="btn text">Skip</span><span class="btn filled gl gP">Next</span></div>
 </div></div>`;
 const isRail=screen==="home"||screen==="drawer"||screen==="aikey";
 document.getElementById("app").innerHTML=`<div class="device ${theme}">${status}<div class="main">${isRail&&screen!=="drawer"?rail:""}<div class="content">${({home,editor,drawer,aikey,onboarding:onb})[screen]()}</div></div><div class="navbar"></div></div>`;

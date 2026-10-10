@@ -94,6 +94,9 @@
     <string name="ai_rewrite">Rewrite</string>
     <string name="ai_scope_note">Acts on the whole note.</string>
     <string name="ai_scope_selection">Acts on the selected text.</string>
+    <string name="ai_sent_last">Last sent %1$s</string>
+    <string name="ai_sent_log">Requests sent to OpenAI: %1$d</string>
+    <string name="ai_sent_none">Nothing has been sent yet</string>
     <string name="ai_settings">AI</string>
     <string name="ai_summarize">Summarize</string>
     <string name="ai_summarize_detailed">Detailed summary</string>
@@ -136,12 +139,17 @@
     <string name="back">Back</string>
     <string name="backlinks">Linked from</string>
     <string name="backup">Backup</string>
+    <string name="backup_banner_never">Your notes exist only on this tablet. Save a backup file in case it is lost or damaged.</string>
+    <string name="backup_banner_overdue">Last backup: %1$s. Save a fresh copy to keep recent notes safe.</string>
+    <string name="backup_banner_title">Back up your notes</string>
     <string name="backup_created_at">Created %1$s</string>
     <string name="backup_done">Backup created and verified</string>
     <string name="backup_explainer">A backup file contains all notes, folders, tags, tasks, templates, version history and attachments. It is saved where you choose on this tablet (for example Downloads, an SD card or a USB drive). KAR Notes never uploads it. Indexes and caches are rebuilt after restore.</string>
     <string name="backup_failed">Backup failed</string>
     <string name="backup_missing_attachments">%1$d attachment(s) were missing when this backup was made.</string>
+    <string name="backup_now">Back up now</string>
     <string name="backup_passphrase_explainer">Optional: protect the backup with a passphrase (AES-256). Without it the backup cannot be restored by anyone, including you. Leave empty for an unencrypted backup.</string>
+    <string name="backup_reminder">Remind me on Home if no backup for</string>
     <string name="backup_verified">Backup verified</string>
     <string name="backup_working">Creating backup</string>
     <string name="body_placeholder">Start writing. Markdown works: # heading, - list, - [ ] task, **bold**.</string>
@@ -303,6 +311,8 @@
     <string name="ft_time">Time</string>
     <string name="ft_url">Web address</string>
     <string name="get_started">Get started</string>
+    <string name="glossy_style">3D glossy style</string>
+    <string name="glossy_style_sub">Raised, glossy panels and buttons. Turn off for a flat look.</string>
     <string name="has_attachments">Has attachments</string>
     <string name="has_reminder">Has reminder</string>
     <string name="hide_archived">Hide archived</string>
@@ -338,6 +348,8 @@
     <string name="keep_forever">Never</string>
     <string name="keep_revisions">Keep</string>
     <string name="knowledge">Connections</string>
+    <string name="last_backup">Last successful backup</string>
+    <string name="later">Later</string>
     <string name="link_label_optional">Link text (optional)</string>
     <string name="link_to_note">…or link to a note by title</string>
     <string name="link_to_note_hint">Creates a [[note link]]. Missing notes can be created by tapping the link.</string>
@@ -382,6 +394,7 @@
     <string name="nav_notes">Notes</string>
     <string name="nav_search">Search</string>
     <string name="nav_tasks">Tasks</string>
+    <string name="never">Never</string>
     <string name="new_note">New note</string>
     <string name="new_notebook">New notebook</string>
     <string name="new_subfolder">New subfolder</string>
@@ -415,6 +428,7 @@
     <string name="ocr_done">Text found in the image is now searchable.</string>
     <string name="ocr_failed">Couldn\'t read text from the image. The image is still attached.</string>
     <string name="ocr_text_available">Contains searchable text</string>
+    <string name="off">Off</string>
     <string name="ok">OK</string>
     <string name="on_device_only">On this device</string>
     <string name="onb_ai_body">KAR Notes works completely without AI. If you like, a basic on-device assistant can summarise and pull out action items. Nothing leaves your device in that mode.</string>
@@ -464,6 +478,8 @@
     <string name="privacy_security">Privacy &amp; security</string>
     <string name="privacy_security_sub">App lock, notifications, data deletion</string>
     <string name="privacy_statement">Your notes are stored only on this tablet, in the app\'s private storage, protected by Android\'s device encryption. KAR Notes has no account, no online storage, no sync, no analytics and no crash reporting, and Android cloud backup is switched off for its data. The only network use is optional AI: if you connect your own OpenAI key, the text of an AI action you run is sent to OpenAI to process.</string>
+    <string name="qa_journal">Daily journal</string>
+    <string name="qa_meeting">Meeting notes</string>
     <string name="quick_capture">Quick capture</string>
     <string name="quick_capture_hint">Capture a thought…</string>
     <string name="quick_capture_notification">Quick-capture notification</string>
@@ -622,6 +638,7 @@
     <string name="tags_empty_body">Add tags from a note\'s menu. Use slashes for hierarchy, like work/clients.</string>
     <string name="tags_empty_title">No tags yet</string>
     <string name="take_photo">Take photo</string>
+    <string name="task_completed">Task completed</string>
     <string name="task_notes">Details</string>
     <string name="task_title">Task</string>
     <string name="tasks_completed">Done</string>

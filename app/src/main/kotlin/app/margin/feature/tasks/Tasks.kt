@@ -66,6 +66,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.ListItemDefaults
+import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
@@ -161,7 +164,7 @@ class TasksViewModel @Inject constructor(
 }
 
 @Composable
-fun TaskRow(t: TaskItem, onToggle: () -> Unit, onClick: () -> Unit, now: Instant = Instant.now()) {
+fun TaskRow(t: TaskItem, onToggle: () -> Unit, onClick: () -> Unit, now: Instant = Instant.now(), containerColor: Color = Color.Unspecified) {
     val zone = ZoneId.systemDefault()
     val bucket = TaskRules.bucket(t, now, zone)
     val due = t.dueDate?.let { d ->
@@ -180,6 +183,7 @@ fun TaskRow(t: TaskItem, onToggle: () -> Unit, onClick: () -> Unit, now: Instant
         },
         leadingContent = { Checkbox(checked = t.isCompleted, onCheckedChange = { onToggle() }) },
         modifier = Modifier.clickable(role = Role.Button, onClick = onClick),
+        colors = if (containerColor.isSpecified) ListItemDefaults.colors(containerColor = containerColor) else ListItemDefaults.colors(),
     )
 }
 

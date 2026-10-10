@@ -3,8 +3,6 @@
 <resources>
     <color name="window_background">#FFF4F9FE</color>
     <color name="brand">#FF2A76AD</color>
-    <color name="brand_pastel">#FFCDE7FA</color>
-    <color name="icon_foreground">#FFFFFFFF</color>
     <color name="widget_background">#F2E8F1FA</color>
     <color name="widget_text">#FF13212E</color>
 </resources>

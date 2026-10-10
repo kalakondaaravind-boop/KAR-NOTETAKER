@@ -39,6 +39,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -136,6 +138,8 @@ fun NoteRow(
     titleHighlight: Highlight? = null,
     snippet: Highlight? = null,
     folderName: String? = null,
+    /** Row background; pass Color.Transparent inside a glossy panel. Defaults to the surface colour. */
+    containerColor: Color = Color.Unspecified,
 ) {
     val sp = LocalSpacing.current
     val untitled = stringResource(R.string.untitled)
@@ -144,7 +148,7 @@ fun NoteRow(
     val selectedLabel = stringResource(R.string.selected)
     val notSelectedLabel = stringResource(R.string.not_selected)
     Surface(
-        color = if (selected) MaterialTheme.colorScheme.secondaryContainer else MaterialTheme.colorScheme.surface,
+        color = if (selected) MaterialTheme.colorScheme.secondaryContainer else containerColor.takeOrElse { MaterialTheme.colorScheme.surface },
         modifier = modifier
             .fillMaxWidth()
             .combinedClickable(onClick = onClick, onLongClick = onLongClick, role = Role.Button,

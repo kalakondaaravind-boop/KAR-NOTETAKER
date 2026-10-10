@@ -9,7 +9,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
@@ -44,6 +43,7 @@ import app.margin.domain.ai.looksLikeOpenAiKey
 import app.margin.domain.settings.SecretStore
 import app.margin.domain.settings.SettingsRepository
 import app.margin.ui.components.BrandLockup
+import app.margin.ui.theme.GlossyButton
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -142,7 +142,7 @@ private fun AiKeyDialog(onDismiss: () -> Unit, vm: AiKeyViewModel = hiltViewMode
             }
         },
         confirmButton = {
-            Button(enabled = keyOk && (s.keyStored || key.isNotBlank()) && model.isNotBlank(),
+            GlossyButton(enabled = keyOk && (s.keyStored || key.isNotBlank()) && model.isNotBlank(),
                 onClick = { vm.save(key, model) { key = ""; onDismiss() } }) { Text(stringResource(R.string.ai_key_save)) }
         },
         dismissButton = { TextButton(onClick = onDismiss) { Text(stringResource(R.string.cancel)) } },

@@ -2,6 +2,7 @@
 
 package app.margin.ui.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -156,7 +157,10 @@ fun AppShell(startDestination: String, settings: AppSettings, navigationRequests
         ) { padding ->
             Row(Modifier.fillMaxSize().padding(bottom = padding.calculateBottomPadding())) {
                 if (wide && isTopLevel(currentRoute)) {
-                    NavigationRail {
+                    NavigationRail(
+                        modifier = Modifier.background(app.margin.ui.theme.glossyBarBrush()),
+                        containerColor = androidx.compose.ui.graphics.Color.Transparent,
+                    ) {
                         Spacer(Modifier.height(16.dp))
                         topLevel.forEach { t ->
                             NavigationRailItem(

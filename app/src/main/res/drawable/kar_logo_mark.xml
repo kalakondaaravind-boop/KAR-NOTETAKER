@@ -1,13 +1,46 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- KAR Group mark: sky-blue page with a pastel folded corner and a white "K". Source: docs/brand/kar-group-mark.svg -->
+<!-- KAR Group mark, glossy: gradient body, specular sheen, pastel fold, white "K" with a soft drop shadow.
+     Source: docs/brand/kar-group-mark.svg -->
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="48dp"
     android:height="48dp"
     android:viewportWidth="48"
     android:viewportHeight="48">
-    <path android:fillColor="#FF2A76AD"
-        android:pathData="M12,0 H34 L48,14 V36 A12,12 0 0 1 36,48 H12 A12,12 0 0 1 0,36 V12 A12,12 0 0 1 12,0 Z" />
-    <path android:fillColor="#FFCDE7FA" android:pathData="M34,0 V10 A4,4 0 0 0 38,14 H48 Z" />
-    <path android:fillColor="#FFFFFFFF"
-        android:pathData="M13,12 H19 V22.2 L28.4,12 H36 L24.6,24 L36,36 H28.2 L19,27.4 V36 H13 Z" />
+    <path android:pathData="M12,0 H34 L48,14 V36 A12,12 0 0 1 36,48 H12 A12,12 0 0 1 0,36 V12 A12,12 0 0 1 12,0 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="0" android:endX="0" android:endY="48">
+                <item android:offset="0" android:color="#FF4D9AD2" />
+                <item android:offset="0.55" android:color="#FF2A76AD" />
+                <item android:offset="1" android:color="#FF185583" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M12,1 H33.6 L44.5,11.9 C38,18.5 22,21.5 1,21 V12 A11,11 0 0 1 12,1 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="1" android:endX="0" android:endY="21">
+                <item android:offset="0" android:color="#73FFFFFF" />
+                <item android:offset="1" android:color="#00FFFFFF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <path android:pathData="M34,0 V10 A4,4 0 0 0 38,14 H48 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="34" android:startY="14" android:endX="48" android:endY="0">
+                <item android:offset="0" android:color="#FFEAF6FE" />
+                <item android:offset="1" android:color="#FFB3D9F3" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <group android:translateX="0.7" android:translateY="1.1">
+        <path android:fillColor="#40082F4D" android:pathData="M13,12 H19 V22.2 L28.4,12 H36 L24.6,24 L36,36 H28.2 L19,27.4 V36 H13 Z" />
+    </group>
+    <path android:pathData="M13,12 H19 V22.2 L28.4,12 H36 L24.6,24 L36,36 H28.2 L19,27.4 V36 H13 Z">
+        <aapt:attr name="android:fillColor">
+            <gradient android:type="linear" android:startX="0" android:startY="12" android:endX="0" android:endY="36">
+                <item android:offset="0" android:color="#FFFFFFFF" />
+                <item android:offset="1" android:color="#FFE1EFFA" />
+            </gradient>
+        </aapt:attr>
+    </path>
 </vector>

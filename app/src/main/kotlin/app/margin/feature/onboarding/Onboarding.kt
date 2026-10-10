@@ -17,7 +17,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Backup
 import androidx.compose.material.icons.outlined.PhoneAndroid
-import androidx.compose.material3.Button
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LinearProgressIndicator
@@ -42,6 +41,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.margin.R
+import app.margin.ui.theme.GlossyButton
 import app.margin.feature.ai.BrandLockupWithAiUnlock
 import app.margin.domain.ai.ProviderType
 import app.margin.domain.settings.SettingsRepository
@@ -91,9 +91,9 @@ fun OnboardingScreen(onFinished: () -> Unit, vm: OnboardingViewModel = hiltViewM
                 Spacer(Modifier.weight(1f))
                 if (page < pages - 1) {
                     TextButton(onClick = { vm.finish(false, onFinished) }) { Text(stringResource(R.string.skip)) }
-                    Button(onClick = { page++ }) { Text(stringResource(R.string.next)) }
+                    GlossyButton(onClick = { page++ }) { Text(stringResource(R.string.next)) }
                 } else {
-                    Button(onClick = { vm.finish(localAi, onFinished) }) { Text(stringResource(R.string.get_started)) }
+                    GlossyButton(onClick = { vm.finish(localAi, onFinished) }) { Text(stringResource(R.string.get_started)) }
                 }
             }
         }

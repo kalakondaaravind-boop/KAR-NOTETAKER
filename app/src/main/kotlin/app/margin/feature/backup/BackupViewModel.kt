@@ -68,6 +68,7 @@ class BackupViewModel @Inject constructor(
     private val search: SearchRepository,
     private val files: AttachmentFiles,
     private val clock: Clock,
+    private val settings: app.margin.domain.settings.SettingsRepository,
 ) : ViewModel() {
     private val _op = MutableStateFlow<DataOp>(DataOp.Idle)
     val op: StateFlow<DataOp> = _op.asStateFlow()
@@ -99,6 +100,8 @@ class BackupViewModel @Inject constructor(
                     tmp.delete()
                     passphrase?.fill('\u0000')
                 }
+                // Only a verified, fully written backup counts (drives the Home reminder).
+                settings.update { app.margin.domain.settings.BackupHealth.recordBackup(it, clock.now()) }
                 DataOp.Done(app.margin.R.string.backup_done, "${snapshot.notes.size} notes, ${snapshot.attachments.size} attachments")
             }
         } catch (e: Exception) {

@@ -119,7 +119,12 @@ class AiCoordinator @Inject constructor(
         val s = settings.current()
         val p = provider(s)
         val excluded = primaryNoteId?.let { notes.getNote(it)?.excludedFromAi } ?: false
-        return AiService({ s.ai }, { p }).run(request, excluded)
+        val result = AiService({ s.ai }, { p }).run(request, excluded)
+        // Transparency log (Settings → Privacy): count only requests that actually reached OpenAI.
+        if (app.margin.domain.settings.AiAudit.reachedCloud(result, p?.sendsDataOffDevice == true)) {
+            settings.update { app.margin.domain.settings.AiAudit.record(it, clock.now()) }
+        }
+        return result
     }
 
     /** "Ask my notes": retrieves authorised notes only (never trashed or excluded), then asks with citations. */

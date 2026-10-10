@@ -46,6 +46,10 @@ S = {
 "on_device_only": "On this device", "time_just_now": "Just now",
 # home
 "new_note": "New note", "quick_capture": "Quick capture", "quick_capture_hint": "Capture a thought…", "quick_capture_save": "Save quick note",
+"backup_banner_title": "Back up your notes", "backup_banner_never": "Your notes exist only on this tablet. Save a backup file in case it is lost or damaged.",
+"backup_banner_overdue": "Last backup: %1$s. Save a fresh copy to keep recent notes safe.", "backup_now": "Back up now", "later": "Later", "last_backup": "Last successful backup", "never": "Never", "backup_reminder": "Remind me on Home if no backup for", "off": "Off",
+"ai_sent_log": "Requests sent to OpenAI: %1$d", "ai_sent_last": "Last sent %1$s", "ai_sent_none": "Nothing has been sent yet",
+"qa_meeting": "Meeting notes", "qa_journal": "Daily journal", "task_completed": "Task completed",
 "quick_capture_saved": "Saved to your notes", "recent": "Recent", "upcoming_tasks": "Upcoming tasks", "recent_templates": "Recent templates",
 "home_empty_title": "Your notes live here", "home_empty_body": "Create a note with the button below, or start from one of the templates. Everything stays on this tablet.",
 "browse_templates": "Browse templates",
@@ -204,7 +208,7 @@ S = {
 # settings
 "privacy_security": "Privacy & security", "privacy_security_sub": "App lock, notifications, data deletion",
 "data_settings": "Backup & data", "data_settings_sub": "Backup, restore, import, export",
-"appearance": "Appearance", "theme_system": "System", "theme_light": "Light", "theme_dark": "Dark", "dynamic_color": "Dynamic color",
+"appearance": "Appearance", "glossy_style": "3D glossy style", "glossy_style_sub": "Raised, glossy panels and buttons. Turn off for a flat look.", "theme_system": "System", "theme_light": "Light", "theme_dark": "Dark", "dynamic_color": "Dynamic color",
 "dynamic_color_sub": "Use colors from your wallpaper (Android 12+)", "editor_text_size": "Editor text size: %1$d%%",
 "monospace_editor": "Monospaced editor font", "open_in_preview": "Open notes in read mode", "open_in_preview_sub": "Tap Edit to change a note",
 "reduced_motion": "Reduce motion", "home_screen": "Home screen", "notes_and_organization": "Notes", "default_sort": "Default sort",
