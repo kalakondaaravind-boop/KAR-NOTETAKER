@@ -180,7 +180,7 @@ private fun routeMatches(current: String?, target: String): Boolean = current !=
 private fun LibraryDrawer(onOpen: (String) -> Unit) {
     ModalDrawerSheet(Modifier.width(300.dp)) {
         androidx.compose.foundation.layout.Column(Modifier.verticalScroll(rememberScrollState())) {
-            app.margin.ui.components.BrandLockup(Modifier.padding(start = 24.dp, end = 24.dp, top = 28.dp, bottom = 20.dp), markSize = 40.dp)
+            app.margin.feature.ai.BrandLockupWithAiUnlock(Modifier.padding(start = 24.dp, end = 24.dp, top = 28.dp, bottom = 20.dp), markSize = 40.dp)
             @Composable
             fun item(label: Int, icon: ImageVector, route: String) = NavigationDrawerItem(
                 label = { Text(stringResource(label)) }, icon = { Icon(icon, null) }, selected = false,

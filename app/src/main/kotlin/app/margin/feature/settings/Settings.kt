@@ -112,7 +112,7 @@ class SettingsViewModel @Inject constructor(
     /** Revoking cloud consent also forgets the key, so nothing can be sent until set up again. */
     fun revokeCloud() = viewModelScope.launch {
         secrets.remove(SECRET_AI_KEY)
-        repo.update { it.copy(ai = it.ai.copy(cloudConsent = false, allowKnowledgeBase = false), aiKeyStored = false) }
+        repo.update { it.copy(ai = it.ai.copy(cloudConsent = false, allowKnowledgeBase = false, provider = if (it.ai.provider == ProviderType.OPENAI_COMPATIBLE) ProviderType.LOCAL else it.ai.provider), aiKeyStored = false) }
     }
 }
 
@@ -202,6 +202,20 @@ fun SettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel()) {
         Header(stringResource(R.string.search))
         SwitchRow(stringResource(R.string.search_history), s.searchHistoryEnabled, stringResource(R.string.search_history_sub)) { v -> vm.update { it.copy(searchHistoryEnabled = v, recentSearches = if (v) it.recentSearches else emptyList()) } }
 
+        Header(stringResource(R.string.capture_settings))
+        val context = androidx.compose.ui.platform.LocalContext.current
+        val notifPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
+            vm.update { it.copy(quickCaptureNotification = granted) }
+        }
+        SwitchRow(stringResource(R.string.quick_capture_notification), s.quickCaptureNotification, stringResource(R.string.quick_capture_notification_sub)) { v ->
+            if (v && !app.margin.feature.capture.QuickCaptureNotification.canPost(context) && android.os.Build.VERSION.SDK_INT >= 33) {
+                notifPermission.launch(android.Manifest.permission.POST_NOTIFICATIONS)
+            } else vm.update { it.copy(quickCaptureNotification = v) }
+        }
+        SwitchRow(stringResource(R.string.clipboard_button), s.clipboardCaptureSuggestion, stringResource(R.string.clipboard_button_sub)) { v ->
+            vm.update { it.copy(clipboardCaptureSuggestion = v) }
+        }
+
         Header(stringResource(R.string.nav_tasks))
         Text(stringResource(R.string.default_reminder), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.labelLarge)
         FlowRow(Modifier.padding(horizontal = 16.dp), horizontalArrangement = Arrangement.spacedBy(6.dp)) {
@@ -260,6 +274,11 @@ fun PrivacySettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel(),
         Header(stringResource(R.string.storage_location))
         ListItem(headlineContent = { Text(stringResource(R.string.storage_tablet_only)) },
             supportingContent = { Text(stringResource(R.string.storage_tablet_only_sub)) })
+        if (s.ai.provider == ProviderType.OPENAI_COMPATIBLE && s.aiKeyStored) {
+            ListItem(headlineContent = { Text(stringResource(R.string.openai_connected)) },
+                supportingContent = { Text(stringResource(R.string.openai_connected_sub)) },
+                trailingContent = { TextButton(onClick = vm::revokeCloud) { Text(stringResource(R.string.disconnect)) } })
+        }
         Header(stringResource(R.string.data_collection))
         Text(stringResource(R.string.no_telemetry), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.bodyMedium)
         Header(stringResource(R.string.danger_zone))
@@ -291,7 +310,10 @@ fun AiSettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel()) {
         listOf(
             ProviderType.NONE to (R.string.ai_provider_none to R.string.ai_provider_none_sub),
             ProviderType.LOCAL to (R.string.ai_provider_local to R.string.ai_provider_local_sub),
-        ).forEach { (p, labels) ->
+        ).let { base ->
+            // OpenAI is offered only after a key was entered through the hidden setup (tap the logo 10 times).
+            if (s.aiKeyStored) base + (ProviderType.OPENAI_COMPATIBLE to (R.string.ai_provider_openai to R.string.ai_provider_openai_sub)) else base
+        }.forEach { (p, labels) ->
             ListItem(headlineContent = { Text(stringResource(labels.first)) }, supportingContent = { Text(stringResource(labels.second)) },
                 leadingContent = { RadioButton(s.ai.provider == p, { vm.update { it.copy(ai = it.ai.copy(provider = p, cloudConsent = if (p == it.ai.provider) it.ai.cloudConsent else false)) } }) },
                 modifier = Modifier.clickable { vm.update { it.copy(ai = it.ai.copy(provider = p, cloudConsent = if (p == it.ai.provider) it.ai.cloudConsent else false)) } })
@@ -329,7 +351,7 @@ fun AiSettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel()) {
             Slider(s.ai.maxContextChars.toFloat(), { v -> vm.update { it.copy(ai = it.ai.copy(maxContextChars = (v / 1000).toInt() * 1000)) } }, Modifier.padding(horizontal = 16.dp), valueRange = 2_000f..48_000f)
         }
     }
-    if (consentDialog) ConfirmDialog(stringResource(R.string.ai_consent_title), stringResource(R.string.ai_consent_body, baseUrl.ifBlank { "api.anthropic.com" }),
+    if (consentDialog) ConfirmDialog(stringResource(R.string.ai_consent_title), stringResource(R.string.ai_consent_body, baseUrl.ifBlank { "api.openai.com" }),
         stringResource(R.string.ai_consent_agree), { vm.update { it.copy(ai = it.ai.copy(cloudConsent = true)) } }, { consentDialog = false })
 }
 

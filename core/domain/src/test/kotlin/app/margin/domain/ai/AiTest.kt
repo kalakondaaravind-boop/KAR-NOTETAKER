@@ -87,6 +87,19 @@ class AiTest {
         assertFalse(r.local)
     }
 
+    @Test fun officialOpenAiUsesCompletionTokenBudgetAndSurfacesErrors() = runBlocking {
+        val t = Recording()
+        val p = OpenAiCompatibleProvider(HttpProviderConfig(OpenAiDefaults.BASE_URL, "sk-test", OpenAiDefaults.MODEL), t)
+        p.run(AiRequest(AiAction.SUMMARIZE_SHORT, "x"), Prompt("sys", "usr", 50))
+        val (url, _, body) = t.calls.single()
+        assertEquals("https://api.openai.com/v1/chat/completions", url)
+        assertTrue(body, body.contains("\"max_completion_tokens\":${OpenAiDefaults.MIN_COMPLETION_TOKENS}") && !body.contains("max_tokens\""))
+        t.status = 404; t.reply = "{\"error\":{\"message\":\"The model `nope` does not exist\"}}"
+        val f = p.run(AiRequest(AiAction.SUMMARIZE_SHORT, "x"), Prompt("s", "u")) as AiResult.Failure
+        assertEquals(AiError.SERVER, f.error)
+        assertTrue(f.detail!!.contains("does not exist") && !f.detail!!.contains("sk-test"))
+    }
+
     @Test fun anthropicRequestAndResponse() = runBlocking {
         val t = Recording(reply = "{\"content\":[{\"type\":\"text\",\"text\":\"hello \"},{\"type\":\"text\",\"text\":\"world\"}]}")
         val p = AnthropicProvider(HttpProviderConfig("https://api.anthropic.com", "key", "m"), t)

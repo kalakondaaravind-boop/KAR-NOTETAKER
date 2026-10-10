@@ -19,6 +19,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.ContentPaste
 import androidx.compose.material.icons.outlined.Dashboard
 import androidx.compose.material.icons.outlined.EditNote
 import androidx.compose.material.icons.outlined.Folder
@@ -42,6 +43,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -67,7 +69,7 @@ import app.margin.domain.settings.SettingsRepository
 import app.margin.domain.task.TaskBucket
 import app.margin.domain.task.TaskRules
 import app.margin.domain.template.TemplateDefinition
-import app.margin.ui.components.BrandLockup
+import app.margin.feature.ai.BrandLockupWithAiUnlock
 import app.margin.ui.components.EmptyState
 import app.margin.ui.components.NoteRow
 import app.margin.ui.components.SectionHeader
@@ -94,6 +96,8 @@ data class HomeState(
     val folders: List<Folder> = emptyList(),
     val templates: List<TemplateDefinition> = emptyList(),
     val isLibraryEmpty: Boolean = false,
+    /** Settings → Capture: show a paste button that reads the clipboard only when tapped. */
+    val clipboardButton: Boolean = false,
 )
 
 @HiltViewModel
@@ -134,6 +138,7 @@ class HomeViewModel @Inject constructor(
             folders = folderList.filter { it.parentId == null }.take(8),
             templates = tpl,
             isLibraryEmpty = pinned.isEmpty() && recent.isEmpty(),
+            clipboardButton = s.clipboardCaptureSuggestion,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeState())
 
@@ -157,12 +162,13 @@ fun HomeScreen(n: Navigator, vm: HomeViewModel = hiltViewModel()) {
     val sp = LocalSpacing.current
     var capture by rememberSaveable { mutableStateOf("") }
     var savedMessage by rememberSaveable { mutableStateOf(false) }
+    val clipboard = LocalClipboardManager.current
 
     Scaffold(
         topBar = {
             TopAppBar(
                 expandedHeight = 80.dp,
-                title = { BrandLockup(markSize = 30.dp) },
+                title = { BrandLockupWithAiUnlock(markSize = 30.dp) },
                 navigationIcon = { IconButton(onClick = n::openDrawer) { Icon(Icons.Outlined.Menu, stringResource(R.string.open_library)) } },
                 actions = {
                     IconButton(onClick = { n.open(Routes.search()) }) { Icon(Icons.Outlined.Search, stringResource(R.string.nav_search)) }
@@ -196,6 +202,12 @@ fun HomeScreen(n: Navigator, vm: HomeViewModel = hiltViewModel()) {
                                 keyboardActions = KeyboardActions(onDone = { vm.quickCapture(capture) { capture = ""; savedMessage = true } }),
                                 supportingText = if (savedMessage) { { Text(stringResource(R.string.quick_capture_saved)) } } else null,
                             )
+                            if (state.clipboardButton) {
+                                // Reads the clipboard only on this explicit tap (no background access, no Android 12+ paste toast surprise).
+                                IconButton(onClick = { clipboard.getText()?.text?.takeIf { it.isNotBlank() }?.let { capture = if (capture.isBlank()) it else capture + "\n" + it; savedMessage = false } }) {
+                                    Icon(Icons.Outlined.ContentPaste, stringResource(R.string.paste_from_clipboard))
+                                }
+                            }
                             IconButton(onClick = { vm.quickCapture(capture) { capture = ""; savedMessage = true } }, enabled = capture.isNotBlank()) {
                                 Icon(Icons.AutoMirrored.Filled.Send, stringResource(R.string.quick_capture_save))
                             }

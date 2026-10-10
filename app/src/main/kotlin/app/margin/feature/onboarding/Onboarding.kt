@@ -42,7 +42,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import app.margin.R
-import app.margin.ui.components.BrandLockup
+import app.margin.feature.ai.BrandLockupWithAiUnlock
 import app.margin.domain.ai.ProviderType
 import app.margin.domain.settings.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -68,7 +68,7 @@ fun OnboardingScreen(onFinished: () -> Unit, vm: OnboardingViewModel = hiltViewM
             LinearProgressIndicator(progress = { (page + 1) / pages.toFloat() }, modifier = Modifier.fillMaxWidth())
             when (page) {
                 0 -> {
-                    BrandLockup(Modifier.fillMaxWidth().padding(vertical = 24.dp), markSize = 64.dp, centered = true)
+                    BrandLockupWithAiUnlock(Modifier.fillMaxWidth().padding(vertical = 24.dp), markSize = 64.dp, centered = true)
                     Text(stringResource(R.string.onb_welcome_title), style = MaterialTheme.typography.headlineSmall, modifier = Modifier.semantics { heading() })
                     Text(stringResource(R.string.onb_welcome_body), style = MaterialTheme.typography.bodyLarge)
                 }

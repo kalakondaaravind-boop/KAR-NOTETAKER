@@ -108,9 +108,9 @@ class SettingsRepositoryImpl(private val store: DataStore<Preferences>) : Settin
                 ),
                 ai = AiSettings(
                     enabled = p[K.aiEnabled] ?: false,
-                    // Tablet-only: cloud providers are not available; any stored cloud choice reads back as NONE.
-                    provider = enumOr(p[K.aiProvider], ProviderType.NONE).let { if (it == ProviderType.LOCAL) it else ProviderType.NONE },
-                    cloudConsent = false,
+                    // On-device or the user's own OpenAI key (hidden setup). Any other stored provider reads back as NONE.
+                    provider = enumOr(p[K.aiProvider], ProviderType.NONE).let { if (it == ProviderType.LOCAL || it == ProviderType.OPENAI_COMPATIBLE) it else ProviderType.NONE },
+                    cloudConsent = p[K.aiConsent] ?: false,
                     allowKnowledgeBase = p[K.aiKb] ?: false,
                     includeArchived = p[K.aiArchived] ?: false,
                     maxContextChars = p[K.aiMaxChars] ?: 12_000,

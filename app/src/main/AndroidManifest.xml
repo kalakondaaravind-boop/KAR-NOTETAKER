@@ -3,11 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <!--
-      Tablet-only storage: the app must never reach the network. INTERNET and network-state permissions
-      are explicitly removed, including any that a library (e.g. ML Kit) would otherwise merge in, so
-      Android itself blocks every socket the app could open.
+      Notes are stored only on the tablet. INTERNET is used solely for AI actions the user runs after
+      connecting their own OpenAI key (hidden setup: tap the logo 10 times). Nothing is uploaded otherwise,
+      and the app never stores data online. Network-state access is not needed and is removed.
     -->
-    <uses-permission android:name="android.permission.INTERNET" tools:node="remove" />
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" tools:node="remove" />
     <!-- Reminders. Requested at the moment the user schedules their first reminder. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />

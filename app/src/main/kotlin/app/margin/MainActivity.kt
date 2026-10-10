@@ -90,6 +90,9 @@ class MainActivity : FragmentActivity() {
                 if (s.lock.enabled && s.lock.secureWindow) window.addFlags(WindowManager.LayoutParams.FLAG_SECURE)
                 else window.clearFlags(WindowManager.LayoutParams.FLAG_SECURE)
             }
+            LaunchedEffect(s.quickCaptureNotification) {
+                app.margin.feature.capture.QuickCaptureNotification.sync(applicationContext, s.quickCaptureNotification)
+            }
             MarginTheme(s.theme, s.dynamicColor) {
                 val locked by lock.locked.collectAsStateWithLifecycle()
                 var authError by remember { mutableStateOf<String?>(null) }

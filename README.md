@@ -2,7 +2,7 @@
 
 A private note-taking app for Android tablets (it also adapts to phones and foldables). Kotlin, Jetpack Compose, Material 3, in a Sky & Pastel Blue theme.
 
-**All data stays on the tablet.** There is no account, no online storage, no sync and no analytics.
+**All data is stored on the tablet.** There is no account, no online storage, no sync and no analytics. Optional AI can use your own OpenAI key; see [AI](#ai-and-the-hidden-openai-setup).
 
 ![Tablet preview](docs/preview/kar-notes-preview-sheet.png)
 
@@ -17,15 +17,27 @@ A private note-taking app for Android tablets (it also adapts to phones and fold
 | Settings | DataStore in app-private storage | No |
 | Backups | A file **you** save with the Android file picker (Downloads, SD card, USB drive) | Only if you move it yourself |
 
-These guarantees are enforced in the build, not just promised:
+How this is enforced:
 
-- **No internet permission.** `AndroidManifest.xml` removes `INTERNET` and `ACCESS_NETWORK_STATE` with `tools:node="remove"`. That includes any a library would try to merge in. Android itself blocks every network connection the app might attempt.
 - **No Android cloud backup or device transfer.** `allowBackup="false"`, and both `data_extraction_rules.xml` and `backup_rules.xml` exclude every data domain.
-- **No cloud AI.** The optional assistant runs on the tablet only. The cloud provider options were removed from Settings, and any old cloud setting reads back as "off".
-- **OCR on the tablet.** ML Kit text recognition uses the bundled on-device model.
+- **No sync, no account, no analytics, no crash reporting.**
+- **The only network use is optional AI through your own OpenAI key.** When you run an AI action, the text that action needs is sent to OpenAI over HTTPS, and the answer comes back to the tablet. Examples: the note you're summarising, or the cited notes for "Ask my notes". Nothing is sent until a key is entered, and the app never stores your notes online. OpenAI's own data-retention terms apply to the requests it receives.
+- **On-device OCR.** ML Kit uses the bundled model. As Google documents for ML Kit, it may send anonymous usage metrics to Google now that the app has internet access. It never sends your images or text.
 - Sharing a note out (Share → another app) only ever happens when you tap it, and sends a copy of that one note.
 
-To check on a device, run `adb shell dumpsys package com.kargroup.notetaker | grep permission`. `android.permission.INTERNET` must not appear. The GitHub build saves this list as `granted-permissions.txt`.
+## AI and the hidden OpenAI setup
+
+AI is optional. Out of the box you can switch on the **on-device assistant** (Settings → AI), which needs no network. It summarises, extracts action items and dates, and suggests titles, tags and flashcards.
+
+To connect **OpenAI**:
+
+1. **Tap the KAR Group logo 10 times in a row**, with less than 1.5 seconds between taps. This works on the home screen's top bar, at the top of the library menu, or on the welcome screen. The tablet vibrates briefly and the **Connect OpenAI** window opens.
+2. Paste your API key (it starts with `sk-`). You can change the model; the default is `gpt-5.4-mini`.
+3. Tap **Save and turn on**.
+
+The key is encrypted with the Android Keystore and never shown again. Once it's saved, OpenAI appears in Settings → AI, where you can change the model and let AI search across all your notes. Settings → Privacy shows "OpenAI connected", with a **Disconnect** button. To replace or remove the key, tap the logo 10 times again. With OpenAI connected, every AI action (a note's ⋮ menu → AI assist) and "Ask my notes" use it, and answers cite the notes they came from.
+
+The setup is hidden from screen readers too: the logo isn't announced as a button.
 
 ## Put it on GitHub and get the APK
 
@@ -84,10 +96,12 @@ app           Compose UI: home, notes, editor, search, folders/tags, templates, 
 tools         Offline verification scripts (domain tests, SQL against SQLite, strings/resources)
 ```
 
+Full feature-by-feature audit against the specification: **[docs/FEATURE_COVERAGE.md](docs/FEATURE_COVERAGE.md)**.
+
 ## Verification status
 
 What has been verified so far:
-- **Domain module:** compiles, and all 137 unit tests pass (`tools/verify-domain.sh`).
+- **Domain module:** compiles, and all 143 unit tests pass (`tools/verify-domain.sh`).
 - **SQL:** all 91 Room queries run against real SQLite 3.45, including the search index and cascade behaviour (`tools/verify-sql.py`).
 - **Resources:** every string and resource reference resolves (`tools/check-resources.py`).
 

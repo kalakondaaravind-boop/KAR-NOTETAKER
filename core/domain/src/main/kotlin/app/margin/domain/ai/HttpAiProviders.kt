@@ -71,7 +71,28 @@ data class HttpProviderConfig(
     val apiKey: String,
     val model: String,
     val timeoutMs: Int = 60_000,
-)
+) {
+    /**
+     * OpenAI's own API: current (reasoning) models reject `max_tokens` and need `max_completion_tokens`,
+     * and spend part of that budget on hidden reasoning, so the budget is raised to avoid empty answers.
+     * Other OpenAI-compatible servers (e.g. llama.cpp) keep the classic `max_tokens`.
+     */
+    val isOfficialOpenAi: Boolean get() = try { URI(baseUrl.trim()).host?.lowercase() == "api.openai.com" } catch (e: Exception) { false }
+}
+
+/** OpenAI defaults used by the app's hidden key setup. The model can be changed there or in Settings → AI. */
+object OpenAiDefaults {
+    const val BASE_URL = "https://api.openai.com/v1"
+    const val MODEL = "gpt-5.4-mini"
+    /** Minimum completion budget for reasoning models (reasoning tokens + visible answer). */
+    const val MIN_COMPLETION_TOKENS = 4096
+}
+
+/** Pulls `error.message` out of an OpenAI-style error body so the user sees e.g. "model not found", never the key. */
+internal fun errorMessage(body: String): String? = try {
+    ((Json.parseToJsonElement(body) as? JsonObject)?.get("error") as? JsonObject)?.get("message")
+        ?.let { (it as? JsonPrimitive)?.contentOrNull }?.take(200)
+} catch (e: Exception) { null }
 
 private abstract class HttpProviderBase(
     protected val config: HttpProviderConfig,
@@ -101,10 +122,10 @@ private abstract class HttpProviderBase(
                 val out = try { extract(Json.parseToJsonElement(text) as JsonObject) } catch (e: Exception) { null }
                 if (out.isNullOrBlank()) AiResult.Failure(AiError.BAD_RESPONSE) else AiResult.Success(out.trim(), displayName, request.sources, local = false)
             }
-            401, 403 -> AiResult.Failure(AiError.AUTH)
+            401, 403 -> AiResult.Failure(AiError.AUTH, errorMessage(text))
             413 -> AiResult.Failure(AiError.INPUT_TOO_LARGE)
-            429 -> AiResult.Failure(AiError.RATE_LIMITED)
-            else -> AiResult.Failure(AiError.SERVER, "HTTP $code")
+            429 -> AiResult.Failure(AiError.RATE_LIMITED, errorMessage(text))
+            else -> AiResult.Failure(AiError.SERVER, "HTTP $code" + (errorMessage(text)?.let { ": $it" } ?: ""))
         }
     }
 }
@@ -118,7 +139,8 @@ class OpenAiCompatibleProvider(config: HttpProviderConfig, transport: HttpTransp
         override fun headers() = if (config.apiKey.isBlank()) emptyMap() else mapOf("Authorization" to "Bearer ${config.apiKey}")
         override fun body(p: Prompt) = Json.encodeToString(JsonElement.serializer(), buildJsonObject {
             put("model", config.model)
-            put("max_tokens", p.maxOutputTokens)
+            if (config.isOfficialOpenAi) put("max_completion_tokens", maxOf(p.maxOutputTokens, OpenAiDefaults.MIN_COMPLETION_TOKENS))
+            else put("max_tokens", p.maxOutputTokens)
             put("messages", buildJsonArray {
                 add(buildJsonObject { put("role", "system"); put("content", p.system) })
                 add(buildJsonObject { put("role", "user"); put("content", p.user) })
