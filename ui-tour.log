@@ -1,0 +1,47 @@
+screenshot: 01-welcome
+tapped logo 10x at 1280 494
+screenshot: 02-hidden-openai-setup
+tap: Cancel
+tap: Skip
+screenshot: 03-home-empty
+tap: android.widget.EditText
+tap: Save quick note
+tap: android.widget.EditText
+tap: Save quick note
+tap: android.widget.EditText
+tap: Save quick note
+screenshot: 04-home-with-notes
+tap: Open library
+screenshot: 05-library-menu
+screenshot: 05b-after-back-closes-menu
+tap: New note
+screenshot: 06-editor
+tap: Drawing
+tap: Marker
+tap: Highlighter
+tap: Shapes
+tap: Ellipse
+tap: Clipart
+screenshot: 09-clipart-picker
+tap: Idea
+screenshot: 10-drawing-canvas
+tap: Copy
+tap: Paste
+screenshot: 11-drawing-copy-paste
+tap: Pen
+tap: More colours
+screenshot: 12-colour-picker
+tap: Cancel
+tap: New page
+screenshot: 13-page-templates
+tap: To-do list
+screenshot: 14-todo-page
+tap: Font
+screenshot: 15-font-menu
+NOT FOUND: Caveat
+screenshot: 16-handwriting-font
+NOT FOUND: Templates
+NOT FOUND: Daily journal
+screenshot: 07-home-dark
+NOT FOUND: Settings
+done

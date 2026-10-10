@@ -1,0 +1,180 @@
+To honour the JVM settings for this build a single-use Daemon process will be forked. For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/gradle_daemon.html#sec:disabling_the_daemon in the Gradle documentation.
+Daemon will be stopped at the end of the build 
+> Task :app:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:domain:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :core:data:preBuild UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
+> Task :core:data:preDebugBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :app:generateDebugBuildConfig FROM-CACHE
+> Task :app:generateDebugResValues FROM-CACHE
+> Task :core:data:generateDebugResValues FROM-CACHE
+> Task :core:data:writeDebugAarMetadata
+> Task :core:data:generateDebugResources FROM-CACHE
+> Task :core:data:packageDebugResources FROM-CACHE
+> Task :app:generateDebugResources FROM-CACHE
+> Task :core:data:extractDeepLinksDebug FROM-CACHE
+> Task :core:data:processDebugManifest FROM-CACHE
+> Task :core:data:compileDebugLibraryResources FROM-CACHE
+> Task :core:domain:compileKotlin FROM-CACHE
+> Task :core:domain:compileJava NO-SOURCE
+> Task :core:domain:processResources
+> Task :core:domain:classes
+> Task :core:domain:jar
+> Task :core:data:parseDebugLocalResources FROM-CACHE
+> Task :core:data:generateDebugRFile FROM-CACHE
+> Task :core:data:checkKotlinGradlePluginConfigurationErrors SKIPPED
+> Task :app:checkDebugAarMetadata
+> Task :app:mapDebugSourceSetPaths
+> Task :app:mergeDebugResources FROM-CACHE
+> Task :app:packageDebugResources FROM-CACHE
+> Task :app:parseDebugLocalResources FROM-CACHE
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug FROM-CACHE
+> Task :app:processDebugMainManifest FROM-CACHE
+> Task :app:processDebugManifest FROM-CACHE
+> Task :app:processDebugManifestForPackage FROM-CACHE
+> Task :core:data:kspDebugKotlin FROM-CACHE
+> Task :core:data:compileDebugKotlin FROM-CACHE
+> Task :core:data:javaPreCompileDebug FROM-CACHE
+> Task :app:processDebugResources FROM-CACHE
+> Task :app:javaPreCompileDebug FROM-CACHE
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:desugarDebugFileDependencies FROM-CACHE
+> Task :app:mergeDebugJniLibFolders
+> Task :app:checkDebugDuplicateClasses
+> Task :core:data:compileDebugJavaWithJavac FROM-CACHE
+> Task :core:data:mergeDebugShaders
+> Task :core:data:compileDebugShaders NO-SOURCE
+> Task :core:data:generateDebugAssets UP-TO-DATE
+> Task :core:data:packageDebugAssets
+> Task :core:data:processDebugJavaRes
+> Task :core:data:bundleLibRuntimeToJarDebug
+> Task :core:data:bundleLibCompileToJarDebug
+> Task :core:data:mergeDebugJniLibFolders
+> Task :core:data:mergeDebugNativeLibs NO-SOURCE
+> Task :core:data:preDebugAndroidTestBuild UP-TO-DATE
+> Task :core:data:copyDebugJniLibsProjectOnly
+> Task :core:data:bundleLibRuntimeToDirDebug
+> Task :core:data:checkDebugAndroidTestAarMetadata
+> Task :core:data:generateDebugAndroidTestResValues FROM-CACHE
+> Task :core:data:mapDebugAndroidTestSourceSetPaths
+> Task :core:data:generateDebugAndroidTestResources FROM-CACHE
+> Task :core:data:mergeDebugAndroidTestResources FROM-CACHE
+> Task :core:data:processDebugAndroidTestManifest
+> Task :core:data:processDebugAndroidTestResources FROM-CACHE
+> Task :app:validateSigningDebug
+> Task :core:data:kspDebugAndroidTestKotlin FROM-CACHE
+> Task :core:data:compileDebugAndroidTestKotlin FROM-CACHE
+> Task :core:data:javaPreCompileDebugAndroidTest FROM-CACHE
+> Task :core:data:compileDebugAndroidTestJavaWithJavac NO-SOURCE
+> Task :core:data:mergeDebugAndroidTestShaders
+> Task :core:data:compileDebugAndroidTestShaders NO-SOURCE
+> Task :core:data:generateDebugAndroidTestAssets UP-TO-DATE
+> Task :core:data:mergeDebugAndroidTestAssets
+> Task :core:data:compressDebugAndroidTestAssets FROM-CACHE
+> Task :core:data:desugarDebugAndroidTestFileDependencies FROM-CACHE
+> Task :core:data:dexBuilderDebugAndroidTest FROM-CACHE
+> Task :core:data:mergeDebugAndroidTestGlobalSynthetics FROM-CACHE
+> Task :core:data:processDebugAndroidTestJavaRes
+> Task :core:data:checkDebugAndroidTestDuplicateClasses
+> Task :core:data:mergeDebugAndroidTestJniLibFolders
+> Task :core:data:mergeExtDexDebugAndroidTest FROM-CACHE
+> Task :core:data:mergeLibDexDebugAndroidTest FROM-CACHE
+> Task :core:data:mergeProjectDexDebugAndroidTest FROM-CACHE
+> Task :core:data:validateSigningDebugAndroidTest
+> Task :core:data:mergeDebugAndroidTestNativeLibs
+> Task :core:data:writeDebugAndroidTestSigningConfigVersions
+
+> Task :core:data:stripDebugAndroidTestDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libdatastore_shared_counter.so.
+
+> Task :core:data:mergeDebugAndroidTestJavaResource
+> Task :app:mergeDebugAssets
+> Task :app:compressDebugAssets FROM-CACHE
+> Task :core:data:packageDebugAndroidTest
+> Task :core:data:createDebugAndroidTestApkListingFileRedirect
+[EmulatorConsole]: Failed to start Emulator console for 5554
+> Task :app:mergeExtDexDebug FROM-CACHE
+> Task :app:mergeLibDexDebug FROM-CACHE
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:preDebugAndroidTestBuild SKIPPED
+> Task :app:processDebugAndroidTestManifest
+> Task :app:generateDebugAndroidTestBuildConfig FROM-CACHE
+> Task :app:checkDebugAndroidTestAarMetadata
+> Task :app:generateDebugAndroidTestResValues FROM-CACHE
+> Task :app:mapDebugAndroidTestSourceSetPaths
+> Task :app:mergeDebugNativeLibs
+> Task :app:generateDebugAndroidTestResources FROM-CACHE
+> Task :app:mergeDebugAndroidTestResources FROM-CACHE
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libandroidx.graphics.path.so, libdatastore_shared_counter.so, libmlkit_google_ocr_pipeline.so.
+
+> Task :app:processDebugAndroidTestResources FROM-CACHE
+> Task :app:javaPreCompileDebugAndroidTest FROM-CACHE
+> Task :app:mergeDebugAndroidTestShaders
+> Task :app:compileDebugAndroidTestShaders NO-SOURCE
+> Task :app:generateDebugAndroidTestAssets UP-TO-DATE
+> Task :app:mergeDebugAndroidTestAssets
+> Task :app:compressDebugAndroidTestAssets FROM-CACHE
+> Task :app:desugarDebugAndroidTestFileDependencies FROM-CACHE
+> Task :app:checkDebugAndroidTestDuplicateClasses
+> Task :app:mergeDebugAndroidTestJniLibFolders
+> Task :app:mergeExtDexDebugAndroidTest FROM-CACHE
+> Task :app:mergeLibDexDebugAndroidTest FROM-CACHE
+> Task :app:mergeDebugAndroidTestNativeLibs NO-SOURCE
+> Task :app:stripDebugAndroidTestDebugSymbols NO-SOURCE
+> Task :app:validateSigningDebugAndroidTest
+> Task :app:writeDebugAndroidTestSigningConfigVersions
+
+> Task :app:kspDebugKotlin
+e: The daemon has terminated unexpectedly on startup attempt #1 with error code: 0. The daemon process output:
+    1. Kotlin compile daemon is ready
+
+Finished 16 tests on emulator-5554 - 14
+
+> Task :core:data:connectedDebugAndroidTest
+Starting 16 tests on emulator-5554 - 14
+
+app.margin.data.MigrationTest > currentSchemaOpensAndMatchesExport[emulator-5554 - 14] [31mFAILED [0m
+	java.io.FileNotFoundException: Cannot find the schema file in the assets folder. Make sure to include the exported json schemas in your test assert inputs. See https://developer.android.com/training/data-storage/room/migrating-db-versions#export-schema for details. Missing file: app.margin.data.db.MarginDatabase/1.json
+	at androidx.room.testing.MigrationTestHelper.loadSchema(MigrationTestHelper.kt:440)
+Tests on emulator-5554 - 14 failed: There was 1 failure(s).
+
+> Task :core:data:connectedDebugAndroidTest FAILED
+
+> Task :app:compileDebugKotlin
+w: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/app/src/main/kotlin/app/margin/feature/drawing/ClipartLibrary.kt:40:55 'val Icons.Filled.Assignment: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.Assignment.
+w: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/app/src/main/kotlin/app/margin/feature/drawing/ClipartLibrary.kt:72:47 'val Icons.Filled.DirectionsBike: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Filled.DirectionsBike.
+w: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/app/src/main/kotlin/app/margin/feature/editor/EditorParts.kt:246:96 'val Icons.Outlined.TextSnippet: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.TextSnippet.
+w: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/app/src/main/kotlin/app/margin/feature/editor/EditorScreen.kt:274:130 'val Icons.Outlined.DriveFileMove: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.DriveFileMove.
+w: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/app/src/main/kotlin/app/margin/feature/notes/NotesList.kt:253:99 'val Icons.Outlined.DriveFileMove: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.DriveFileMove.
+w: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/app/src/main/kotlin/app/margin/feature/search/Search.kt:159:77 'val Icons.Outlined.HelpOutline: ImageVector' is deprecated. Use the AutoMirrored version at Icons.AutoMirrored.Outlined.HelpOutline.
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/__reactivecircus_android-emulator-runner-1791618783118.json
+
+[Incubating] Problems report is available at: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/build/reports/problems/problems-report.html
+
+FAILURE: Build failed with an exception.
+
+* What went wrong:
+Execution failed for task ':core:data:connectedDebugAndroidTest'.
+> There were failing tests. See the report at: file:///home/runner/work/KAR-NOTETAKER/KAR-NOTETAKER/core/data/build/reports/androidTests/connected/debug/index.html
+
+* Try:
+> Run with --stacktrace option to get the stack trace.
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+Deprecated Gradle features were used in this build, making it incompatible with Gradle 9.0.
+
+You can use '--warning-mode all' to show the individual deprecation warnings and determine if they come from your own scripts or plugins.
+
+For more on this, please refer to https://docs.gradle.org/8.14.3/userguide/command_line_interface.html#sec:command_line_warnings in the Gradle documentation.
+
+BUILD FAILED in 1m 5s
+103 actionable tasks: 50 executed, 53 from cache
