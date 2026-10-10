@@ -14,6 +14,7 @@ import androidx.compose.material.icons.outlined.AutoAwesome
 import androidx.compose.material.icons.outlined.Backup
 import androidx.compose.material.icons.outlined.Checklist
 import androidx.compose.material.icons.outlined.Groups
+import androidx.compose.material.icons.outlined.Mic
 import androidx.compose.material.icons.outlined.Today
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -29,6 +30,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
+import app.margin.platform.rememberDictation
 import app.margin.ui.theme.GlossTone
 import app.margin.ui.theme.GlossyExtendedFab
 import app.margin.ui.theme.GlossyPanel
@@ -212,6 +214,16 @@ fun HomeScreen(n: Navigator, vm: HomeViewModel = hiltViewModel()) {
     val taskDone = stringResource(R.string.task_completed)
     val undo = stringResource(R.string.undo)
     val panel = Modifier.widthIn(max = sp.readingWidth).fillMaxWidth().padding(horizontal = sp.l, vertical = sp.s)
+    val noSpeech = stringResource(R.string.speech_unavailable)
+    val dictationPrompt = stringResource(R.string.dictation_prompt)
+    // Mic in quick capture: transcript goes into the field so it can be checked before saving.
+    val dictateIntoCapture = rememberDictation(dictationPrompt,
+        onText = { capture = if (capture.isBlank()) it else capture.trimEnd() + " " + it; savedMessage = false },
+        onUnavailable = { scope.launch { snackbar.showSnackbar(noSpeech) } })
+    // "Voice note" tile: transcript becomes a new note, opened in the editor to review and continue.
+    val dictateNewNote = rememberDictation(dictationPrompt,
+        onText = { text -> vm.newNote(text) { n.open(Routes.editor(it)) } },
+        onUnavailable = { scope.launch { snackbar.showSnackbar(noSpeech) } })
 
     @Composable
     fun NotesPanel(title: String, notes: List<NoteSummary>, seeAll: String) = GlossyPanel(panel) {
@@ -276,12 +288,14 @@ fun HomeScreen(n: Navigator, vm: HomeViewModel = hiltViewModel()) {
                                         Icon(Icons.Outlined.ContentPaste, stringResource(R.string.paste_from_clipboard))
                                     }
                                 }
+                                IconButton(onClick = dictateIntoCapture) { Icon(Icons.Outlined.Mic, stringResource(R.string.dictate)) }
                                 IconButton(onClick = { vm.quickCapture(capture) { capture = ""; savedMessage = true } }, enabled = capture.isNotBlank()) {
                                     Icon(Icons.AutoMirrored.Filled.Send, stringResource(R.string.quick_capture_save))
                                 }
                             }
                             QuickActions(
                                 onNewNote = { vm.newNote { n.open(Routes.editor(it)) } },
+                                onVoiceNote = dictateNewNote,
                                 onChecklist = { vm.newNote("- [ ] ") { n.open(Routes.editor(it)) } },
                                 onOpen = n::open,
                             )
@@ -389,14 +403,15 @@ private fun PanelDivider() = HorizontalDivider(
  * Template tiles open the built-in templates by their stable ids.
  */
 @Composable
-private fun QuickActions(onNewNote: () -> Unit, onChecklist: () -> Unit, onOpen: (String) -> Unit) {
+private fun QuickActions(onNewNote: () -> Unit, onVoiceNote: () -> Unit, onChecklist: () -> Unit, onOpen: (String) -> Unit) {
     val sp = LocalSpacing.current
     FlowRow(
         Modifier.fillMaxWidth().padding(start = sp.l, end = sp.l, top = sp.xs, bottom = sp.l),
-        horizontalArrangement = Arrangement.spacedBy(sp.m),
-        verticalArrangement = Arrangement.spacedBy(sp.m),
+        horizontalArrangement = Arrangement.spacedBy(sp.s),
+        verticalArrangement = Arrangement.spacedBy(sp.s),
     ) {
         QuickTile(Icons.Outlined.EditNote, R.string.new_note, onNewNote)
+        QuickTile(Icons.Outlined.Mic, R.string.voice_note, onVoiceNote)
         QuickTile(Icons.Outlined.Checklist, R.string.shortcut_new_checklist, onChecklist)
         QuickTile(Icons.Outlined.Groups, R.string.qa_meeting) { onOpen(Routes.templateForm(QUICK_MEETING_TEMPLATE)) }
         QuickTile(Icons.Outlined.Today, R.string.qa_journal) { onOpen(Routes.templateForm(QUICK_JOURNAL_TEMPLATE)) }
@@ -414,7 +429,7 @@ private fun QuickTile(icon: ImageVector, label: Int, onClick: () -> Unit) {
     val badge = glossStyle(GlossTone.PRIMARY)
     Column(
         Modifier
-            .width(96.dp)
+            .width(86.dp)
             .glossy(tile, MaterialTheme.shapes.medium, elevation = 4.dp, flat = MaterialTheme.colorScheme.secondaryContainer)
             .clickable(role = Role.Button, onClick = onClick)
             .padding(vertical = 12.dp, horizontal = 6.dp),

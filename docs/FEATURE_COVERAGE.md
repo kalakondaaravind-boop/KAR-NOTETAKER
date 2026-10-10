@@ -6,7 +6,7 @@ Audited 10 Oct 2026 against the specification sections (§) the app was built fr
 
 | Status | Meaning |
 |---|---|
-| **VERIFIED** | The logic lives in `core/domain` (or is SQL) and is covered by passing automated tests: 149 JVM tests, plus 91 SQL statements run against SQLite. |
+| **VERIFIED** | The logic lives in `core/domain` (or is SQL) and is covered by passing automated tests: 152 JVM tests, plus 91 SQL statements run against SQLite. |
 | **IMPLEMENTED** | UI and wiring exist in the Android modules but haven't been compiled or run yet. The first GitHub Actions build is the first compile. |
 | **PARTIAL** | Part of the requirement is present. The gap is stated. |
 | **DEFERRED** | Not built. Planned for later. |
@@ -79,7 +79,8 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | Item | Status |
 |---|---|
 | Text, quick note, checklist, share sheet (text, URLs, images, PDF, audio), file attach | IMPLEMENTED |
-| Camera (through the system camera app), voice recording, speech-to-text (system recogniser) | IMPLEMENTED |
+| Camera (through the system camera app), voice recording | IMPLEMENTED |
+| Speech-to-text: Home *Voice note* tile (new note), mic in Quick capture, editor dictation at the cursor; offline recognition requested | IMPLEMENTED |
 | OCR from images on the device (ML Kit), original image kept | IMPLEMENTED |
 | PDF import | PARTIAL: stored as an attachment, but its text isn't extracted or searchable |
 | Clipboard capture | IMPLEMENTED: optional paste button on Home that reads the clipboard only on tap (added in this pass) |
@@ -150,6 +151,7 @@ Nothing in the Android UI can be **VERIFIED** until the app compiles and runs. T
 | API key stored with Android Keystore encryption, never displayed | IMPLEMENTED |
 | App lock (biometric or device PIN), timeout, hidden from recents and screenshots | IMPLEMENTED |
 | Android cloud backup and device transfer disabled | IMPLEMENTED |
+| Erase all data: three-step confirmation; erases reminders, library, attachments, key, settings, cache and notifications; reports partial failures | VERIFIED order and failure reporting (`DataErasure`), IMPLEMENTED UI |
 | Network | INTERNET is used **only** for OpenAI AI actions you run. Nothing is stored online. |
 
 ### §18–23

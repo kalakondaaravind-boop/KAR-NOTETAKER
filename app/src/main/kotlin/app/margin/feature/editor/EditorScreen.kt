@@ -5,7 +5,6 @@ package app.margin.feature.editor
 import android.Manifest
 import android.content.Intent
 import android.net.Uri
-import android.speech.RecognizerIntent
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -201,10 +200,12 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
             attach(FileAttachmentSource(f, "image/jpeg"), ocr = Uri.fromFile(f))
         }
     }
-    val speech = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { res ->
-        val text = res.data?.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS)?.firstOrNull()
-        if (!text.isNullOrBlank()) vm.insertText(text)
-    }
+    // Dictation inserts at the cursor, followed by a space so the next dictation continues the sentence.
+    val dictate = app.margin.platform.rememberDictation(
+        prompt = stringResource(R.string.dictation_prompt),
+        onText = { vm.insertText("$it ") },
+        onUnavailable = { scope.launch { snackbar.showSnackbar(msgNoSpeech) } },
+    )
     val micPermission = rememberLauncherForActivityResult(ActivityResultContracts.RequestPermission()) { granted ->
         if (granted) recording = recorder.start() else scope.launch { snackbar.showSnackbar(msgMicDenied) }
     }
@@ -288,11 +289,7 @@ fun EditorScreen(n: Navigator, vm: EditorViewModel = hiltViewModel()) {
                             pendingCamera = f.absolutePath
                             try { takePicture.launch(uri) } catch (e: android.content.ActivityNotFoundException) { scope.launch { snackbar.showSnackbar(msgNoCamera) } }
                         },
-                        onDictate = {
-                            try {
-                                speech.launch(Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM))
-                            } catch (e: android.content.ActivityNotFoundException) { scope.launch { snackbar.showSnackbar(msgNoSpeech) } }
-                        },
+                        onDictate = dictate,
                         recording = recording,
                         onRecord = {
                             if (recording) {

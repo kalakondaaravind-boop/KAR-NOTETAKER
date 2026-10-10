@@ -86,8 +86,8 @@ svg.i{width:24px;height:24px;fill:currentColor;flex:none}
 .gC::before{background:linear-gradient(rgba(255,255,255,var(--gSheenC)),rgba(255,255,255,0))}
 .panel{border-radius:20px;margin:8px 16px}
 .panel .note+.note,.panel .task+.task{border-top:1px solid color-mix(in srgb,var(--outlineV) 60%,transparent);margin:0 16px;padding-left:0;padding-right:0}
-.tiles{display:flex;flex-wrap:wrap;gap:12px;padding:4px 16px 16px}
-.tile{width:96px;border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:600;text-align:center}
+.tiles{display:flex;flex-wrap:wrap;gap:8px;padding:4px 16px 16px}
+.tile{width:86px;border-radius:14px;padding:12px 6px;display:flex;flex-direction:column;align-items:center;gap:8px;font-size:13px;font-weight:600;text-align:center}
 .qbadge{width:40px;height:40px;border-radius:20px;display:flex;align-items:center;justify-content:center}
 .qbadge svg{width:22px;height:22px;fill:currentColor}
 .fab.gl{position:absolute}
@@ -95,7 +95,9 @@ svg.i{width:24px;height:24px;fill:currentColor;flex:none}
 .scrim{z-index:20}.drawer,.dlg{z-index:21}</style></head>
 <body><div id="app"></div>
 <script>
-const P={backup:"M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z",
+const P={mic:"M12 14c1.66 0 2.99-1.34 2.99-3L15 5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z",
+warn:"M1 21h22L12 2 1 21zm12-3h-2v-2h2v2zm0-4h-2v-4h2v4z",
+backup:"M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z",
 checklist:"M22 7h-9v2h9V7zm0 8h-9v2h9v-2zM5.54 11L2 7.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41L5.54 11zm0 8L2 15.46l1.41-1.41 2.12 2.12 4.24-4.24 1.41 1.41L5.54 19z",
 groups:"M12 12.75c1.63 0 3.07.39 4.24.9 1.08.48 1.76 1.56 1.76 2.73V18H6v-1.61c0-1.18.68-2.26 1.76-2.73 1.17-.52 2.61-.91 4.24-.91zM4 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm1.13 1.1c-.37-.06-.74-.1-1.13-.1-.99 0-1.93.21-2.78.58A2.01 2.01 0 0 0 0 16.43V18h4.5v-1.61c0-.83.23-1.61.63-2.29zM20 13c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm4 3.43c0-.81-.48-1.53-1.22-1.85A6.95 6.95 0 0 0 20 14c-.39 0-.76.04-1.13.1.4.68.63 1.46.63 2.29V18H24v-1.57zM12 6c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3z",
 today:"M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z",
@@ -135,8 +137,8 @@ const home=()=>`
 <div class="topbar"><div class="ib">${ic("menu")}</div><div class="title">${lockup(30)}</div><div class="ib">${ic("search")}</div><div class="ib">${ic("settings")}</div></div>
 <div class="scroll"><div class="col">
  <div class="banner gl gPa"><span style="display:flex">${ic("backup")}</span><div style="flex:1"><div style="font-weight:600;font-size:14px">Back up your notes</div><div style="font-size:12px;opacity:.9">Your notes exist only on this tablet. Save a backup file in case it is lost or damaged.</div></div><span class="btn text">Later</span><span class="btn filled gl gP">Back up now</span></div>
- <div class="panel gl gC"><div class="capture" style="padding:16px 8px 8px 16px"><div class="field">Capture a thought…</div><div class="ib" style="opacity:.38">${ic("send")}</div></div>
-  <div class="tiles"><div class="tile gl gPa"><div class="qbadge gl gP">${ic("notes")}</div><span>New note</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("checklist")}</div><span>New checklist</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("groups")}</div><span>Meeting notes</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("today")}</div><span>Daily journal</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("spark")}</div><span>Ask my notes</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("dash")}</div><span>Templates</span></div></div></div>
+ <div class="panel gl gC"><div class="capture" style="padding:16px 8px 8px 16px"><div class="field">Capture a thought…</div><div class="ib">${ic("mic")}</div><div class="ib" style="opacity:.38">${ic("send")}</div></div>
+  <div class="tiles"><div class="tile gl gPa"><div class="qbadge gl gP">${ic("notes")}</div><span>New note</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("mic")}</div><span>Voice note</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("checklist")}</div><span>New checklist</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("groups")}</div><span>Meeting notes</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("today")}</div><span>Daily journal</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("spark")}</div><span>Ask my notes</span></div><div class="tile gl gPa"><div class="qbadge gl gP">${ic("dash")}</div><span>Templates</span></div></div></div>
  <div class="panel gl gC"><div class="sh"><h3>Pinned</h3><span class="tb">See all</span></div>
  ${note("Q4 planning workshop","Agenda, owners and the three decisions we need by Friday…",`Today 09:12 <span class="tag2">planning</span>`,{pin:1})}
  ${note("Supplier comparison","Lead times, MOQ and payment terms for the three shortlisted vendors…",`Yesterday <span class="tag2">procurement</span>`,{pin:1,fav:1})}<div style="height:4px"></div></div>
@@ -179,6 +181,16 @@ const aikey=()=>home()+`<div class="scrim"></div><div class="dlg" style="positio
  <div style="font-size:12px;color:var(--onV);padding:4px 16px 0">Default: gpt-5.4-mini. You can enter any model your key can use.</div></div>
  <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px"><span class="btn text">Cancel</span><span class="btn filled gl gP">Save and turn on</span></div>
 </div>`;
+const erase=()=>`<div class="topbar"><div class="ib">${ic("back")}</div><div class="title" style="font-size:22px">Privacy &amp; security</div></div><div class="scroll"><div class="col" style="padding:16px;color:var(--onV)">…</div></div>
+<div class="scrim"></div><div class="dlg" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:560px;background:var(--cHigh);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 28px rgba(0,0,0,.25)">
+ <div style="display:flex;justify-content:center;color:#B3261E">${ic("warn")}</div>
+ <div style="font-size:24px;font-weight:500;text-align:center">Erase all data on this tablet?</div>
+ <div style="font-size:14px;color:var(--onV)">This permanently deletes:</div>
+ <div style="font-size:14px;line-height:22px">•&nbsp; All notes, folders, tags, templates and version history<br>•&nbsp; All photos, PDFs, voice notes and other attachments<br>•&nbsp; All tasks and their scheduled reminders<br>•&nbsp; Your OpenAI key and the AI request log<br>•&nbsp; All settings, including app lock, search and backup history. The app restarts at the welcome screen.</div>
+ <div style="font-size:12px;color:var(--onV)">Backup files you saved elsewhere (Downloads, SD card, USB) are not touched, so you can restore from them later.</div>
+ <div style="font-size:14px;font-weight:600;color:#B3261E">This cannot be undone.</div>
+ <div style="display:flex;justify-content:flex-end;gap:4px;margin-top:6px"><span class="btn text">Back up first</span><span class="btn text">Cancel</span><span class="btn text" style="color:#B3261E">Continue</span></div>
+</div>`;
 const onb=()=>`<div class="onb"><div class="onbc">
  <div class="prog"><i></i></div>
  <div style="padding:24px 0;display:flex;justify-content:center">${lockup(64,true)}</div>
@@ -187,8 +199,8 @@ const onb=()=>`<div class="onb"><div class="onbc">
  <div style="display:flex;align-items:center;margin-top:8px"><span style="flex:1"></span><span class="btn text">Skip</span><span class="btn filled gl gP">Next</span></div>
 </div></div>`;
 const isRail=screen==="home"||screen==="drawer"||screen==="aikey";
-document.getElementById("app").innerHTML=`<div class="device ${theme}">${status}<div class="main">${isRail&&screen!=="drawer"?rail:""}<div class="content">${({home,editor,drawer,aikey,onboarding:onb})[screen]()}</div></div><div class="navbar"></div></div>`;
-if(screen==="aikey"){const c=document.querySelector(".device");c.appendChild(c.querySelector(".scrim"));c.appendChild(c.querySelector(".dlg"));}
+document.getElementById("app").innerHTML=`<div class="device ${theme}">${status}<div class="main">${isRail&&screen!=="drawer"?rail:""}<div class="content">${({home,editor,drawer,aikey,erase,onboarding:onb})[screen]()}</div></div><div class="navbar"></div></div>`;
+if(screen==="aikey"||screen==="erase"){const c=document.querySelector(".device");c.appendChild(c.querySelector(".scrim"));c.appendChild(c.querySelector(".dlg"));}
 if(screen==="drawer"){document.querySelector(".main").insertAdjacentHTML("afterbegin","");document.querySelector(".content").insertAdjacentHTML("beforebegin",rail);
  const c=document.querySelector(".device"); const s=c.querySelector(".scrim"),d=c.querySelector(".drawer"); c.appendChild(s); c.appendChild(d);}
 </script></body></html>

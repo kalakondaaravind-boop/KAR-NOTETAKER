@@ -52,6 +52,8 @@ sealed interface DataOp {
     data class ReadyToRestore(val counts: String, val createdAt: String?, val missingAttachments: Int) : DataOp
     data object NeedsPassphrase : DataOp
     data class Imported(val report: ImportReport) : DataOp
+    /** Erase finished: complete, or with the steps that failed (never reported as complete if any did). */
+    data class Erased(val report: app.margin.domain.security.EraseReport) : DataOp
 }
 
 enum class ExportKind { MARKDOWN_ZIP, HTML_ZIP, TEXT_ZIP, JSON }
@@ -69,6 +71,7 @@ class BackupViewModel @Inject constructor(
     private val files: AttachmentFiles,
     private val clock: Clock,
     private val settings: app.margin.domain.settings.SettingsRepository,
+    private val eraser: DataEraser,
 ) : ViewModel() {
     private val _op = MutableStateFlow<DataOp>(DataOp.Idle)
     val op: StateFlow<DataOp> = _op.asStateFlow()
@@ -261,6 +264,6 @@ class BackupViewModel @Inject constructor(
 
     fun wipe() = viewModelScope.launch {
         _op.value = DataOp.Working(app.margin.R.string.wiping)
-        _op.value = try { library.wipeAll(); DataOp.Done(app.margin.R.string.wiped) } catch (e: Exception) { DataOp.Failed(app.margin.R.string.something_went_wrong, e.message) }
+        _op.value = DataOp.Erased(eraser.eraseEverything())
     }
 }

@@ -94,6 +94,15 @@ import kotlinx.coroutines.launch
 import java.time.Duration
 import java.time.LocalDate
 import javax.inject.Inject
+import androidx.compose.material.icons.outlined.DeleteForever
+import androidx.compose.material.icons.outlined.WarningAmber
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.text.input.KeyboardCapitalization
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
 
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
@@ -246,7 +255,6 @@ fun PrivacySettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel(),
     val s by vm.settings.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val activity = context as? FragmentActivity
-    var wipeDialog by rememberSaveable { mutableStateOf(false) }
     var authError by remember { mutableStateOf<String?>(null) }
     SettingsScaffold(stringResource(R.string.privacy_security), n) {
         Card(Modifier.padding(16.dp)) { Text(stringResource(R.string.privacy_statement), Modifier.padding(16.dp), style = MaterialTheme.typography.bodyMedium) }
@@ -290,17 +298,83 @@ fun PrivacySettingsScreen(n: Navigator, vm: SettingsViewModel = hiltViewModel(),
         Header(stringResource(R.string.data_collection))
         Text(stringResource(R.string.no_telemetry), Modifier.padding(horizontal = 16.dp), style = MaterialTheme.typography.bodyMedium)
         Header(stringResource(R.string.danger_zone))
-        OutlinedButton(onClick = { wipeDialog = true }, Modifier.padding(horizontal = 16.dp)) { Text(stringResource(R.string.delete_all_data), color = MaterialTheme.colorScheme.error) }
-    }
-    if (wipeDialog) {
-        var typed by rememberSaveable { mutableStateOf("") }
-        val word = stringResource(R.string.delete_confirm_word)
-        AlertDialog(onDismissRequest = { wipeDialog = false }, title = { Text(stringResource(R.string.delete_all_data)) },
-            text = { Column { Text(stringResource(R.string.delete_all_data_body, word)); OutlinedTextField(typed, { typed = it }, singleLine = true) } },
-            confirmButton = { TextButton(enabled = typed.trim().equals(word, ignoreCase = true), onClick = { data.wipe(); wipeDialog = false }) { Text(stringResource(R.string.delete), color = MaterialTheme.colorScheme.error) } },
-            dismissButton = { TextButton(onClick = { wipeDialog = false }) { Text(stringResource(R.string.cancel)) } })
+        EraseAllData(data, lockEnabled = s.lock.enabled, onBackupFirst = { n.open(Routes.SETTINGS_DATA) })
+        Spacer(Modifier.height(24.dp))
     }
     OperationDialog(data)
+}
+
+/**
+ * Erase all data, with deliberate friction: (1) a dialog listing exactly what goes, with "Back up first";
+ * (2) typing the confirmation word; (3) device authentication when the app lock is on.
+ */
+@Composable
+fun EraseAllData(data: BackupViewModel, lockEnabled: Boolean, onBackupFirst: (() -> Unit)?) {
+    val activity = LocalContext.current as? FragmentActivity
+    var step by rememberSaveable { mutableIntStateOf(0) }
+    var typed by rememberSaveable { mutableStateOf("") }
+    var authError by remember { mutableStateOf<String?>(null) }
+    val word = stringResource(R.string.delete_confirm_word)
+    val error = MaterialTheme.colorScheme.error
+    OutlinedButton(
+        onClick = { typed = ""; authError = null; step = 1 },
+        modifier = Modifier.padding(horizontal = 16.dp),
+        colors = ButtonDefaults.outlinedButtonColors(contentColor = error),
+    ) {
+        Icon(Icons.Outlined.DeleteForever, null)
+        Spacer(Modifier.width(8.dp))
+        Text(stringResource(R.string.erase_all_data))
+    }
+    if (step == 1) AlertDialog(
+        onDismissRequest = { step = 0 },
+        icon = { Icon(Icons.Outlined.WarningAmber, null, tint = error) },
+        title = { Text(stringResource(R.string.erase_title)) },
+        text = {
+            Column(Modifier.verticalScroll(rememberScrollState()), verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                Text(stringResource(R.string.erase_will_delete))
+                listOf(R.string.erase_item_notes, R.string.erase_item_attachments, R.string.erase_item_tasks, R.string.erase_item_ai, R.string.erase_item_settings)
+                    .forEach { Text("•  " + stringResource(it), style = MaterialTheme.typography.bodyMedium) }
+                Text(stringResource(R.string.erase_keeps_backups), style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(stringResource(R.string.erase_cannot_undo), style = MaterialTheme.typography.labelLarge, color = error)
+            }
+        },
+        confirmButton = { TextButton(onClick = { step = 2 }) { Text(stringResource(R.string.continue_label), color = error) } },
+        dismissButton = {
+            Row {
+                if (onBackupFirst != null) TextButton(onClick = { step = 0; onBackupFirst() }) { Text(stringResource(R.string.backup_first)) }
+                TextButton(onClick = { step = 0 }) { Text(stringResource(R.string.cancel)) }
+            }
+        },
+    )
+    if (step == 2) {
+        val matches = typed.trim().equals(word, ignoreCase = true)
+        AlertDialog(
+            onDismissRequest = { step = 0 },
+            title = { Text(stringResource(R.string.erase_confirm_title)) },
+            text = {
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(stringResource(R.string.erase_type_to_confirm, word))
+                    OutlinedTextField(typed, { typed = it }, singleLine = true, modifier = Modifier.fillMaxWidth(),
+                        keyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Characters, autoCorrectEnabled = false))
+                    if (lockEnabled) Text(stringResource(R.string.erase_auth_note), style = MaterialTheme.typography.bodySmall)
+                    authError?.let { Text(it, color = error, style = MaterialTheme.typography.bodySmall) }
+                }
+            },
+            confirmButton = {
+                Button(
+                    enabled = matches,
+                    colors = ButtonDefaults.buttonColors(containerColor = error, contentColor = MaterialTheme.colorScheme.onError),
+                    onClick = {
+                        val go: () -> Unit = { step = 0; data.wipe() }
+                        if (lockEnabled && activity != null && AppLockManager.canAuthenticate(activity)) {
+                            showAuthPrompt(activity, onSuccess = go, onError = { authError = it })
+                        } else go()
+                    },
+                ) { Text(stringResource(R.string.erase_everything)) }
+            },
+            dismissButton = { TextButton(onClick = { step = 0 }) { Text(stringResource(R.string.cancel)) } },
+        )
+    }
 }
 
 @Composable
@@ -410,6 +484,10 @@ fun DataSettingsScreen(n: Navigator, vm: BackupViewModel = hiltViewModel(), sv: 
         Header(stringResource(R.string.maintenance))
         LinkRow(stringResource(R.string.rebuild_index), stringResource(R.string.rebuild_index_sub)) { vm.rebuildIndex() }
         LinkRow(stringResource(R.string.attachments), stringResource(R.string.storage_and_files)) { n.open(Routes.ATTACHMENTS) }
+        // Same erase flow as in Privacy, where people look for it after backing up or exporting.
+        Header(stringResource(R.string.danger_zone))
+        EraseAllData(vm, lockEnabled = s.lock.enabled, onBackupFirst = { passDialog = true })
+        Spacer(Modifier.height(24.dp))
     }
     if (passDialog) {
         var show by remember { mutableStateOf("") }
@@ -433,12 +511,37 @@ fun DataSettingsScreen(n: Navigator, vm: BackupViewModel = hiltViewModel(), sv: 
     OperationDialog(vm)
 }
 
+private fun eraseStepLabel(s: app.margin.domain.security.EraseStep): Int = when (s) {
+    app.margin.domain.security.EraseStep.REMINDERS -> R.string.erase_step_reminders
+    app.margin.domain.security.EraseStep.LIBRARY -> R.string.erase_step_library
+    app.margin.domain.security.EraseStep.SECRETS -> R.string.erase_step_secrets
+    app.margin.domain.security.EraseStep.SETTINGS -> R.string.erase_step_settings
+    app.margin.domain.security.EraseStep.CACHE -> R.string.erase_step_cache
+    app.margin.domain.security.EraseStep.NOTIFICATIONS -> R.string.erase_step_notifications
+}
+
 /** Progress / result / restore-confirmation dialogs shared by data screens. */
 @Composable
 fun OperationDialog(vm: BackupViewModel) {
     val op by vm.op.collectAsStateWithLifecycle()
     when (val o = op) {
         DataOp.Idle -> Unit
+        is DataOp.Erased -> {
+            val activity = LocalContext.current as? android.app.Activity
+            if (o.report.isComplete) {
+                AlertDialog(onDismissRequest = {}, icon = { Icon(Icons.Outlined.CheckCircle, null) },
+                    title = { Text(stringResource(R.string.erased_title)) }, text = { Text(stringResource(R.string.erased_body)) },
+                    // Settings are back to defaults (onboarding not done), so recreating the activity starts at the welcome screen.
+                    confirmButton = { TextButton(onClick = { vm.dismiss(); activity?.recreate() }) { Text(stringResource(R.string.start_fresh)) } })
+            } else {
+                val labels = o.report.failed.keys.map { stringResource(eraseStepLabel(it)) }
+                AlertDialog(onDismissRequest = vm::dismiss, icon = { Icon(Icons.Outlined.WarningAmber, null, tint = MaterialTheme.colorScheme.error) },
+                    title = { Text(stringResource(R.string.erase_incomplete_title)) },
+                    text = { Text(stringResource(R.string.erase_incomplete_body, labels.joinToString(", "))) },
+                    confirmButton = { TextButton(onClick = vm::wipe) { Text(stringResource(R.string.try_again)) } },
+                    dismissButton = { TextButton(onClick = vm::dismiss) { Text(stringResource(R.string.close)) } })
+            }
+        }
         is DataOp.Working -> AlertDialog(onDismissRequest = {}, title = { Text(stringResource(o.label)) },
             text = { Row(verticalAlignment = Alignment.CenterVertically) { CircularProgressIndicator(); Text(stringResource(R.string.please_wait), Modifier.padding(start = 16.dp)) } },
             confirmButton = {})

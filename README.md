@@ -41,6 +41,33 @@ The key is encrypted with the Android Keystore and never shown again. Once it's 
 
 The setup is hidden from screen readers too: the logo isn't announced as a button.
 
+
+## Voice notes (speech-to-text)
+
+- **Home → Voice note tile:** speak, and the words become a new note that opens in the editor.
+- **Home → 🎤 in Quick capture:** your words go into the capture box, so you can check them before saving.
+- **Editor → toolbar 🗣 button:** dictation is inserted at the cursor.
+
+This uses Android's built-in speech recogniser. The app asks it to recognise speech **offline**, so audio stays on the tablet. To guarantee that, download the offline speech language in Android Settings → System → Languages → Speech (exact menu names vary by tablet). Without an offline language pack, the device's speech service may use its own online recognition.
+
+## Erase all data
+
+Settings → Privacy (or the bottom of Backup & data) → **Erase all data**. You're asked to confirm three times:
+
+1. A screen lists exactly what will be deleted, with a **Back up first** option.
+2. Type **DELETE**.
+3. If the app lock is on, unlock with your fingerprint or PIN.
+
+The erase removes:
+- notes, folders, tags, templates and version history;
+- attachments;
+- tasks and their scheduled reminders;
+- the OpenAI key and AI request log;
+- all settings, plus search and backup history;
+- temporary files and notifications.
+
+The app then restarts at the welcome screen. If any part fails, the app lists what couldn't be erased and offers **Try again**; it never reports a partial erase as complete. Backup files you saved outside the app are not touched.
+
 ## Put it on GitHub and get the APK
 
 1. Create an empty repository on GitHub, for example `kar-notes`, with no README and no .gitignore.
@@ -103,7 +130,7 @@ Full feature-by-feature audit against the specification: **[docs/FEATURE_COVERAG
 ## Verification status
 
 What has been verified so far:
-- **Domain module:** compiles, and all 149 unit tests pass (`tools/verify-domain.sh`).
+- **Domain module:** compiles, and all 152 unit tests pass (`tools/verify-domain.sh`).
 - **SQL:** all 91 Room queries run against real SQLite 3.45, including the search index and cascade behaviour (`tools/verify-sql.py`).
 - **Resources:** every string and resource reference resolves (`tools/check-resources.py`).
 
