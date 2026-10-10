@@ -30,11 +30,15 @@ To check on a device, run `adb shell dumpsys package com.kargroup.notetaker | gr
 ## Put it on GitHub and get the APK
 
 1. Create an empty repository on GitHub, for example `kar-notes`, with no README and no .gitignore.
-2. From this folder, run:
+2. Unzip the project, open a terminal in the `kar-notes` folder, and run:
    ```bash
+   git init -b main
+   git add .
+   git commit -m "KAR Notes"
    git remote add origin https://github.com/<your-account>/kar-notes.git
    git push -u origin main
    ```
+   Alternatively, use the website. GitHub's **Add file → Upload files** works too, but drag the *contents* of the `kar-notes` folder, including the hidden `.github` folder, which some file managers hide.
 3. Open the repository's **Actions** tab. The **Android build** workflow runs automatically, in two parts:
    - **build** runs the domain unit tests, builds the debug APK, and records its SHA-256 checksum. The download is the artifact **kar-notes-debug-apk**.
    - **tablet** installs the APK on a Pixel Tablet emulator with Wi-Fi and data switched off and screenshots the app in light and dark mode. It also lists the permissions Android granted and runs the instrumented tests. The download is the artifact **tablet-screenshots**.
