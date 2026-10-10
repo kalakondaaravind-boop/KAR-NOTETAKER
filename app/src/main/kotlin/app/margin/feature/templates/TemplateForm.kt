@@ -247,7 +247,7 @@ private fun SectionView(s: TemplateSection, depth: Int, ui: FormUi, vm: Template
         if (s.title.isNotEmpty()) {
             HorizontalDivider()
             Text(s.title, style = if (depth == 0) MaterialTheme.typography.titleMedium else MaterialTheme.typography.titleSmall, color = MaterialTheme.colorScheme.primary,
-                modifier = Modifier.semantics { androidx.compose.ui.semantics.heading() })
+                modifier = Modifier.semantics { heading() })
         }
         s.description?.let { Text(it, style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.onSurfaceVariant) }
         if (s.repeatable) {

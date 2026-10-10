@@ -36,14 +36,15 @@ class DataEraser @Inject constructor(
         DataErasure.run(
             mapOf<EraseStep, suspend () -> Unit>(
                 EraseStep.REMINDERS to suspend { tasks.tasksWithReminders().forEach { scheduler.cancel(it.id) } },
-                EraseStep.LIBRARY to suspend { library.wipeAll() },
-                EraseStep.SECRETS to suspend { secrets.remove(SECRET_AI_KEY) },
+                EraseStep.LIBRARY to suspend { library.wipeAll(); Unit },
+                EraseStep.SECRETS to suspend { secrets.remove(SECRET_AI_KEY); Unit },
                 // Defaults: onboarding not completed, app lock off, AI off, logs and histories empty.
-                EraseStep.SETTINGS to suspend { settings.update { AppSettings() } },
+                EraseStep.SETTINGS to suspend { settings.update { AppSettings() }; Unit },
                 EraseStep.CACHE to suspend {
                     context.cacheDir.listFiles()?.forEach { f -> if (!f.deleteRecursively()) error("could not delete ${f.name}") }
+                    Unit
                 },
-                EraseStep.NOTIFICATIONS to suspend { NotificationManagerCompat.from(context).cancelAll() },
+                EraseStep.NOTIFICATIONS to suspend { NotificationManagerCompat.from(context).cancelAll(); Unit },
             ),
         )
     }

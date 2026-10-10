@@ -104,7 +104,7 @@ fun MarkdownPreview(markdown: String, actions: PreviewActions, textStyle: TextSt
                 is Block.Heading -> Text(
                     inline(b.inlines, colors, actions),
                     style = when (b.level) { 1 -> MaterialTheme.typography.headlineSmall; 2 -> MaterialTheme.typography.titleLarge; else -> MaterialTheme.typography.titleMedium },
-                    modifier = Modifier.padding(top = 8.dp).semantics { androidx.compose.ui.semantics.heading() },
+                    modifier = Modifier.padding(top = 8.dp).semantics { heading() },
                 )
                 is Block.Paragraph -> Text(inline(b.inlines, colors, actions), style = textStyle)
                 is Block.ListItem -> Row(Modifier.padding(start = (b.indent * 20).dp), verticalAlignment = Alignment.Top) {
