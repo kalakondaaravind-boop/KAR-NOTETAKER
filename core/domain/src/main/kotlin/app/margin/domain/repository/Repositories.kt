@@ -127,6 +127,9 @@ interface AttachmentRepository {
     fun observeForNote(noteId: String): Flow<List<Attachment>>
     fun observeAll(): Flow<List<Attachment>>
     suspend fun add(noteId: String, source: AttachmentSource): Result<Attachment>
+    /** Replaces an attachment's content (e.g. an edited drawing), keeping its id; the old file is removed only after the new one is saved. */
+    suspend fun replace(id: String, source: AttachmentSource, extractedText: String? = null): Result<Attachment>
+    suspend fun get(id: String): Attachment?
     suspend fun remove(id: String)
     suspend fun setExtractedText(id: String, text: String?)
     suspend fun storageBytes(): Long

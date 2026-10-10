@@ -45,32 +45,44 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.em
 import app.margin.domain.text.Block
 import app.margin.domain.text.Inline
+import app.margin.domain.text.LiveMarkdown
 import app.margin.domain.text.MarkdownHighlighter
+import app.margin.ui.theme.NoteFonts
 import app.margin.domain.text.MarkdownParser
 import app.margin.ui.theme.SemanticColors
 
 /**
- * Styles raw Markdown in place: characters are never added or removed (identity offset mapping),
- * so cursor movement, selection, IME composition and accessibility read the actual text.
+ * Editor styling. By default the note is shown "what you see": formatting characters are hidden and list
+ * markers become • / ☐ / ☑ (see [LiveMarkdown]); the stored text stays Markdown. With [showMarks] the raw
+ * Markdown is shown, styled in place, with an identity offset mapping.
  */
-class MarkdownVisualTransformation(private val colors: SemanticColors, private val syntax: Color, private val headingScale: Float = 1f) : VisualTransformation {
+class MarkdownVisualTransformation(
+    private val colors: SemanticColors,
+    private val syntax: Color,
+    private val headingScale: Float = 1f,
+    private val showMarks: Boolean = false,
+) : VisualTransformation {
     private var cacheText: String? = null
-    private var cache: AnnotatedString? = null
+    private var cache: TransformedText? = null
 
     override fun filter(text: AnnotatedString): TransformedText {
         val raw = text.text
-        val styled = if (raw == cacheText && cache != null) cache!! else {
-            // Very long notes: skip styling beyond a size where it could cost frames while typing.
-            val spans = if (raw.length > 200_000) emptyList() else MarkdownHighlighter.spans(raw)
-            buildAnnotatedString {
-                append(raw)
-                for (s in spans) addStyle(style(s.kind), s.start, s.end)
-            }.also { cacheText = raw; cache = it }
+        cache?.let { if (raw == cacheText) return it }
+        // Very long notes: skip styling beyond a size where it could cost frames while typing.
+        if (raw.length > 200_000) return TransformedText(text, OffsetMapping.Identity)
+        val view = LiveMarkdown.build(raw, showMarks)
+        val styled = buildAnnotatedString {
+            append(view.text)
+            for (s in view.styles) addStyle(style(s), s.start, s.end)
         }
-        return TransformedText(styled, OffsetMapping.Identity)
+        val mapping = if (showMarks) OffsetMapping.Identity else object : OffsetMapping {
+            override fun originalToTransformed(offset: Int): Int = view.toView(offset)
+            override fun transformedToOriginal(offset: Int): Int = view.toOrig(offset)
+        }
+        return TransformedText(styled, mapping).also { cacheText = raw; cache = it }
     }
 
-    private fun style(k: MarkdownHighlighter.Kind): SpanStyle = when (k) {
+    private fun style(s: MarkdownHighlighter.Span): SpanStyle = when (s.kind) {
         MarkdownHighlighter.Kind.HEADING1 -> SpanStyle(fontSize = (1.5f * headingScale).em, fontWeight = FontWeight.Bold)
         MarkdownHighlighter.Kind.HEADING2 -> SpanStyle(fontSize = (1.3f * headingScale).em, fontWeight = FontWeight.Bold)
         MarkdownHighlighter.Kind.HEADING3 -> SpanStyle(fontSize = (1.15f * headingScale).em, fontWeight = FontWeight.SemiBold)
@@ -84,6 +96,9 @@ class MarkdownVisualTransformation(private val colors: SemanticColors, private v
         MarkdownHighlighter.Kind.LIST_MARKER -> SpanStyle(color = syntax, fontWeight = FontWeight.SemiBold)
         MarkdownHighlighter.Kind.CHECKED_ITEM -> SpanStyle(textDecoration = TextDecoration.LineThrough, color = syntax)
         MarkdownHighlighter.Kind.SYNTAX -> SpanStyle(color = syntax.copy(alpha = 0.55f))
+        MarkdownHighlighter.Kind.COLOR -> SpanStyle(color = (s.value as? Long)?.let { Color(it) } ?: Color.Unspecified)
+        MarkdownHighlighter.Kind.HIGHLIGHT -> SpanStyle(background = (s.value as? Long)?.let { Color(it) } ?: Color.Unspecified)
+        MarkdownHighlighter.Kind.FONT -> SpanStyle(fontFamily = NoteFonts.family(s.value as? String))
     }
 }
 
@@ -181,6 +196,11 @@ fun inline(nodes: List<Inline>, colors: SemanticColors, actions: PreviewActions)
                 actions.onOpenUrl(n.url)
             }) { append(n.url) }
             is Inline.Image -> { pushStyle(SpanStyle(fontStyle = FontStyle.Italic, color = colors.link)); append("🖼 " + n.alt.ifBlank { n.url }); pop() }
+            is Inline.Styled -> styled(SpanStyle(
+                color = n.attrs.color?.let { Color(it) } ?: Color.Unspecified,
+                background = n.attrs.background?.let { Color(it) } ?: Color.Unspecified,
+                fontFamily = n.attrs.font?.let { NoteFonts.family(it) },
+            ), n.children)
         }
     }
     nodes.forEach { walk(it, null) }

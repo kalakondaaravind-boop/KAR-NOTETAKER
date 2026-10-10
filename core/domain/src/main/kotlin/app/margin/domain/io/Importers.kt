@@ -22,6 +22,8 @@ data class ImportCandidate(
     val favorite: Boolean = false,
     /** Original id when re-importing a Margin export (used for duplicate detection). */
     val originalId: String? = null,
+    /** Files carried with the note (e.g. images from a Word document); stored as attachments. */
+    val media: List<ImportMedia> = emptyList(),
 )
 
 sealed interface ImportIssue {

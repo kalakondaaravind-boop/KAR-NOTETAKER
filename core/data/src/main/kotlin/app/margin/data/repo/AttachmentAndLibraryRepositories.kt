@@ -31,6 +31,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import java.io.File
 
+internal fun sanitizeName(n: String) = n.replace(Regex("""[\\/\u0000-\u001F]"""), "_").trim().ifEmpty { "attachment" }.take(200)
+
 class AttachmentRepositoryImpl(
     private val db: MarginDatabase,
     private val files: AttachmentFiles,
@@ -59,7 +61,26 @@ class AttachmentRepositoryImpl(
         a
     }
 
-    private fun sanitizeName(n: String) = n.replace(Regex("""[\\/\u0000-\u001F]"""), "_").trim().ifEmpty { "attachment" }.take(200)
+    override suspend fun get(id: String): Attachment? = db.attachments().get(id)?.toDomain()
+
+    override suspend fun replace(id: String, source: AttachmentSource, extractedText: String?): Result<Attachment> = runCatching {
+        val old = db.attachments().get(id)?.toDomain() ?: error("attachment not found")
+        val stored = files.store(Ids.newId(), source.open(), ImportLimits.MAX_ATTACHMENT_BYTES)
+        val a = old.copy(sizeBytes = stored.size, storagePath = stored.path, sha256 = stored.sha256, extractedText = extractedText ?: old.extractedText,
+            mimeType = source.mimeType.ifBlank { old.mimeType })
+        try {
+            db.withTransaction {
+                db.attachments().upsert(a.toEntity())
+                indexer.reindex(a.noteId)
+            }
+        } catch (e: Exception) {
+            files.delete(stored.path)
+            throw e
+        }
+        if (old.storagePath != stored.path) files.delete(old.storagePath)
+        a
+    }
+
 
     override suspend fun remove(id: String) {
         val a = db.attachments().get(id) ?: return
@@ -197,6 +218,12 @@ class LibraryRepositoryImpl(
                         db.tags().byKey(Tags.key(name)) ?: Tag(Ids.newId(), Tags.clean(name), Tags.key(name)).toEntity().also { db.tags().insert(it) }
                     }
                     db.tags().link(tags.map { app.margin.data.db.NoteTagEntity(note.id, it.id) })
+                }
+                // Media carried with the note (e.g. images from a Word document) become attachments.
+                for (m in c.media.take(200)) {
+                    val aid = Ids.newId()
+                    val stored = files.store(aid, m.bytes.inputStream(), ImportLimits.MAX_ATTACHMENT_BYTES)
+                    db.attachments().upsert(Attachment(aid, note.id, sanitizeName(m.name), m.mimeType, stored.size, stored.path, now, null, stored.sha256).toEntity())
                 }
                 indexer.reindex(e)
             }
