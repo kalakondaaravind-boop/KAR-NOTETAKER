@@ -143,6 +143,15 @@ const drawer=()=>home()+`<div class="scrim"></div><div class="drawer">
  ${[["inbox","Inbox"],["pin","Pinned"],["star","Favorites"],["folder","Folders"],["label","Tags"],["dash","Templates"],["attach","Attachments"],["hub","Knowledge"],["spark","Ask my notes"]].map(([i,l,s])=>`<div class="di ${s?"sel":""}">${ic(i)}${l}</div>`).join("")}
  <div class="hr"></div>${[["archive","Archive"],["del","Trash"]].map(([i,l])=>`<div class="di">${ic(i)}${l}</div>`).join("")}<div class="hr"></div><div class="di">${ic("settings")}Settings</div>
 </div>`;
+const aikey=()=>home()+`<div class="scrim"></div><div class="dlg" style="position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:560px;background:var(--cHigh);border-radius:28px;padding:24px;display:flex;flex-direction:column;gap:14px;box-shadow:0 8px 28px rgba(0,0,0,.25)">
+ <div style="font-size:24px;font-weight:500">Connect OpenAI</div>
+ <div style="font-size:14px;font-weight:600;color:var(--primary)">AI is running on this tablet only</div>
+ <div style="font-size:14px;line-height:20px;color:var(--onV)">Paste your OpenAI API key. It is stored encrypted on this tablet (Android Keystore) and never shown again. When you run an AI action, only the text that action needs is sent to OpenAI over HTTPS. Your notes stay stored on this tablet.</div>
+ <div style="position:relative;border:2px solid var(--primary);border-radius:6px;height:56px;display:flex;align-items:center;padding:0 16px;font-size:16px;letter-spacing:3px">••••••••••••••••••••••••<span style="position:absolute;top:-9px;left:12px;background:var(--cHigh);padding:0 4px;font-size:12px;letter-spacing:0;color:var(--primary)">OpenAI API key</span></div>
+ <div><div style="position:relative;border:1px solid var(--outline);border-radius:6px;height:56px;display:flex;align-items:center;padding:0 16px;font-size:16px">gpt-5.4-mini<span style="position:absolute;top:-9px;left:12px;background:var(--cHigh);padding:0 4px;font-size:12px;color:var(--onV)">Model name</span></div>
+ <div style="font-size:12px;color:var(--onV);padding:4px 16px 0">Default: gpt-5.4-mini. You can enter any model your key can use.</div></div>
+ <div style="display:flex;justify-content:flex-end;gap:8px;margin-top:6px"><span class="btn text">Cancel</span><span class="btn filled">Save and turn on</span></div>
+</div>`;
 const onb=()=>`<div class="onb"><div class="onbc">
  <div class="prog"><i></i></div>
  <div style="padding:24px 0;display:flex;justify-content:center">${lockup(64,true)}</div>
@@ -150,8 +159,9 @@ const onb=()=>`<div class="onb"><div class="onbc">
  <div style="font-size:16px;line-height:26px">A calm place to capture anything, write naturally, organise with notebooks and tags, and find things instantly. Notes are written in Markdown, so they stay portable.</div>
  <div style="display:flex;align-items:center;margin-top:8px"><span style="flex:1"></span><span class="btn text">Skip</span><span class="btn filled">Next</span></div>
 </div></div>`;
-const isRail=screen==="home"||screen==="drawer";
-document.getElementById("app").innerHTML=`<div class="device ${theme}">${status}<div class="main">${isRail&&screen!=="drawer"?rail:""}<div class="content">${({home,editor,drawer,onboarding:onb})[screen]()}</div></div><div class="navbar"></div></div>`;
+const isRail=screen==="home"||screen==="drawer"||screen==="aikey";
+document.getElementById("app").innerHTML=`<div class="device ${theme}">${status}<div class="main">${isRail&&screen!=="drawer"?rail:""}<div class="content">${({home,editor,drawer,aikey,onboarding:onb})[screen]()}</div></div><div class="navbar"></div></div>`;
+if(screen==="aikey"){const c=document.querySelector(".device");c.appendChild(c.querySelector(".scrim"));c.appendChild(c.querySelector(".dlg"));}
 if(screen==="drawer"){document.querySelector(".main").insertAdjacentHTML("afterbegin","");document.querySelector(".content").insertAdjacentHTML("beforebegin",rail);
  const c=document.querySelector(".device"); const s=c.querySelector(".scrim"),d=c.querySelector(".drawer"); c.appendChild(s); c.appendChild(d);}
 </script></body></html>
