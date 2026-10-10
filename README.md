@@ -70,20 +70,28 @@ The app then restarts at the welcome screen. If any part fails, the app lists wh
 
 ## Put it on GitHub and get the APK
 
-1. Create an empty repository on GitHub, for example `kar-notes`, with no README and no .gitignore.
-2. Unzip the project, open a terminal in the `kar-notes` folder, and run:
-   ```bash
-   git init -b main
-   git add .
-   git commit -m "KAR Notes"
-   git remote add origin https://github.com/<your-account>/kar-notes.git
-   git push -u origin main
-   ```
-   Alternatively, use the website. GitHub's **Add file → Upload files** works too, but drag the *contents* of the `kar-notes` folder, including the hidden `.github` folder, which some file managers hide.
-3. Open the repository's **Actions** tab. The **Android build** workflow runs automatically, in two parts:
-   - **build** runs the domain unit tests, builds the debug APK, and records its SHA-256 checksum. The download is the artifact **kar-notes-debug-apk**.
-   - **tablet** installs the APK on a Pixel Tablet emulator with Wi-Fi and data switched off. A scripted walkthrough (`tools/ci-ui-tour.sh`) then takes real screenshots: the welcome screen, the hidden OpenAI popup (10 logo taps), Home with notes, the library menu, the editor, dark mode and Settings. The job also lists the permissions Android granted and runs the instrumented tests. The download is the artifact **tablet-screenshots**, which includes `ui-tour.log`.
-4. To install on a tablet, copy the APK across, open it and allow "install unknown apps" for your file manager. Or use `adb install kar-notes-*.apk`.
+**Easiest (no command line): GitHub Desktop**
+
+1. Sign in at github.com (create a free account if needed).
+2. Unzip `kar-notes-project.zip`, which gives you a `kar-notes` folder.
+3. Install **GitHub Desktop** (desktop.github.com) and sign in with your GitHub account.
+4. In GitHub Desktop, choose **File → Add local repository…** and pick the `kar-notes` folder. When it says the folder isn't a repository, click **create a repository**, leave the defaults, then click **Create repository**.
+5. Click **Publish repository**. Keep **"Keep this code private"** ticked, then click **Publish**.
+6. On github.com, open the repository → **Actions** tab. The **Android build** workflow starts by itself (about 10 minutes for the APK and 20–30 for the tablet screenshots).
+7. When it shows a green tick, open the run and scroll to **Artifacts**:
+   - **kar-notes-debug-apk** is the installable app;
+   - **tablet-screenshots** holds real screenshots from a tablet emulator.
+8. To install, copy the `.apk` to the tablet, open it, and allow "Install unknown apps" for your file manager when asked.
+
+If a step shows a red ✗, open it, copy the log, and send it to Claude to fix.
+
+**Command line alternative** (from inside the `kar-notes` folder):
+```bash
+git init -b main && git add . && git commit -m "KAR Notes"
+git remote add origin https://github.com/<your-account>/kar-notes.git
+git push -u origin main
+```
+Don't use the website's "Upload files" button: it accepts at most 100 files at a time, and this project has about 290, including a hidden `.github` folder.
 
 ## Build locally (Android Studio)
 
