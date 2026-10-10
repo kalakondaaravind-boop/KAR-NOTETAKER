@@ -80,6 +80,43 @@ if tap "New note"; then
 fi
 launch 2
 
+# Drawing canvas: pen strokes, a shape, clipart, selection with cut/copy/paste.
+if tap "Drawing"; then
+  sleep 4
+  c="$(find_center 'Drawing canvas' contains)"
+  if [ -n "$c" ]; then
+    set -- $c; cx=$1; cy=$2
+    # a wave in pen (several connected strokes)
+    x=$((cx-300)); y=$((cy-250))
+    for d in 0 1 2 3 4 5; do
+      nx=$((x+100)); if [ $((d % 2)) -eq 0 ]; then ny=$((y-80)); else ny=$((y+80)); fi
+      adb shell input swipe $x $y $nx $ny 250; x=$nx; y=$ny
+    done
+    tap "Marker" && adb shell input swipe $((cx-300)) $((cy-80)) $((cx+300)) $((cy-80)) 400
+    tap "Highlighter" && adb shell input swipe $((cx-300)) $((cy-150)) $((cx+200)) $((cy-150)) 400
+    if tap "Shapes"; then tap "Ellipse"; adb shell input swipe $((cx-250)) $((cy+20)) $((cx-50)) $((cy+180)) 400; fi
+    if tap "Clipart"; then sleep 2; shot 09-clipart-picker 1; tap "Idea"; fi
+    shot 10-drawing-canvas 2
+    if tap "Copy"; then tap "Paste"; shot 11-drawing-copy-paste 1; fi
+    tap "Pen"
+    if tap "More colours"; then shot 12-colour-picker 2; tap "Cancel"; fi
+  else
+    log "NOT FOUND: drawing canvas"
+  fi
+  adb shell input keyevent KEYCODE_BACK; sleep 3
+fi
+launch 2
+
+# Page templates: a to-do page with check boxes printed on the paper.
+if tap "New page"; then
+  shot 13-page-templates 2
+  if tap "To-do list"; then sleep 3; shot 14-todo-page 2
+    if tap "Font"; then shot 15-font-menu 1; tap "Caveat"; sleep 1; shot 16-handwriting-font 1; fi
+    adb shell input keyevent KEYCODE_ESCAPE; sleep 1; adb shell input keyevent KEYCODE_BACK; sleep 2
+  fi
+fi
+launch 2
+
 adb shell cmd uimode night yes; sleep 3; launch 3; shot 07-home-dark 1; adb shell cmd uimode night no; sleep 3; launch 3
 
 tap "Settings" && shot 08-settings 2
