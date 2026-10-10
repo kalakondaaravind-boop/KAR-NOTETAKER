@@ -25,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.drawscope.scale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -49,7 +50,7 @@ fun PagePreview(style: PageStyle, modifier: Modifier = Modifier, selected: Boole
         drawRect(Color.White)
         // Draw as if the page were 1200 units wide, so spacing looks like the real thing.
         val s = size.width / 1200f
-        androidx.compose.ui.graphics.drawscope.scale(s, s, pivot = androidx.compose.ui.geometry.Offset.Zero) {
+        scale(s, s, pivot = androidx.compose.ui.geometry.Offset.Zero) {
             drawPaper(style, 1200f, 1700f, lineWidth = 1f / s.coerceAtLeast(0.01f))
             if (drawingHint) {
                 val p = strokePath(listOf(
