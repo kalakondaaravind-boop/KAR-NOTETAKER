@@ -134,6 +134,9 @@ fun AppShell(startDestination: String, settings: AppSettings, navigationRequests
         restoreState = true
     }
 
+    // System Back closes the open library menu instead of leaving the app.
+    androidx.activity.compose.BackHandler(enabled = drawer.isOpen) { scope.launch { drawer.close() } }
+
     ModalNavigationDrawer(
         drawerState = drawer,
         gesturesEnabled = isTopLevel(currentRoute),

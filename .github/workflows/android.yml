@@ -127,13 +127,17 @@ jobs:
             bash tools/ci-ui-tour.sh screenshots
             adb shell dumpsys package com.kargroup.notetaker.debug | grep -i "android.permission" > screenshots/granted-permissions.txt || true
             adb logcat -d -b crash > screenshots/crash-log.txt || true
-            ./gradlew --no-daemon connectedDebugAndroidTest || echo "instrumented tests failed - see reports" > screenshots/instrumented-tests-FAILED.txt
+            ./gradlew --no-daemon connectedDebugAndroidTest > screenshots/instrumented-tests.log 2>&1 || echo "instrumented tests failed - see instrumented-tests.log" > screenshots/instrumented-tests-FAILED.txt
 
       - name: Publish screenshots to the ci-logs-tablet branch
         if: always() && github.event_name == 'push'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bash tools/ci-publish.sh screenshots ci-logs-tablet
+        run: |
+          mkdir -p screenshots/test-reports
+          cp -r app/build/reports/androidTests screenshots/test-reports/app 2>/dev/null || true
+          cp -r core/data/build/reports/androidTests screenshots/test-reports/core-data 2>/dev/null || true
+          bash tools/ci-publish.sh screenshots ci-logs-tablet
 
       - name: Upload screenshots
         if: always()
