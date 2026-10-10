@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -66,7 +67,7 @@ fun PagePreview(style: PageStyle, modifier: Modifier = Modifier, selected: Boole
 /** Page templates for new pages (ruled, to-do, Cornell, planners, sketch pages, ...). */
 @Composable
 fun PageTemplateSheet(onDismiss: () -> Unit, onPick: (PageTemplate) -> Unit) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Text(stringResource(R.string.page_templates), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 24.dp))
         Text(stringResource(R.string.page_templates_sub), style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant,
             modifier = Modifier.padding(horizontal = 24.dp, vertical = 4.dp))
@@ -90,7 +91,7 @@ fun PageTemplateSheet(onDismiss: () -> Unit, onPick: (PageTemplate) -> Unit) {
 /** Paper style chooser for an existing note or drawing. */
 @Composable
 fun PageStyleSheet(current: PageStyle, onDismiss: () -> Unit, onPick: (PageStyle) -> Unit) {
-    ModalBottomSheet(onDismissRequest = onDismiss) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)) {
         Text(stringResource(R.string.page_style), style = MaterialTheme.typography.titleLarge, modifier = Modifier.padding(horizontal = 24.dp))
         LazyVerticalGrid(
             columns = GridCells.Adaptive(104.dp),

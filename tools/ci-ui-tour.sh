@@ -116,9 +116,11 @@ launch 2; scroll_top
 # Page templates: a to-do page with check boxes printed on the paper.
 if tap "New page"; then
   shot 13-page-templates 2
+  adb shell input swipe 1280 1300 1280 700 300; sleep 1
   if tap "To-do list"; then sleep 3; shot 14-todo-page 2
     if tap "Font"; then shot 15-font-menu 1; tap "Caveat"; sleep 1; shot 16-handwriting-font 1; fi
     adb shell input keyevent KEYCODE_ESCAPE; sleep 1; adb shell input keyevent KEYCODE_BACK; sleep 2
+  else adb shell input keyevent KEYCODE_BACK; sleep 1
   fi
 fi
 launch 2

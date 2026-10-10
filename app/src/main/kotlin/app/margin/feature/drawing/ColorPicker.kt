@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -40,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
@@ -188,14 +190,28 @@ private fun GradientSlider(label: String, value: Float, colors: List<Color>, onC
     Column {
         Text(label, style = MaterialTheme.typography.bodySmall)
         Box(contentAlignment = Alignment.Center) {
-            Canvas(Modifier.fillMaxWidth().height(10.dp).padding(horizontal = 10.dp).clip(RoundedCornerShape(5.dp))) {
-                // checkerboard behind translucent gradients
-                val sq = size.height
-                var x = 0f; var i = 0
-                while (x < size.width) { if (i % 2 == 0) drawRect(Color(0xFFDDDDDD), Offset(x, 0f), androidx.compose.ui.geometry.Size(sq, sq)); x += sq; i++ }
+            // The colour ramp is the track; the slider on top only draws its thumb.
+            Canvas(Modifier.fillMaxWidth().height(18.dp).padding(horizontal = 10.dp).clip(RoundedCornerShape(9.dp))) {
+                val sq = size.height / 2f
+                var y = 0f; var row = 0
+                while (y < size.height) {
+                    var x = 0f; var i = row
+                    while (x < size.width) { if (i % 2 == 0) drawRect(Color(0xFFDDDDDD), Offset(x, y), androidx.compose.ui.geometry.Size(sq, sq)); x += sq; i++ }
+                    y += sq; row++
+                }
                 drawRect(Brush.horizontalGradient(colors))
             }
-            Slider(value = value.coerceIn(0f, 1f), onValueChange = onChange, modifier = Modifier.fillMaxWidth())
+            Slider(
+                value = value.coerceIn(0f, 1f), onValueChange = onChange, modifier = Modifier.fillMaxWidth(),
+                colors = SliderDefaults.colors(
+                    thumbColor = Color.White, activeTrackColor = Color.Transparent, inactiveTrackColor = Color.Transparent,
+                    activeTickColor = Color.Transparent, inactiveTickColor = Color.Transparent,
+                ),
+                thumb = {
+                    Box(Modifier.size(24.dp).shadow(3.dp, CircleShape).background(Color.White, CircleShape).border(2.dp, Color(0xFF455A64), CircleShape))
+                },
+                track = { Spacer(Modifier.fillMaxWidth().height(18.dp)) },
+            )
         }
     }
 }

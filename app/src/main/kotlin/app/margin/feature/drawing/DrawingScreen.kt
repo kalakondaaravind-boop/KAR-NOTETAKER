@@ -187,7 +187,16 @@ fun DrawingScreen(n: Navigator, vm: DrawingViewModel = hiltViewModel()) {
         zoom = minOf(viewSize.width * 0.96f / d.width, viewSize.height * 0.96f / d.height)
         pan = Offset((viewSize.width - d.width * zoom) / 2f, (viewSize.height - d.height * zoom) / 2f)
     }
-    LaunchedEffect(viewSize) { if (!fitted && viewSize.width > 0) { fit(); fitted = true } }
+    /** Opening view: as wide as is comfortable for writing (up to the screen width), starting at the top of the page. */
+    fun writingView() {
+        if (viewSize.width == 0) return
+        val d = vm.drawing.value
+        zoom = minOf(viewSize.width * 0.96f / d.width, viewSize.height * 0.96f / d.height * 1.8f)
+        val x = (viewSize.width - d.width * zoom) / 2f
+        val y = if (d.height * zoom <= viewSize.height) (viewSize.height - d.height * zoom) / 2f else viewSize.height * 0.02f
+        pan = Offset(x, y)
+    }
+    LaunchedEffect(viewSize) { if (!fitted && viewSize.width > 0) { writingView(); fitted = true } }
 
     // live gesture state (drawn on the overlay only, so the page itself isn't redrawn per touch point)
     val livePoints = remember { mutableStateListOf<Pt>() }
