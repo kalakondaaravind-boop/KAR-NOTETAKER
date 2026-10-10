@@ -4,6 +4,7 @@ package app.margin.domain.text
  * Inline Markdown model. Supported syntax (documented in docs/ARCHITECTURE.md):
  *  **bold**  __bold__  *italic*  _italic_  ~~strike~~  <u>underline</u>  `code`
  *  [text](url)  [[Wiki link]]  bare https:// URLs  ![alt](url) (image reference)
+ *  <span style="color:#RRGGBB;background-color:#RRGGBB;font-family:Name">styled</span>  <mark>highlight</mark>
  * Every node records the source range it came from so the editor can style raw text
  * without changing character offsets.
  */
@@ -21,6 +22,8 @@ sealed interface Inline {
     data class WikiLink(val target: String, override val start: Int, override val end: Int) : Inline
     data class AutoLink(val url: String, override val start: Int, override val end: Int) : Inline
     data class Image(val alt: String, val url: String, override val start: Int, override val end: Int) : Inline
+    /** Colour / highlight / font span. [openEnd] is where the opening tag ends, [closeStart] where the closing tag begins. */
+    data class Styled(val children: List<Inline>, val attrs: TextStyleAttrs, val openEnd: Int, val closeStart: Int, override val start: Int, override val end: Int) : Inline
 }
 
 object InlineParser {
@@ -56,6 +59,8 @@ object InlineParser {
                 s.startsWith("__", i) && boundaryBefore(s, i) -> delimited(s, i, to, "__", depth) { ch, a, b -> Inline.Bold(ch, a, b) }
                 s.startsWith("~~", i) -> delimited(s, i, to, "~~", depth) { ch, a, b -> Inline.Strike(ch, a, b) }
                 s.startsWith("<u>", i) -> delimited(s, i, to, "<u>", depth, close = "</u>") { ch, a, b -> Inline.Underline(ch, a, b) }
+                s.startsWith("<span", i) -> span(s, i, to, depth)
+                s.startsWith("<mark>", i) -> mark(s, i, to, depth)
                 c == '*' -> delimited(s, i, to, "*", depth) { ch, a, b -> Inline.Italic(ch, a, b) }
                 c == '_' && boundaryBefore(s, i) -> delimited(s, i, to, "_", depth, requireBoundaryAfter = true) { ch, a, b -> Inline.Italic(ch, a, b) }
                 (c == 'h') && (s.startsWith("http://", i) || s.startsWith("https://", i)) && boundaryBefore(s, i) -> autolink(s, i, to)
@@ -76,6 +81,34 @@ object InlineParser {
     }
 
     private fun boundaryBefore(s: String, i: Int) = i == 0 || !s[i - 1].isLetterOrDigit()
+
+    private val spanOpen = Regex("""<span\s+style\s*=\s*(?:"([^"\n]*)"|'([^'\n]*)')\s*>""")
+
+    /** `<span style="...">…</span>`, allowing nested spans inside. */
+    private fun span(s: String, i: Int, to: Int, depth: Int): Pair<Inline, Int>? {
+        val m = spanOpen.matchAt(s, i) ?: return null
+        val openEnd = m.range.last + 1
+        if (openEnd > to) return null
+        var level = 1
+        var j = openEnd
+        while (j < to) {
+            when {
+                s.startsWith("<span", j) && spanOpen.matchAt(s, j) != null -> { level++; j += 5 }
+                s.startsWith("</span>", j) -> { level--; if (level == 0) break; j += 7 }
+                else -> j++
+            }
+        }
+        if (level != 0 || j + 7 > to) return null
+        val attrs = TextStyleAttrs.parseCss(m.groupValues[1].ifEmpty { m.groupValues[2] })
+        return Inline.Styled(parseRange(s, openEnd, j, depth + 1), attrs, openEnd, j, i, j + 7) to j + 7
+    }
+
+    private fun mark(s: String, i: Int, to: Int, depth: Int): Pair<Inline, Int>? {
+        val openEnd = i + 6
+        val close = s.indexOf("</mark>", openEnd)
+        if (close < 0 || close + 7 > to || close == openEnd) return null
+        return Inline.Styled(parseRange(s, openEnd, close, depth + 1), TextStyleAttrs(background = Palette.DEFAULT_MARK), openEnd, close, i, close + 7) to close + 7
+    }
 
     private fun code(s: String, i: Int, to: Int): Pair<Inline, Int>? {
         val close = s.indexOf('`', i + 1)
@@ -175,6 +208,7 @@ object InlineParser {
             is Inline.WikiLink -> append(n.target)
             is Inline.AutoLink -> append(n.url)
             is Inline.Image -> append(n.alt)
+            is Inline.Styled -> n.children.forEach { appendPlain(it) }
         }
     }
 

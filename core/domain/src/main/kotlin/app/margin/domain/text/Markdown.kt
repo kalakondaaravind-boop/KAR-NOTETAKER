@@ -57,6 +57,7 @@ object MarkdownParser {
     private val dividerRe = Regex("""^\s{0,3}([-*_])(\s*\1){2,}\s*$""")
     private val fenceRe = Regex("""^\s{0,3}(```+|~~~+)\s*([\w+#.-]*)\s*$""")
     private val tableSepRe = Regex("""^\s*\|?\s*:?-{1,}:?\s*(\|\s*:?-{1,}:?\s*)*\|?\s*$""")
+    private val commentLineRe = Regex("""^\s*<!--.*-->\s*$""")
 
     fun parse(markdown: String): List<Block> {
         val lines = markdown.replace("\r\n", "\n").replace('\r', '\n').split('\n')
@@ -65,6 +66,8 @@ object MarkdownParser {
         while (i < lines.size) {
             val line = lines[i]
             if (line.isBlank()) { i++; continue }
+            // A whole-line HTML comment (e.g. the note's page/font directive) is metadata, not content.
+            if (commentLineRe.matches(line)) { i++; continue }
 
             val fence = fenceRe.matchEntire(line)
             if (fence != null) {
@@ -222,6 +225,7 @@ object MarkdownParser {
                     is Inline.Italic -> walk(n.children)
                     is Inline.Strike -> walk(n.children)
                     is Inline.Underline -> walk(n.children)
+                    is Inline.Styled -> walk(n.children)
                     else -> Unit
                 }
             }
@@ -249,6 +253,7 @@ object MarkdownParser {
                     is Inline.Italic -> walk(n.children)
                     is Inline.Strike -> walk(n.children)
                     is Inline.Underline -> walk(n.children)
+                    is Inline.Styled -> walk(n.children)
                     else -> Unit
                 }
             }

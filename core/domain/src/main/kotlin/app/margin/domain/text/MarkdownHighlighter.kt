@@ -7,9 +7,14 @@ package app.margin.domain.text
  */
 object MarkdownHighlighter {
 
-    enum class Kind { HEADING1, HEADING2, HEADING3, BOLD, ITALIC, STRIKE, UNDERLINE, CODE, CODE_BLOCK, LINK, WIKILINK, QUOTE, LIST_MARKER, CHECKED_ITEM, SYNTAX }
+    /**
+     * SYNTAX marks Markdown/HTML punctuation (`**`, `# `, `<span …>`, `](url)` …). The editor hides it so text
+     * reads as formatted ("what you see"), while the characters stay in the canonical Markdown.
+     */
+    enum class Kind { HEADING1, HEADING2, HEADING3, BOLD, ITALIC, STRIKE, UNDERLINE, CODE, CODE_BLOCK, LINK, WIKILINK, QUOTE, LIST_MARKER, CHECKED_ITEM, SYNTAX, COLOR, HIGHLIGHT, FONT }
 
-    data class Span(val start: Int, val end: Int, val kind: Kind)
+    /** [value]: ARGB colour (as Long) for COLOR/HIGHLIGHT, font id for FONT. */
+    data class Span(val start: Int, val end: Int, val kind: Kind, val value: Any? = null)
 
     fun spans(text: String): List<Span> {
         val out = ArrayList<Span>()
@@ -76,9 +81,25 @@ object MarkdownHighlighter {
                     out += Span(s, s + 3, Kind.SYNTAX); out += Span(e - 4, e, Kind.SYNTAX)
                     inlineSpans(n.children, base, out)
                 }
-                is Inline.Code -> out += Span(s, e, Kind.CODE)
-                is Inline.Link -> { out += Span(s, e, Kind.LINK); inlineSpans(n.children, base, out) }
-                is Inline.WikiLink -> out += Span(s, e, Kind.WIKILINK)
+                is Inline.Code -> { out += Span(s, e, Kind.CODE); out += Span(s, s + 1, Kind.SYNTAX); out += Span(e - 1, e, Kind.SYNTAX) }
+                is Inline.Link -> {
+                    out += Span(s, e, Kind.LINK)
+                    val labelEnd = n.children.lastOrNull()?.let { base + it.end } ?: (s + 1)
+                    out += Span(s, s + 1, Kind.SYNTAX)            // [
+                    out += Span(labelEnd, e, Kind.SYNTAX)         // ](url)
+                    inlineSpans(n.children, base, out)
+                }
+                is Inline.WikiLink -> { out += Span(s, e, Kind.WIKILINK); out += Span(s, s + 2, Kind.SYNTAX); out += Span(e - 2, e, Kind.SYNTAX) }
+                is Inline.Styled -> {
+                    val inner = base + n.openEnd
+                    val innerEnd = base + n.closeStart
+                    n.attrs.color?.let { out += Span(inner, innerEnd, Kind.COLOR, it) }
+                    n.attrs.background?.let { out += Span(inner, innerEnd, Kind.HIGHLIGHT, it) }
+                    n.attrs.font?.let { out += Span(inner, innerEnd, Kind.FONT, it.id) }
+                    out += Span(s, inner, Kind.SYNTAX)
+                    out += Span(innerEnd, e, Kind.SYNTAX)
+                    inlineSpans(n.children, base, out)
+                }
                 is Inline.AutoLink -> out += Span(s, e, Kind.LINK)
                 is Inline.Image -> out += Span(s, e, Kind.LINK)
             }

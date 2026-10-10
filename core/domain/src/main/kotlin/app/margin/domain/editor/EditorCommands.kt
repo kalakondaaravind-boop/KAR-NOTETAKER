@@ -1,5 +1,7 @@
 package app.margin.domain.editor
 
+import app.margin.domain.text.NoteFont
+import app.margin.domain.text.TextStyleAttrs
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
@@ -24,6 +26,66 @@ enum class LineStyle { HEADING1, HEADING2, HEADING3, BULLET, NUMBERED, CHECKLIST
 object EditorCommands {
 
     private val linePrefixRe = Regex("""^(\s*)(#{1,6}\s+|[-*+]\s+\[[ xX]]\s+|[-*+]\s+|\d{1,9}[.)]\s+|>\s?)?""")
+
+    private val openSpanAtEnd = Regex("""<span\s+style\s*=\s*"([^"\n]*)"\s*>$""")
+    private val anyStyleTag = Regex("""<span\s+style\s*=\s*"[^"\n]*"\s*>|</span>|<mark>|</mark>""")
+
+    /**
+     * Colour / highlight / font for the selection. If the selection is exactly the content of an existing
+     * `<span style>` the span is updated in place (no nesting); if the change leaves no properties the
+     * span is removed. Without a selection an empty span is inserted and the cursor placed inside, so the
+     * next characters typed get the style.
+     */
+    fun applyStyle(v: TextValue, change: (TextStyleAttrs) -> TextStyleAttrs): TextValue {
+        val s = v.min
+        val e = v.max
+        val t = v.text
+        val before = t.substring(maxOf(0, s - 300), s)
+        val m = openSpanAtEnd.find(before)
+        if (m != null && t.startsWith(TextStyleAttrs.CLOSE, e)) {
+            val tagStart = s - m.value.length
+            val updated = change(TextStyleAttrs.parseCss(m.groupValues[1]))
+            if (updated.isEmpty) {
+                val nt = t.substring(0, tagStart) + t.substring(s, e) + t.substring(e + TextStyleAttrs.CLOSE.length)
+                return TextValue(nt, tagStart, tagStart + (e - s))
+            }
+            val tag = updated.openTag()
+            val nt = t.substring(0, tagStart) + tag + t.substring(s)
+            val shift = tag.length - m.value.length
+            return TextValue(nt, s + shift, e + shift)
+        }
+        val attrs = change(TextStyleAttrs())
+        if (attrs.isEmpty) return v
+        val open = attrs.openTag()
+        val close = TextStyleAttrs.CLOSE
+        if (!v.hasSelection) {
+            return TextValue(t.substring(0, s) + open + close + t.substring(s), s + open.length)
+        }
+        val sel = t.substring(s, e)
+        val lead = sel.length - sel.trimStart().length
+        val trail = sel.length - sel.trimEnd().length
+        if (lead == sel.length) return v
+        val core = sel.trim()
+        val nt = t.substring(0, s + lead) + open + core + close + t.substring(e - trail)
+        val ns = s + lead + open.length
+        return TextValue(nt, ns, ns + core.length)
+    }
+
+    fun setColor(v: TextValue, argb: Long?) = applyStyle(v) { it.copy(color = argb) }
+    fun setHighlight(v: TextValue, argb: Long?) = applyStyle(v) { it.copy(background = argb) }
+    fun setFont(v: TextValue, font: NoteFont?) = applyStyle(v) { it.copy(font = font) }
+
+    /** Removes colour, highlight and font from the selection (the span immediately around it, or tags inside it). */
+    fun clearStyles(v: TextValue): TextValue {
+        val around = applyStyle(v) { TextStyleAttrs() }
+        if (around != v) return around
+        val s = v.min
+        val e = v.max
+        val sel = v.text.substring(s, e)
+        val cleaned = sel.replace(anyStyleTag, "")
+        if (cleaned == sel) return v
+        return TextValue(v.text.substring(0, s) + cleaned + v.text.substring(e), s, s + cleaned.length)
+    }
 
     fun toggleInline(v: TextValue, style: InlineStyle): TextValue {
         val s = v.min

@@ -86,6 +86,7 @@ object HtmlRenderer {
         is Inline.Link -> if (isSafeUrl(n.url)) "<a href=\"${escape(n.url)}\">${inline(n.children)}</a>" else inline(n.children)
         is Inline.WikiLink -> "<span class=\"wikilink\">${escape(n.target)}</span>"
         is Inline.AutoLink -> "<a href=\"${escape(n.url)}\">${escape(n.url)}</a>"
+        is Inline.Styled -> if (n.attrs.isEmpty) inline(n.children) else "<span style=\"${escape(n.attrs.toCss())}\">${inline(n.children)}</span>"
         is Inline.Image -> if (isSafeUrl(n.url)) "<img alt=\"${escape(n.alt)}\" src=\"${escape(n.url)}\">" else escape(n.alt)
     }
 
