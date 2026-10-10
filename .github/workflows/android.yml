@@ -70,6 +70,7 @@ jobs:
         run: |
           grep -E '^e: |error: |^\* What went wrong' -A2 ci-out/build.log > ci-out/errors.txt 2>/dev/null || true
           cp -r app/build/outputs/apk/debug ci-out/apk 2>/dev/null || true
+          cp -r core/data/schemas ci-out/room-schemas 2>/dev/null || true
           bash tools/ci-publish.sh ci-out ci-logs-build
 
       - name: Upload reports
