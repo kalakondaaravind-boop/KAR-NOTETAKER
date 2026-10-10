@@ -125,6 +125,12 @@ if tap "New page"; then
 fi
 launch 2
 
+# Earlier features still in place: template library and the daily journal template.
+if tap "Templates"; then shot 17-templates 3; adb shell input keyevent KEYCODE_BACK; sleep 2; fi
+launch 2; scroll_top
+if tap "Daily journal"; then shot 18-journal-template 3; adb shell input keyevent KEYCODE_BACK; sleep 2; fi
+launch 2; scroll_top
+
 adb shell cmd uimode night yes; sleep 3; launch 3; shot 07-home-dark 1; adb shell cmd uimode night no; sleep 3; launch 3
 
 tap "Settings" && shot 08-settings 2

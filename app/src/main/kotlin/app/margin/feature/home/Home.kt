@@ -435,6 +435,7 @@ private fun QuickActions(onNewNote: () -> Unit, onNewPage: () -> Unit, onDrawing
         QuickTile(Icons.Outlined.Mic, R.string.voice_note, onVoiceNote)
         QuickTile(Icons.Outlined.Checklist, R.string.shortcut_new_checklist, onChecklist)
         QuickTile(Icons.Outlined.Groups, R.string.qa_meeting) { onOpen(Routes.templateForm(QUICK_MEETING_TEMPLATE)) }
+        QuickTile(Icons.Outlined.Today, R.string.qa_journal) { onOpen(Routes.templateForm(QUICK_JOURNAL_TEMPLATE)) }
         QuickTile(Icons.Outlined.AutoAwesome, R.string.ask_notes) { onOpen(Routes.ASK) }
         QuickTile(Icons.Outlined.Dashboard, R.string.templates) { onOpen(Routes.templates()) }
     }
