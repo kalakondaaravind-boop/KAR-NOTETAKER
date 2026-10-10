@@ -42,6 +42,11 @@ jobs:
           set -o pipefail
           ./gradlew --no-daemon --continue :app:assembleDebug 2>&1 | tee ci-out/build.log
 
+      - name: Export Room schema (for migration tests)
+        if: success()
+        continue-on-error: true
+        run: ./gradlew --no-daemon :core:data:kspDebugKotlin --rerun 2>&1 | tail -5
+
       - name: Show build errors on the run page
         if: failure()
         run: bash tools/ci-annotate.sh ci-out/build.log
